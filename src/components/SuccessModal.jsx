@@ -1,11 +1,8 @@
 import React from 'react';
+import { formatPrice } from '../utils/format';
 
 const SuccessModal = ({ isOpen, onClose, bookingData }) => {
   if (!isOpen) return null;
-
-  const formatPrice = (price) => {
-    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

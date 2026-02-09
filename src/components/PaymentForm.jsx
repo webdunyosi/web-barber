@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatPrice } from '../utils/format';
 
 const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
   const [errors, setErrors] = useState({});
@@ -40,10 +41,6 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
   const handleCvvChange = (value) => {
     const cleaned = value.replace(/\D/g, '').slice(0, 3);
     handleChange('cvv', cleaned);
-  };
-
-  const formatPrice = (price) => {
-    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   };
 
   return (

@@ -1,8 +1,10 @@
 // Telegram Bot API integration
 // Note: In production, this should be implemented on the backend for security
 
-const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE'; // Replace with your bot token
-const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID_HERE'; // Replace with your chat ID
+import { formatPrice } from './format';
+
+const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN || ''; // Set in .env file
+const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID || ''; // Set in .env file
 
 export const sendBookingToTelegram = async (bookingData) => {
   try {
@@ -102,8 +104,4 @@ Sizni kutib qolamiz! 💈
     console.error('Telegram error:', error);
     throw error;
   }
-};
-
-const formatPrice = (price) => {
-  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 };

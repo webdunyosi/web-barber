@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatPrice } from '../utils/format';
 
 const ServiceSelection = ({ services, selectedService, onSelectService }) => {
   return (
@@ -41,10 +42,6 @@ const ServiceSelection = ({ services, selectedService, onSelectService }) => {
       </div>
     </div>
   );
-};
-
-const formatPrice = (price) => {
-  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 };
 
 export default ServiceSelection;
