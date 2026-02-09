@@ -12,12 +12,6 @@ const PersonalInfoForm = ({ formData, onUpdate }) => {
     }
   };
 
-  const validatePhone = (phone) => {
-    // Uzbekistan phone number format: +998 XX XXX XX XX
-    const phoneRegex = /^\+998\d{9}$/;
-    return phoneRegex.test(phone.replace(/\s/g, ''));
-  };
-
   const handlePhoneChange = (value) => {
     // Auto-format phone number
     let cleaned = value.replace(/\D/g, '');
