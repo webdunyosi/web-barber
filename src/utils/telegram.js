@@ -32,7 +32,7 @@ export const sendBookingToTelegram = async (bookingData) => {
 ✅ *Buyurtma tasdiqlandi!*
     `.trim();
 
-    // Send API call to Telegram
+    // Sends API call to Telegram
     console.log('Sending to Telegram:', message);
     
     const response = await fetch(
