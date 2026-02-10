@@ -28,7 +28,7 @@ A modern, responsive barber shop booking system built with React and TailwindCSS
 ### Prerequisites
 
 - Node.js 18+ and npm
-- A Telegram bot (for notifications)
+- A Telegram bot (optional for development, required for production notifications)
 
 ### Installation
 
@@ -96,9 +96,16 @@ Browser → Backend Server (port 3001) → Telegram API
    VITE_TELEGRAM_BOT_TOKEN=your_bot_token_here
    VITE_TELEGRAM_CHAT_ID=your_chat_id_here
    VITE_API_URL=http://localhost:3001
+   
+   # For production, also set these for better security:
+   # TELEGRAM_BOT_TOKEN=your_bot_token_here
+   # TELEGRAM_CHAT_ID=your_chat_id_here
+   # CORS_ORIGIN=https://yourdomain.com
    ```
 
 4. The Telegram integration is now automatically enabled through the backend server.
+
+**Note:** The app will function without Telegram credentials, but booking confirmations won't be sent.
 
 ### Customize Services
 
