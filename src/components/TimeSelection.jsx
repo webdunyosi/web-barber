@@ -71,22 +71,22 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
   return (
     <div className="w-full max-w-4xl mx-auto">
       {/* Calendar */}
-      <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+      <div className="bg-zinc-800/70 border border-green-500/50 rounded-xl p-8 mb-8">
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={prevMonth}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-lg hover:bg-gray-700 transition-colors text-white"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h3 className="text-xl font-semibold">
+          <h3 className="text-xl font-semibold text-white">
             {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
           </h3>
           <button
             onClick={nextMonth}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-lg hover:bg-gray-700 transition-colors text-white"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -96,7 +96,7 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
         
         <div className="grid grid-cols-7 gap-2">
           {dayNames.map((day) => (
-            <div key={day} className="text-center font-semibold text-gray-600 py-2">
+            <div key={day} className="text-center font-semibold text-gray-300 py-2">
               {day}
             </div>
           ))}
@@ -113,10 +113,10 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
                     disabled={!available}
                     className={`w-full h-full rounded-lg font-medium transition-all ${
                       selected
-                        ? 'bg-emerald-500 text-white shadow-lg'
+                        ? 'bg-green-500 text-white shadow-lg'
                         : available
-                        ? 'bg-gray-100 hover:bg-emerald-100 hover:text-emerald-700'
-                        : 'bg-gray-50 text-gray-300 cursor-not-allowed'
+                        ? 'bg-gray-700 text-white hover:bg-green-500/20 hover:text-green-300'
+                        : 'bg-gray-800 text-gray-500 cursor-not-allowed'
                     }`}
                   >
                     {date.getDate()}
@@ -130,8 +130,8 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
 
       {/* Time Slots */}
       {selectedDate && (
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-xl font-semibold mb-4 text-gray-800">
+        <div className="bg-zinc-800/70 border border-green-500/50 rounded-xl p-8">
+          <h3 className="text-xl font-semibold mb-4 text-white">
             Vaqtni tanlang ({formatDate(selectedDate)})
           </h3>
           <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
@@ -141,8 +141,8 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
                 onClick={() => onSelectTime(time)}
                 className={`py-3 px-4 rounded-lg font-medium transition-all ${
                   selectedTime === time
-                    ? 'bg-emerald-500 text-white shadow-lg'
-                    : 'bg-gray-100 hover:bg-emerald-100 hover:text-emerald-700'
+                    ? 'bg-green-500 text-white shadow-lg'
+                    : 'bg-gray-700 text-white hover:bg-green-500/20 hover:text-green-300'
                 }`}
               >
                 {time}

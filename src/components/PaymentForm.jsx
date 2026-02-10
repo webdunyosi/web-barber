@@ -46,7 +46,7 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
   return (
     <div className="w-full max-w-md mx-auto">
       {/* Order Summary */}
-      <div className="bg-linear-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg p-6 mb-6 text-white">
+      <div className="bg-zinc-800/70 border border-green-500/50 rounded-xl p-8 mb-6 text-white">
         <h3 className="text-xl font-semibold mb-4">Buyurtma tafsilotlari</h3>
         <div className="space-y-2">
           <div className="flex justify-between">
@@ -70,11 +70,11 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
       </div>
 
       {/* Payment Form */}
-      <div className="bg-white rounded-xl shadow-lg p-8">
+      <div className="bg-zinc-800/70 border border-green-500/50 rounded-xl p-8">
         <div className="space-y-6">
           {/* Card Number */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Karta raqami *
             </label>
             <div className="relative">
@@ -84,8 +84,8 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
                 onChange={(e) => handleCardNumberChange(e.target.value)}
                 placeholder="1234 5678 9012 3456"
                 maxLength="19"
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all ${
-                  errors.cardNumber ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all bg-gray-700 text-white ${
+                  errors.cardNumber ? 'border-red-500' : 'border-gray-600'
                 }`}
               />
               <div className="absolute right-3 top-3">
@@ -100,7 +100,7 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
           {/* Expiry Date and CVV */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Amal qilish muddati *
               </label>
               <input
@@ -109,8 +109,8 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
                 onChange={(e) => handleExpiryChange(e.target.value)}
                 placeholder="MM/YY"
                 maxLength="5"
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all ${
-                  errors.expiry ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all bg-gray-700 text-white ${
+                  errors.expiry ? 'border-red-500' : 'border-gray-600'
                 }`}
               />
               {errors.expiry && (
@@ -119,7 +119,7 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 CVV *
               </label>
               <input
@@ -128,8 +128,8 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
                 onChange={(e) => handleCvvChange(e.target.value)}
                 placeholder="123"
                 maxLength="3"
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all ${
-                  errors.cvv ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all bg-gray-700 text-white ${
+                  errors.cvv ? 'border-red-500' : 'border-gray-600'
                 }`}
               />
               {errors.cvv && (
@@ -140,7 +140,7 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
 
           {/* Cardholder Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Karta egasining ismi *
             </label>
             <input
@@ -148,8 +148,8 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
               value={paymentData.cardholderName || ''}
               onChange={(e) => handleChange('cardholderName', e.target.value.toUpperCase())}
               placeholder="ISM FAMILIYA"
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all uppercase ${
-                errors.cardholderName ? 'border-red-500' : 'border-gray-300'
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all uppercase bg-gray-700 text-white ${
+                errors.cardholderName ? 'border-red-500' : 'border-gray-600'
               }`}
             />
             {errors.cardholderName && (

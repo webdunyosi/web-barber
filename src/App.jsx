@@ -148,7 +148,7 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950/80 web-pattern">
+    <div className="min-h-screen bg-zinc-950 web-pattern">
       {/* Header */}
       <header className="bg-linear-to-r from-zinc-900/95 via-zinc-950/95 to-zinc-900/95 backdrop-blur-lg text-white shadow-md sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
@@ -192,10 +192,10 @@ const App = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h2 className="text-center text-3xl font-bold text-gray-800 mb-2">
+          <h2 className="text-center text-3xl font-bold text-white mb-2">
             {getStepTitle()}
           </h2>
-          <p className="text-center text-gray-600">
+          <p className="text-center text-white/70">
             {currentStep === STEPS.SERVICE && 'Qaysi xizmatni tanlamoqchisiz?'}
             {currentStep === STEPS.TIME && 'Sizga qulay vaqtni tanlang'}
             {currentStep === STEPS.PERSONAL_INFO && 'Bog\'lanish uchun ma\'lumotlar'}

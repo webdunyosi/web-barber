@@ -9,26 +9,26 @@ const ServiceSelection = ({ services, selectedService, onSelectService }) => {
           <div
             key={service.id}
             onClick={() => onSelectService(service)}
-            className={`cursor-pointer p-6 rounded-xl border-2 transition-all duration-300 hover:shadow-lg ${
+            className={`cursor-pointer bg-zinc-800/70 border rounded-xl p-8 transition-all duration-300 hover:shadow-lg ${
               selectedService?.id === service.id
-                ? 'border-emerald-500 bg-emerald-50 shadow-xl'
-                : 'border-gray-200 bg-white hover:border-emerald-300'
+                ? 'border-green-500 shadow-xl'
+                : 'border-green-500/50 hover:border-green-500'
             }`}
           >
             <div className="flex items-center gap-4">
               <div className="text-5xl">{service.icon}</div>
               <div className="flex-1">
-                <h3 className="text-xl font-semibold text-gray-800">
+                <h3 className="text-xl font-semibold text-white">
                   {service.name}
                 </h3>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-300 mt-1">
                   {service.name_en}
                 </p>
                 <div className="flex items-center justify-between mt-3">
-                  <span className="text-2xl font-bold text-emerald-600">
+                  <span className="text-2xl font-bold text-green-400">
                     {formatPrice(service.price)} so'm
                   </span>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-gray-300">
                     {service.duration} daqiqa
                   </span>
                 </div>
