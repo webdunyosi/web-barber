@@ -41,8 +41,13 @@ const ServiceSelection = ({ services, selectedService, onSelectService }) => {
               }`}>
                 <img 
                   src={service.icon} 
-                  alt={service.name_en}
+                  alt={service.name}
                   className="w-20 h-20 object-cover rounded-xl shadow-lg"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.parentElement.classList.add('text-5xl');
+                    e.target.parentElement.innerHTML = '🔧';
+                  }}
                 />
               </div>
               <div className="flex-1">
