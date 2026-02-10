@@ -19,7 +19,6 @@
     );
   background-size: 800px 800px, 600px 600px, 1000px 1000px;
   animation: float 8s ease-in-out infinite;
-  color: white;
 }
 
 /* animatsiya bo‘lishi uchun */
@@ -33,4 +32,23 @@
   100% {
     background-position: 0 0, 0 0, 0 0;
   }
+}
+
+/* Modal animation */
+@keyframes bounce-in {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.4s ease-out;
 }

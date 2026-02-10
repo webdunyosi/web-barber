@@ -1,0 +1,59 @@
+{
+  "services": [
+    {
+      "id": 1,
+      "name": "Klassik soch olish",
+      "name_en": "Classic Haircut",
+      "price": 50000,
+      "duration": 30,
+      "icon": "✂️"
+    },
+    {
+      "id": 2,
+      "name": "Soqol olish",
+      "name_en": "Beard Trim",
+      "price": 30000,
+      "duration": 20,
+      "icon": "🪒"
+    },
+    {
+      "id": 3,
+      "name": "Soch + Soqol",
+      "name_en": "Haircut + Beard",
+      "price": 70000,
+      "duration": 45,
+      "icon": "💈"
+    },
+    {
+      "id": 4,
+      "name": "Yuz masaji",
+      "name_en": "Face Massage",
+      "price": 40000,
+      "duration": 30,
+      "icon": "💆"
+    }
+  ],
+  "timeSlots": [
+    "09:00",
+    "09:30",
+    "10:00",
+    "10:30",
+    "11:00",
+    "11:30",
+    "12:00",
+    "12:30",
+    "13:00",
+    "13:30",
+    "14:00",
+    "14:30",
+    "15:00",
+    "15:30",
+    "16:00",
+    "16:30",
+    "17:00",
+    "17:30",
+    "18:00",
+    "18:30"
+  ],
+  "workDays": [1, 2, 3, 4, 5, 6]
+}
