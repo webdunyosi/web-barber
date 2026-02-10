@@ -36,10 +36,14 @@ const ServiceSelection = ({ services, selectedService, onSelectService }) => {
               <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
             </div>
             <div className="flex items-center gap-4 relative z-10">
-              <div className={`text-5xl transition-all duration-300 ${
+              <div className={`transition-all duration-300 ${
                 selectedService?.id === service.id ? 'scale-110' : 'group-hover:scale-110'
               }`}>
-                {service.icon}
+                <img 
+                  src={service.icon} 
+                  alt={service.name_en}
+                  className="w-20 h-20 object-cover rounded-xl shadow-lg"
+                />
               </div>
               <div className="flex-1">
                 <h3 className={`text-xl font-semibold transition-colors duration-300 ${

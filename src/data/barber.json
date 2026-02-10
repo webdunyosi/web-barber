@@ -6,7 +6,7 @@
       "name_en": "Classic Haircut",
       "price": 50000,
       "duration": 30,
-      "icon": "✂️"
+      "icon": "/barber/1.png"
     },
     {
       "id": 2,
@@ -14,7 +14,7 @@
       "name_en": "Beard Trim",
       "price": 30000,
       "duration": 20,
-      "icon": "🪒"
+      "icon": "/barber/2.png"
     },
     {
       "id": 3,
@@ -22,7 +22,7 @@
       "name_en": "Haircut + Beard",
       "price": 70000,
       "duration": 45,
-      "icon": "💈"
+      "icon": "/barber/3.png"
     },
     {
       "id": 4,
@@ -30,7 +30,7 @@
       "name_en": "Face Massage",
       "price": 40000,
       "duration": 30,
-      "icon": "💆"
+      "icon": "/barber/4.png"
     }
   ],
   "timeSlots": [
