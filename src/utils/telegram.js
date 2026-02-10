@@ -1,10 +1,10 @@
 // Telegram Bot API integration
-// Note: In production, this should be implemented on the backend for security
+// Configured with bot token and chat ID
 
 import { formatPrice } from './format';
 
-const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN || ''; // Set in .env file
-const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID || ''; // Set in .env file
+const TELEGRAM_BOT_TOKEN = '8598199374:AAGgeu2SY9n7zuVhU7HNC4zhdQrwooDpPfc';
+const TELEGRAM_CHAT_ID = '5414733748';
 
 // Check if credentials are configured
 const isTelegramConfigured = () => {
@@ -32,11 +32,9 @@ export const sendBookingToTelegram = async (bookingData) => {
 ✅ *Buyurtma tasdiqlandi!*
     `.trim();
 
-    // Simulate API call (in production, this should be done on the backend)
+    // Send message to Telegram
     console.log('Sending to Telegram:', message);
     
-    // Uncomment this in production with real tokens
-    /*
     const response = await fetch(
       `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
       {
@@ -53,10 +51,6 @@ export const sendBookingToTelegram = async (bookingData) => {
     );
     
     return await response.json();
-    */
-    
-    // Return mock success response
-    return { ok: true, message: 'Booking sent successfully' };
   } catch (error) {
     console.error('Telegram error:', error);
     throw error;
@@ -91,8 +85,6 @@ Sizni kutib qolamiz! 💈
 
     console.log('Sending receipt to Telegram:', message);
     
-    // Uncomment this in production with real tokens
-    /*
     const response = await fetch(
       `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
       {
@@ -109,10 +101,6 @@ Sizni kutib qolamiz! 💈
     );
     
     return await response.json();
-    */
-    
-    // Return mock success response
-    return { ok: true, message: 'Receipt sent successfully' };
   } catch (error) {
     console.error('Telegram error:', error);
     throw error;
