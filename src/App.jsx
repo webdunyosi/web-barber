@@ -254,7 +254,7 @@ const App = () => {
           {currentStep > STEPS.SERVICE && (
             <button
               onClick={handleBack}
-              className="group relative flex-1 bg-linear-to-br from-zinc-700 via-zinc-800 to-zinc-900 text-white py-4 px-6 rounded-xl font-semibold overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] border border-zinc-600 hover:border-zinc-500"
+              className="group relative flex-1 bg-linear-to-br from-zinc-700 via-zinc-800 to-zinc-900 text-white py-4 px-6 rounded-xl font-semibold overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] border border-zinc-600 hover:border-zinc-500 backdrop-blur-sm animate-bounce-in"
             >
               <span className="absolute inset-0 bg-linear-to-r from-zinc-600/0 via-zinc-500/30 to-zinc-600/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></span>
               <span className="relative flex items-center justify-center gap-2">
@@ -268,7 +268,7 @@ const App = () => {
           <button
             onClick={handleNext}
             disabled={!validateStep() || isProcessing}
-            className={`group relative flex-1 py-4 px-6 rounded-xl font-semibold overflow-hidden shadow-lg transition-all duration-300 ease-out border ${
+            className={`group relative flex-1 py-4 px-6 rounded-xl font-semibold overflow-hidden shadow-lg transition-all duration-300 ease-out border backdrop-blur-sm animate-bounce-in ${
               validateStep() && !isProcessing
                 ? 'bg-linear-to-br from-emerald-500 via-emerald-600 to-green-600 text-white hover:shadow-2xl hover:shadow-emerald-500/50 hover:scale-[1.02] active:scale-[0.98] border-emerald-400 hover:border-emerald-300'
                 : 'bg-gradient-to-br from-gray-300 to-gray-400 text-gray-500 cursor-not-allowed border-gray-300'
