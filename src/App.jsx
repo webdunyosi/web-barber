@@ -257,11 +257,23 @@ const App = () => {
             className={`group relative flex-1 py-4 px-6 rounded-xl font-semibold overflow-hidden shadow-lg transition-all duration-300 ease-out border ${
               validateStep() && !isProcessing
                 ? 'bg-linear-to-br from-emerald-500 via-emerald-600 to-green-600 text-white hover:shadow-2xl hover:shadow-emerald-500/50 hover:scale-[1.02] active:scale-[0.98] border-emerald-400 hover:border-emerald-300'
-                : 'bg-gradient-to-br from-gray-300 to-gray-400 text-gray-500 cursor-not-allowed border-gray-300'
+                : 'bg-zinc-800/40 backdrop-blur-md text-gray-400 cursor-not-allowed border-zinc-700/50 shadow-inner'
             }`}
+            style={!validateStep() && !isProcessing ? {
+              animation: 'disabled-pulse 2s ease-in-out infinite',
+              background: 'linear-gradient(135deg, rgba(39, 39, 42, 0.4) 0%, rgba(63, 63, 70, 0.3) 50%, rgba(39, 39, 42, 0.4) 100%)',
+              backgroundSize: '200% 100%',
+              backgroundPosition: '0% center'
+            } : {}}
           >
             {validateStep() && !isProcessing && (
               <span className="absolute inset-0 bg-linear-to-r from-emerald-400/0 via-white/30 to-emerald-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></span>
+            )}
+            {!validateStep() && !isProcessing && (
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-zinc-600/20 to-transparent" style={{
+                animation: 'disabled-shimmer 3s linear infinite',
+                backgroundSize: '200% 100%'
+              }}></span>
             )}
             <span className="relative flex items-center justify-center gap-2">
               {isProcessing ? (

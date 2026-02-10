@@ -52,3 +52,23 @@
 .animate-bounce-in {
   animation: bounce-in 0.4s ease-out;
 }
+
+/* Disabled button pulse animation */
+@keyframes disabled-pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Disabled button shimmer effect */
+@keyframes disabled-shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
