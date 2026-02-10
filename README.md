@@ -28,7 +28,6 @@ A modern, responsive barber shop booking system built with React and TailwindCSS
 ### Prerequisites
 
 - Node.js 18+ and npm
-- A Telegram bot (optional, for notifications)
 
 ### Installation
 
@@ -40,10 +39,6 @@ cd barber-shop
 # Install dependencies
 npm install
 
-# Setup environment variables
-cp .env.example .env
-# Edit .env with your Telegram credentials (optional)
-
 # Start development server
 npm run dev
 ```
@@ -52,26 +47,7 @@ The app will be available at `http://localhost:5173`
 
 ## 🔧 Configuration
 
-### Telegram Bot Setup (Optional)
-
-1. Create a bot via [@BotFather](https://t.me/botfather):
-   - Send `/newbot` to BotFather
-   - Follow the instructions to get your bot token
-
-2. Get your chat ID:
-   - Send a message to [@userinfobot](https://t.me/userinfobot)
-   - Copy your chat ID
-
-3. Update `.env` file:
-   ```env
-   VITE_TELEGRAM_BOT_TOKEN=your_bot_token_here
-   VITE_TELEGRAM_CHAT_ID=your_chat_id_here
-   ```
-
-4. Enable API calls in `src/utils/telegram.js`:
-   - Uncomment the fetch API calls in both functions
-   - Lines 23-37 (sendBookingToTelegram)
-   - Lines 74-88 (sendPaymentReceiptToTelegram)
+The Telegram bot is already configured and will send booking confirmations and payment receipts automatically.
 
 ### Customize Services
 
