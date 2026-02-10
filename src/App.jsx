@@ -252,7 +252,7 @@ const App = () => {
             >
               <span className="absolute inset-0 bg-gradient-to-r from-zinc-600/0 via-zinc-500/30 to-zinc-600/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></span>
               <span className="relative flex items-center justify-center gap-2">
-                <svg className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
                 </svg>
                 <span className="text-lg">Ortga</span>
@@ -282,13 +282,13 @@ const App = () => {
                 </>
               ) : currentStep === STEPS.PAYMENT ? (
                 <>
-                  <span className="text-2xl transition-transform duration-300 group-hover:scale-110">💳</span>
+                  <span className="text-2xl transition-transform duration-300 group-hover:scale-110" role="img" aria-label="Karta ikoni">💳</span>
                   <span className="text-lg">To'lovni amalga oshirish</span>
                 </>
               ) : (
                 <>
                   <span className="text-lg">Keyingisi</span>
-                  <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                   </svg>
                 </>
