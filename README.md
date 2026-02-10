@@ -52,9 +52,17 @@ The app will be available at `http://localhost:5173`
 
 ## 🔧 Configuration
 
-### Telegram Bot Setup (Optional)
+### Telegram Bot Setup
 
-1. Create a bot via [@BotFather](https://t.me/botfather):
+✅ **Telegram bot is now configured and ready to use!**
+
+The application has been configured with Telegram bot credentials in the `.env` file (not committed to the repository for security). When customers make bookings and payments, notifications will automatically be sent to Telegram.
+
+**Note:** The application will continue to work even if Telegram notifications fail. Telegram integration is optional but recommended for receiving booking notifications.
+
+If you need to reconfigure the bot or set up your own:
+
+1. Create a new bot via [@BotFather](https://t.me/botfather):
    - Send `/newbot` to BotFather
    - Follow the instructions to get your bot token
 
@@ -62,16 +70,11 @@ The app will be available at `http://localhost:5173`
    - Send a message to [@userinfobot](https://t.me/userinfobot)
    - Copy your chat ID
 
-3. Update `.env` file:
+3. Update `.env` file with your credentials:
    ```env
    VITE_TELEGRAM_BOT_TOKEN=your_bot_token_here
    VITE_TELEGRAM_CHAT_ID=your_chat_id_here
    ```
-
-4. Enable API calls in `src/utils/telegram.js`:
-   - Uncomment the fetch API calls in both functions
-   - Lines 23-37 (sendBookingToTelegram)
-   - Lines 74-88 (sendPaymentReceiptToTelegram)
 
 ### Customize Services
 
