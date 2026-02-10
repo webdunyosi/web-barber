@@ -142,7 +142,7 @@ const App = () => {
   return (
     <div className="min-h-screen bg-zinc-950 web-pattern">
       {/* Header */}
-      <header className="bg-linear-to-r from-zinc-900/95 via-zinc-950/95 to-zinc-900/95 backdrop-blur-lg text-white shadow-md sticky top-0 z-40">
+      <header className="bg-gradient-to-r from-zinc-900/95 via-zinc-950/95 to-zinc-900/95 backdrop-blur-lg text-white shadow-md sticky top-0 z-40">
         <div className="container mx-auto pl-4 pr-7 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
