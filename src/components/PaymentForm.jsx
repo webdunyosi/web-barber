@@ -1,8 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { formatPrice } from '../utils/format';
 
 const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
   const [errors, setErrors] = useState({});
+  const [previewUrl, setPreviewUrl] = useState(null);
+
+  // Cleanup preview URL on unmount or when receipt changes
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
@@ -19,6 +29,15 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
         setErrors({ receipt: 'Fayl hajmi 5MB dan kichik bo\'lishi kerak' });
         return;
       }
+      
+      // Revoke old preview URL if exists
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      
+      // Create new preview URL
+      const newPreviewUrl = URL.createObjectURL(file);
+      setPreviewUrl(newPreviewUrl);
       
       onUpdate({ ...paymentData, receipt: file });
       setErrors({ ...errors, receipt: '' });
@@ -168,11 +187,11 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
           </div>
 
           {/* Preview uploaded image */}
-          {paymentData.receipt && (
+          {paymentData.receipt && previewUrl && (
             <div className="mt-4 p-4 bg-zinc-900/70 rounded-xl border border-emerald-500/20">
               <p className="text-sm text-gray-300 mb-2 font-medium">Yuklangan chek:</p>
               <img 
-                src={URL.createObjectURL(paymentData.receipt)} 
+                src={previewUrl} 
                 alt="To'lov cheki" 
                 className="w-full h-auto max-h-64 object-contain rounded-lg border border-emerald-500/30"
               />

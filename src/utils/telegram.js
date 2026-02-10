@@ -65,6 +65,10 @@ export const sendPaymentReceiptToTelegram = async (paymentData) => {
       console.warn('Telegram credentials not configured. Set VITE_TELEGRAM_BOT_TOKEN and VITE_TELEGRAM_CHAT_ID in .env file');
     }
     
+    if (!paymentData.receipt) {
+      throw new Error('To\'lov cheki yuklanmagan');
+    }
+    
     const message = `
 🧾 *To'lov cheki*
 
