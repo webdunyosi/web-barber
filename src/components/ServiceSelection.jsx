@@ -41,8 +41,11 @@ const ServiceSelection = ({ services, selectedService, onSelectService }) => {
               }`}>
                 <img 
                   src={service.image} 
-                  alt={service.name}
+                  alt={`${service.name_en} - ${service.name}`}
                   className="w-full h-full object-cover rounded-lg"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
                 />
               </div>
               <div className="flex-1">
