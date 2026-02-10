@@ -1,5 +1,6 @@
 // Telegram Bot API integration
-// Configured with bot token and chat ID
+// Note: Credentials are hardcoded as per configuration requirements
+// For better security in production, consider using environment variables or backend implementation
 
 import { formatPrice } from './format';
 
