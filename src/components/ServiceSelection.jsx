@@ -9,6 +9,15 @@ const ServiceSelection = ({ services, selectedService, onSelectService }) => {
           <div
             key={service.id}
             onClick={() => onSelectService(service)}
+            role="button"
+            aria-pressed={selectedService?.id === service.id}
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onSelectService(service);
+              }
+            }}
             className={`relative cursor-pointer border rounded-xl p-8 transition-all duration-300 ${
               selectedService?.id === service.id
                 ? 'bg-gradient-to-br from-green-500/20 via-emerald-500/10 to-green-500/20 border-green-400 shadow-2xl shadow-green-500/50 scale-105 ring-2 ring-green-400/50'
