@@ -28,7 +28,7 @@ A modern, responsive barber shop booking system built with React and TailwindCSS
 ### Prerequisites
 
 - Node.js 18+ and npm
-- A Telegram bot (optional, for notifications)
+- A Telegram bot (for notifications)
 
 ### Installation
 
@@ -42,13 +42,42 @@ npm install
 
 # Setup environment variables
 cp .env.example .env
-# Edit .env with your Telegram credentials (optional)
-
-# Start development server
-npm run dev
+# Edit .env with your Telegram credentials
 ```
 
-The app will be available at `http://localhost:5173`
+### Running the Application
+
+**Important:** This application requires both a frontend and backend server to work properly.
+
+**Option 1: Run both servers together (Recommended)**
+```bash
+npm run dev:all
+```
+
+**Option 2: Run servers separately**
+
+In one terminal, start the backend server:
+```bash
+npm run server
+```
+Backend will run on `http://localhost:3001`
+
+In another terminal, start the frontend:
+```bash
+npm run dev
+```
+Frontend will be available at `http://localhost:5173`
+
+### Why Two Servers?
+
+The backend server is required to avoid CORS (Cross-Origin Resource Sharing) errors when calling the Telegram Bot API. Telegram doesn't allow direct API calls from browsers for security reasons.
+
+**Architecture:**
+```
+Browser → Backend Server (port 3001) → Telegram API
+                ↓
+           Frontend (port 5173)
+```
 
 ## 🔧 Configuration
 
@@ -66,12 +95,10 @@ The app will be available at `http://localhost:5173`
    ```env
    VITE_TELEGRAM_BOT_TOKEN=your_bot_token_here
    VITE_TELEGRAM_CHAT_ID=your_chat_id_here
+   VITE_API_URL=http://localhost:3001
    ```
 
-4. Enable API calls in `src/utils/telegram.js`:
-   - Uncomment the fetch API calls in both functions
-   - Lines 23-37 (sendBookingToTelegram)
-   - Lines 74-88 (sendPaymentReceiptToTelegram)
+4. The Telegram integration is now automatically enabled through the backend server.
 
 ### Customize Services
 
@@ -83,7 +110,13 @@ Edit `src/data/barber.json` to customize:
 ## 📋 Available Scripts
 
 ```bash
-# Development server
+# Start both frontend and backend
+npm run dev:all
+
+# Start backend server only (port 3001)
+npm run server
+
+# Start frontend only (port 5173)
 npm run dev
 
 # Build for production
@@ -108,12 +141,13 @@ src/
 │   └── SuccessModal.jsx           # Success confirmation modal
 ├── utils/
 │   ├── format.js                  # Formatting utilities
-│   └── telegram.js                # Telegram API integration
+│   └── telegram.js                # Frontend Telegram API calls
 ├── data/
 │   └── barber.json                # Services and configuration
 ├── App.jsx                        # Main application
 ├── main.jsx                       # Entry point
 └── index.css                      # Styles and animations
+server.js                           # Backend Express server
 ```
 
 ## 📱 Telegram Messages
@@ -162,7 +196,27 @@ Sizni kutib qolamiz! 💈
 - **React 19.2.0** - UI framework
 - **TailwindCSS 4.1.18** - Styling
 - **Vite 7.2.4** - Build tool
+- **Express 4.21.2** - Backend server
+- **Node Fetch 3** - HTTP client for backend
 - **Telegram Bot API** - Notifications
+
+## 🐛 Troubleshooting
+
+### CORS Error
+If you see `"Access to fetch blocked by CORS policy"`:
+- Make sure the backend server is running on port 3001
+- Verify `VITE_API_URL=http://localhost:3001` in `.env`
+- Use `npm run dev:all` to start both servers
+
+### Backend Server Won't Start
+- Check if port 3001 is already in use
+- Make sure your `.env` file has valid credentials
+- Try `npm run server` separately to see error messages
+
+### Telegram Messages Not Sending
+- Verify bot token and chat ID in `.env`
+- Check backend server logs for errors
+- Test the backend endpoint: `curl http://localhost:3001/api/health`
 
 ## 🔒 Security
 
