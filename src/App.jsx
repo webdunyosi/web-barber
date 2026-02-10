@@ -153,26 +153,37 @@ const App = () => {
               </div>
             </div>
             {/* Step Indicator */}
-            <div className="hidden md:flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-3">
               {[1, 2, 3, 4].map((step) => (
                 <React.Fragment key={step}>
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
+                    className={`group relative w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-bold transition-all duration-500 cursor-pointer backdrop-blur-xl border-2 shadow-lg ${
                       step === currentStep
-                        ? 'bg-emerald-500 text-white'
+                        ? 'bg-emerald-500/90 text-white border-emerald-400 shadow-emerald-500/50 scale-110 animate-pulse-glow'
                         : step < currentStep
-                        ? 'bg-emerald-200 text-emerald-700'
-                        : 'bg-gray-200 text-gray-500'
+                        ? 'bg-emerald-400/80 text-white border-emerald-300 shadow-emerald-400/40 hover:scale-105'
+                        : 'bg-white/10 text-gray-300 border-white/20 hover:bg-white/20 hover:border-white/30 hover:scale-105'
                     }`}
                   >
-                    {step < currentStep ? '✓' : step}
+                    <span className={`relative z-10 transition-transform duration-300 ${
+                      step === currentStep ? 'scale-110' : 'group-hover:scale-110'
+                    }`}>
+                      {step < currentStep ? '✓' : step}
+                    </span>
+                    {step === currentStep && (
+                      <span className="absolute inset-0 rounded-2xl bg-emerald-400/30 animate-ping"></span>
+                    )}
                   </div>
                   {step < 4 && (
-                    <div
-                      className={`w-8 h-1 rounded ${
-                        step < currentStep ? 'bg-emerald-500' : 'bg-gray-200'
-                      }`}
-                    />
+                    <div className="relative w-12 h-1 rounded-full overflow-hidden bg-white/10 backdrop-blur-sm">
+                      <div
+                        className={`h-full rounded-full transition-all duration-700 ease-out ${
+                          step < currentStep 
+                            ? 'w-full bg-gradient-to-r from-emerald-400 to-emerald-500 shadow-lg shadow-emerald-400/50' 
+                            : 'w-0 bg-gray-400'
+                        }`}
+                      />
+                    </div>
                   )}
                 </React.Fragment>
               ))}
