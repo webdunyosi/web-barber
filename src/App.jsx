@@ -148,16 +148,16 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 web-pattern">
+    <div className="min-h-screen bg-zinc-950/80 web-pattern">
       {/* Header */}
-      <header className="bg-white shadow-md sticky top-0 z-40">
+      <header className="bg-linear-to-r from-zinc-900/95 via-zinc-950/95 to-zinc-900/95 backdrop-blur-lg text-white shadow-md sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="text-4xl">💈</span>
               <div>
-                <h1 className="text-2xl font-bold text-gray-800">Barber Shop</h1>
-                <p className="text-sm text-gray-600">Professional Sartaroshxona</p>
+                <h1 className="text-2xl font-bold">Barber Shop</h1>
+                <p className="text-sm">Professional Sartaroshxona</p>
               </div>
             </div>
             {/* Step Indicator */}
@@ -289,20 +289,6 @@ const App = () => {
           time: selectedTime,
         }}
       />
-
-      {/* Footer */}
-      <footer className="bg-white shadow-md mt-16">
-        <div className="container mx-auto px-4 py-6">
-          <div className="text-center">
-            <p className="text-gray-600 text-sm">
-              © 2024 Barber Shop. Barcha huquqlar himoyalangan.
-            </p>
-            <p className="text-gray-500 text-xs mt-2">
-              📞 +998 XX XXX XX XX | 📍 Toshkent, O'zbekiston
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };

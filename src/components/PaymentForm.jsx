@@ -45,12 +45,8 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
-        To'lov ma'lumotlari
-      </h2>
-      
       {/* Order Summary */}
-      <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg p-6 mb-6 text-white">
+      <div className="bg-linear-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg p-6 mb-6 text-white">
         <h3 className="text-xl font-semibold mb-4">Buyurtma tafsilotlari</h3>
         <div className="space-y-2">
           <div className="flex justify-between">

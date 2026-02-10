@@ -70,10 +70,6 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
-        Sana va vaqtni tanlang
-      </h2>
-      
       {/* Calendar */}
       <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
         <div className="flex items-center justify-between mb-6">
