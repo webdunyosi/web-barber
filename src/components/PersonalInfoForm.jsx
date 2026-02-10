@@ -46,7 +46,7 @@ const PersonalInfoForm = ({ formData, onUpdate }) => {
 
   return (
     <div className="w-full mx-auto">
-      <div className="bg-zinc-800/70 border border-green-500/50 rounded-xl p-8">
+      <div className="bg-zinc-800/70 border border-green-500/50 rounded-xl p-8 backdrop-blur-md">
         <div className="space-y-6">
           {/* Name Field */}
           <div>
@@ -58,7 +58,7 @@ const PersonalInfoForm = ({ formData, onUpdate }) => {
               value={formData.name || ''}
               onChange={(e) => handleChange('name', e.target.value)}
               placeholder="Ismingizni kiriting"
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all bg-gray-700 text-white ${
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-300 bg-gray-700 text-white hover:bg-gray-600/80 backdrop-blur-sm ${
                 errors.name ? 'border-red-500' : 'border-gray-600'
               }`}
             />
@@ -77,7 +77,7 @@ const PersonalInfoForm = ({ formData, onUpdate }) => {
               value={formData.phone || ''}
               onChange={(e) => handlePhoneChange(e.target.value)}
               placeholder="+998 XX XXX XX XX"
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all bg-gray-700 text-white ${
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-300 bg-gray-700 text-white hover:bg-gray-600/80 backdrop-blur-sm ${
                 errors.phone ? 'border-red-500' : 'border-gray-600'
               }`}
             />
@@ -95,7 +95,7 @@ const PersonalInfoForm = ({ formData, onUpdate }) => {
               Telegram username (ixtiyoriy)
             </label>
             <div className="flex items-center">
-              <span className="px-3 py-3 bg-gray-700 border border-r-0 border-gray-600 rounded-l-lg text-gray-300">
+              <span className="px-3 py-3 bg-gray-700 border border-r-0 border-gray-600 rounded-l-lg text-gray-300 backdrop-blur-sm">
                 @
               </span>
               <input
@@ -103,7 +103,7 @@ const PersonalInfoForm = ({ formData, onUpdate }) => {
                 value={formData.telegram || ''}
                 onChange={(e) => handleChange('telegram', e.target.value)}
                 placeholder="username"
-                className="flex-1 px-4 py-3 border border-gray-600 rounded-r-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all bg-gray-700 text-white"
+                className="flex-1 px-4 py-3 border border-gray-600 rounded-r-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-300 bg-gray-700 text-white hover:bg-gray-600/80 backdrop-blur-sm"
               />
             </div>
           </div>

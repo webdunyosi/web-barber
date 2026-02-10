@@ -185,7 +185,7 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
               />
               <label
                 htmlFor="receipt-upload"
-                className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-emerald-500/40 rounded-xl cursor-pointer bg-zinc-900/50 hover:bg-zinc-800/50 transition-all duration-300 group"
+                className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-emerald-500/40 rounded-xl cursor-pointer bg-zinc-900/50 hover:bg-zinc-800/50 transition-all duration-300 group backdrop-blur-md hover:border-emerald-500/70 hover:scale-[1.02]"
               >
                 {paymentData.receipt ? (
                   <div className="flex flex-col items-center gap-2">
@@ -215,7 +215,7 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
                 ) : (
                   <div className="flex flex-col items-center gap-2">
                     <svg
-                      className="w-12 h-12 text-gray-400 group-hover:text-emerald-500 transition-colors"
+                      className="w-12 h-12 text-gray-400 group-hover:text-emerald-500 transition-colors duration-300 group-hover:scale-110"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"

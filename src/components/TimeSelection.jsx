@@ -71,13 +71,13 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
   return (
     <div className="w-full mx-auto">
       {/* Calendar */}
-      <div className="bg-zinc-800/70 border border-green-500/50 rounded-xl p-8 mb-8">
+      <div className="bg-zinc-800/70 border border-green-500/50 rounded-xl p-8 mb-8 backdrop-blur-md">
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={prevMonth}
-            className="p-2 rounded-lg hover:bg-gray-700 transition-colors text-white"
+            className="group p-3 rounded-lg bg-zinc-700/50 hover:bg-emerald-500/20 transition-all duration-300 text-white hover:scale-110 active:scale-95 border border-zinc-600 hover:border-emerald-500/50 backdrop-blur-sm"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
@@ -86,9 +86,9 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
           </h3>
           <button
             onClick={nextMonth}
-            className="p-2 rounded-lg hover:bg-gray-700 transition-colors text-white"
+            className="group p-3 rounded-lg bg-zinc-700/50 hover:bg-emerald-500/20 transition-all duration-300 text-white hover:scale-110 active:scale-95 border border-zinc-600 hover:border-emerald-500/50 backdrop-blur-sm"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -111,11 +111,11 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
                   <button
                     onClick={() => available && onSelectDate(date)}
                     disabled={!available}
-                    className={`w-full h-full rounded-lg font-medium transition-all ${
+                    className={`w-full h-full rounded-lg font-medium transition-all duration-300 backdrop-blur-sm ${
                       selected
-                        ? 'bg-green-500 text-white shadow-lg'
+                        ? 'bg-green-500 text-white shadow-lg shadow-green-500/50 scale-105'
                         : available
-                        ? 'bg-gray-700 text-white hover:bg-green-500/20 hover:text-green-300'
+                        ? 'bg-gray-700 text-white hover:bg-emerald-500/30 hover:text-green-300 hover:scale-105 hover:shadow-md border border-transparent hover:border-emerald-500/50'
                         : 'bg-gray-800 text-gray-500 cursor-not-allowed'
                     }`}
                   >
@@ -130,7 +130,7 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
 
       {/* Time Slots */}
       {selectedDate && (
-        <div className="bg-zinc-800/70 border border-green-500/50 rounded-xl p-8">
+        <div className="bg-zinc-800/70 border border-green-500/50 rounded-xl p-8 backdrop-blur-md">
           <h3 className="text-xl font-semibold mb-4 text-white">
             Vaqtni tanlang ({formatDate(selectedDate)})
           </h3>
@@ -139,10 +139,10 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
               <button
                 key={time}
                 onClick={() => onSelectTime(time)}
-                className={`py-3 px-4 rounded-lg font-medium transition-all ${
+                className={`py-3 px-4 rounded-lg font-medium transition-all duration-300 backdrop-blur-sm ${
                   selectedTime === time
-                    ? 'bg-green-500 text-white shadow-lg'
-                    : 'bg-gray-700 text-white hover:bg-green-500/20 hover:text-green-300'
+                    ? 'bg-green-500 text-white shadow-lg shadow-green-500/50 scale-105'
+                    : 'bg-gray-700 text-white hover:bg-emerald-500/30 hover:text-green-300 hover:scale-105 hover:shadow-md border border-transparent hover:border-emerald-500/50'
                 }`}
               >
                 {time}

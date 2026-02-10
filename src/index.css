@@ -71,6 +71,55 @@
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
+/* Button hover animations */
+@keyframes button-shine {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+  }
+}
+
+@keyframes button-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes button-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3),
+                0 0 20px rgba(16, 185, 129, 0.2),
+                0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5),
+                0 0 35px rgba(16, 185, 129, 0.3),
+                0 6px 20px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.animate-button-float {
+  animation: button-float 3s ease-in-out infinite;
+}
+
 /* Respect user's motion preferences */
 @media (prefers-reduced-motion: reduce) {
   .animate-pulse-glow {
@@ -78,6 +127,14 @@
   }
   
   .animate-ping {
+    animation: none;
+  }
+  
+  .animate-glow-pulse {
+    animation: none;
+  }
+  
+  .animate-button-float {
     animation: none;
   }
 }
