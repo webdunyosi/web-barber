@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Layout from './components/Layout';
+import Layout from './layouts/Layout';
 import ServiceSelection from './components/ServiceSelection';
 import TimeSelection from './components/TimeSelection';
 import PersonalInfoForm from './components/PersonalInfoForm';
