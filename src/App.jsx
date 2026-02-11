@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import Header from './components/Header';
-import ServiceSelection from './components/ServiceSelection';
-import TimeSelection from './components/TimeSelection';
-import PersonalInfoForm from './components/PersonalInfoForm';
-import PaymentForm from './components/PaymentForm';
-import SuccessModal from './components/SuccessModal';
+import Header from './components/layout/Header';
+import ServiceSelection from './components/features/booking/ServiceSelection';
+import TimeSelection from './components/features/booking/TimeSelection';
+import PersonalInfoForm from './components/features/booking/PersonalInfoForm';
+import PaymentForm from './components/features/payment/PaymentForm';
+import SuccessModal from './components/features/payment/SuccessModal';
 import barberData from './data/barber.json';
 import { sendBookingToTelegram, sendPaymentReceiptToTelegram } from './utils/telegram';
 
