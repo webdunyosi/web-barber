@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Header from './components/Header';
+import Layout from './components/Layout';
 import ServiceSelection from './components/ServiceSelection';
 import TimeSelection from './components/TimeSelection';
 import PersonalInfoForm from './components/PersonalInfoForm';
@@ -141,118 +141,112 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 web-pattern">
-      {/* Header */}
-      <Header currentStep={currentStep} />
+    <Layout currentStep={currentStep}>
+      <div className="mb-8">
+        <h2 className="text-center text-3xl font-bold text-white mb-2">
+          {getStepTitle()}
+        </h2>
+        <p className="text-center text-white/70">
+          {currentStep === STEPS.SERVICE && 'Qaysi xizmatni tanlamoqchisiz?'}
+          {currentStep === STEPS.TIME && 'Sizga qulay vaqtni tanlang'}
+          {currentStep === STEPS.PERSONAL_INFO && 'Bog\'lanish uchun ma\'lumotlar'}
+          {currentStep === STEPS.PAYMENT && 'To\'lov ma\'lumotlarini kiriting'}
+        </p>
+      </div>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h2 className="text-center text-3xl font-bold text-white mb-2">
-            {getStepTitle()}
-          </h2>
-          <p className="text-center text-white/70">
-            {currentStep === STEPS.SERVICE && 'Qaysi xizmatni tanlamoqchisiz?'}
-            {currentStep === STEPS.TIME && 'Sizga qulay vaqtni tanlang'}
-            {currentStep === STEPS.PERSONAL_INFO && 'Bog\'lanish uchun ma\'lumotlar'}
-            {currentStep === STEPS.PAYMENT && 'To\'lov ma\'lumotlarini kiriting'}
-          </p>
-        </div>
+      {/* Step Content */}
+      <div className="max-w-5xl mx-auto">
+        {currentStep === STEPS.SERVICE && (
+          <ServiceSelection
+            services={barberData.services}
+            selectedService={selectedService}
+            onSelectService={setSelectedService}
+          />
+        )}
 
-        {/* Step Content */}
-        <div className="max-w-5xl mx-auto">
-          {currentStep === STEPS.SERVICE && (
-            <ServiceSelection
-              services={barberData.services}
-              selectedService={selectedService}
-              onSelectService={setSelectedService}
-            />
-          )}
+        {currentStep === STEPS.TIME && (
+          <TimeSelection
+            timeSlots={barberData.timeSlots}
+            selectedDate={selectedDate}
+            selectedTime={selectedTime}
+            onSelectDate={setSelectedDate}
+            onSelectTime={setSelectedTime}
+          />
+        )}
 
-          {currentStep === STEPS.TIME && (
-            <TimeSelection
-              timeSlots={barberData.timeSlots}
-              selectedDate={selectedDate}
-              selectedTime={selectedTime}
-              onSelectDate={setSelectedDate}
-              onSelectTime={setSelectedTime}
-            />
-          )}
+        {currentStep === STEPS.PERSONAL_INFO && (
+          <PersonalInfoForm
+            formData={personalInfo}
+            onUpdate={setPersonalInfo}
+          />
+        )}
 
-          {currentStep === STEPS.PERSONAL_INFO && (
-            <PersonalInfoForm
-              formData={personalInfo}
-              onUpdate={setPersonalInfo}
-            />
-          )}
+        {currentStep === STEPS.PAYMENT && (
+          <PaymentForm
+            paymentData={paymentData}
+            onUpdate={setPaymentData}
+            bookingInfo={{
+              service: selectedService,
+              date: formatDate(selectedDate),
+              time: selectedTime,
+            }}
+          />
+        )}
+      </div>
 
-          {currentStep === STEPS.PAYMENT && (
-            <PaymentForm
-              paymentData={paymentData}
-              onUpdate={setPaymentData}
-              bookingInfo={{
-                service: selectedService,
-                date: formatDate(selectedDate),
-                time: selectedTime,
-              }}
-            />
-          )}
-        </div>
-
-        {/* Navigation Buttons */}
-        <div className="max-w-5xl mx-auto mt-8 flex gap-4">
-          {currentStep > STEPS.SERVICE && (
-            <button
-              onClick={handleBack}
-              className="group relative flex-1 bg-linear-to-br from-zinc-700 via-zinc-800 to-zinc-900 text-white py-4 px-6 rounded-xl font-semibold overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] border border-zinc-600 hover:border-zinc-500 backdrop-blur-xl"
-            >
-              <span className="absolute inset-0 bg-linear-to-r from-zinc-600/0 via-zinc-500/30 to-zinc-600/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></span>
-              <span className="relative flex items-center justify-center gap-2">
-                <svg className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-                </svg>
-                <span className="text-lg">Ortga</span>
-              </span>
-            </button>
-          )}
+      {/* Navigation Buttons */}
+      <div className="max-w-5xl mx-auto mt-8 flex gap-4">
+        {currentStep > STEPS.SERVICE && (
           <button
-            onClick={handleNext}
-            disabled={!validateStep() || isProcessing}
-            className={`group relative flex-1 py-4 px-6 rounded-xl font-semibold overflow-hidden shadow-lg transition-all duration-300 ease-out border backdrop-blur-xl ${
-              validateStep() && !isProcessing
-                ? 'bg-linear-to-br from-emerald-500 via-emerald-600 to-green-600 text-white hover:shadow-2xl hover:shadow-emerald-500/50 hover:scale-[1.02] active:scale-[0.98] border-emerald-400 hover:border-emerald-300 animate-glow-pulse'
-                : 'bg-white/10 text-gray-400 cursor-not-allowed border-white/20 hover:bg-white/15 hover:border-white/30'
-            }`}
+            onClick={handleBack}
+            className="group relative flex-1 bg-linear-to-br from-zinc-700 via-zinc-800 to-zinc-900 text-white py-4 px-6 rounded-xl font-semibold overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] border border-zinc-600 hover:border-zinc-500 backdrop-blur-xl"
           >
-            {validateStep() && !isProcessing && (
-              <span className="absolute inset-0 bg-linear-to-r from-emerald-400/0 via-white/30 to-emerald-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></span>
-            )}
+            <span className="absolute inset-0 bg-linear-to-r from-zinc-600/0 via-zinc-500/30 to-zinc-600/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></span>
             <span className="relative flex items-center justify-center gap-2">
-              {isProcessing ? (
-                <>
-                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                  <span className="text-lg animate-pulse">Kutilmoqda...</span>
-                </>
-              ) : currentStep === STEPS.PAYMENT ? (
-                <>
-                  <span className="text-2xl transition-transform duration-300 group-hover:scale-110" role="img" aria-label="Karta belgisi">💳</span>
-                  <span className="text-lg">To'lovni amalga oshirish</span>
-                </>
-              ) : (
-                <>
-                  <span className="text-lg">Keyingisi</span>
-                  <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                  </svg>
-                </>
-              )}
+              <svg className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+              </svg>
+              <span className="text-lg">Ortga</span>
             </span>
           </button>
-        </div>
-      </main>
+        )}
+        <button
+          onClick={handleNext}
+          disabled={!validateStep() || isProcessing}
+          className={`group relative flex-1 py-4 px-6 rounded-xl font-semibold overflow-hidden shadow-lg transition-all duration-300 ease-out border backdrop-blur-xl ${
+            validateStep() && !isProcessing
+              ? 'bg-linear-to-br from-emerald-500 via-emerald-600 to-green-600 text-white hover:shadow-2xl hover:shadow-emerald-500/50 hover:scale-[1.02] active:scale-[0.98] border-emerald-400 hover:border-emerald-300 animate-glow-pulse'
+              : 'bg-white/10 text-gray-400 cursor-not-allowed border-white/20 hover:bg-white/15 hover:border-white/30'
+          }`}
+        >
+          {validateStep() && !isProcessing && (
+            <span className="absolute inset-0 bg-linear-to-r from-emerald-400/0 via-white/30 to-emerald-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></span>
+          )}
+          <span className="relative flex items-center justify-center gap-2">
+            {isProcessing ? (
+              <>
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                <span className="text-lg animate-pulse">Kutilmoqda...</span>
+              </>
+            ) : currentStep === STEPS.PAYMENT ? (
+              <>
+                <span className="text-2xl transition-transform duration-300 group-hover:scale-110" role="img" aria-label="Karta belgisi">💳</span>
+                <span className="text-lg">To'lovni amalga oshirish</span>
+              </>
+            ) : (
+              <>
+                <span className="text-lg">Keyingisi</span>
+                <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                </svg>
+              </>
+            )}
+          </span>
+        </button>
+      </div>
 
       {/* Success Modal */}
       <SuccessModal
@@ -264,7 +258,7 @@ const App = () => {
           time: selectedTime,
         }}
       />
-    </div>
+    </Layout>
   );
 };
 
