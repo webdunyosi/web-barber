@@ -51,6 +51,7 @@ const Header = ({ currentStep }) => {
               </React.Fragment>
             ))}
           </div>
+          
         </div>
       </div>
     </header>

@@ -8,6 +8,11 @@ const Sidebar = () => {
       path: '/',
       icon: '📅',
     },
+    {
+      name: 'Soch va Soqol Stillari',
+      path: '/stillar',
+      icon: '✂️',
+    },
   ];
 
   return (
@@ -34,13 +39,6 @@ const Sidebar = () => {
             </NavLink>
           ))}
         </nav>
-
-        {/* Info Section */}
-        <div className="mt-8 p-4 bg-white/5 rounded-lg border border-emerald-500/20">
-          <p className="text-xs text-white/50 text-center">
-            Professional Sartaroshxona
-          </p>
-        </div>
       </div>
     </aside>
   );
