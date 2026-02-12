@@ -1,0 +1,93 @@
+{
+  "name": "Javohir Aliyev",
+  "title": "Professional Sartarosh",
+  "image": "/barber/1.png",
+  "bio": "Men 15 yildan beri sartaroshlik sohasida faoliyat yuritaman. Har bir mijozga professional yondashuv va sifatli xizmat ko'rsatish mening asosiy maqsadim. Zamonaviy va klassik stillarni birlashtirish orqali har bir mijozga o'ziga mos bo'lgan uslubni topib beraman.",
+  "experience": {
+    "years": 15,
+    "startYear": 2011,
+    "specialization": "Klassik va zamonaviy soch kesimi, soqol olish, facial"
+  },
+  "achievements": [
+    {
+      "id": 1,
+      "icon": "🏆",
+      "title": "O'zbekiston chempioni",
+      "description": "2020 yilda O'zbekiston sartaroshlik chempionatida 1-o'rin"
+    },
+    {
+      "id": 2,
+      "icon": "⭐",
+      "title": "Mijozlar tanlovi",
+      "description": "2021-2023 yillarda eng yaxshi sartarosh mukofoti"
+    },
+    {
+      "id": 3,
+      "icon": "🎓",
+      "title": "Xalqaro sertifikat",
+      "description": "Londonda professional sartaroshlik kurslari va sertifikati"
+    },
+    {
+      "id": 4,
+      "icon": "👥",
+      "title": "5000+ mijoz",
+      "description": "5000 dan ortiq mamnun mijozlar va ijobiy fikrlar"
+    }
+  ],
+  "socialMedia": [
+    {
+      "id": 1,
+      "platform": "Instagram",
+      "icon": "📷",
+      "url": "https://instagram.com/webbarber",
+      "username": "@webbarber",
+      "color": "from-pink-500 to-purple-600"
+    },
+    {
+      "id": 2,
+      "platform": "Telegram",
+      "icon": "✈️",
+      "url": "https://t.me/webbarber",
+      "username": "@webbarber",
+      "color": "from-blue-400 to-blue-600"
+    },
+    {
+      "id": 3,
+      "platform": "Facebook",
+      "icon": "📘",
+      "url": "https://facebook.com/webbarber",
+      "username": "@webbarber",
+      "color": "from-blue-600 to-blue-800"
+    },
+    {
+      "id": 4,
+      "platform": "YouTube",
+      "icon": "🎥",
+      "url": "https://youtube.com/@webbarber",
+      "username": "@webbarber",
+      "color": "from-red-500 to-red-700"
+    }
+  ],
+  "stats": [
+    {
+      "id": 1,
+      "value": "15+",
+      "label": "Yillik tajriba"
+    },
+    {
+      "id": 2,
+      "value": "5000+",
+      "label": "Mamnun mijozlar"
+    },
+    {
+      "id": 3,
+      "value": "10+",
+      "label": "Mukofotlar"
+    },
+    {
+      "id": 4,
+      "value": "100%",
+      "label": "Sifat kafolati"
+    }
+  ]
+}
