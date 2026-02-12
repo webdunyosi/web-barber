@@ -2,6 +2,10 @@
 
 A modern, responsive barber shop booking system built with React and TailwindCSS. Customers can book appointments, select services, and make payments online. Booking confirmations and payment receipts are automatically sent to Telegram.
 
+## 🌐 Live Demo
+
+**[View Live Demo →](https://web-barber-three.vercel.app/)**
+
 ## ✨ Features
 
 - 🎨 **Beautiful UI** - Modern, responsive design with smooth animations
