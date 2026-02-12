@@ -56,7 +56,7 @@ const Header = ({ currentStep, toggleSidebar }) => {
           {/* Burger Menu Icon - Right Side */}
           <button 
             onClick={toggleSidebar}
-            className="text-white hover:text-emerald-500 transition-colors duration-300"
+            className="md:hidden text-white hover:text-emerald-500 transition-colors duration-300"
             aria-label="Menu"
           >
             <HiMenuAlt3 className="w-8 h-8" />
