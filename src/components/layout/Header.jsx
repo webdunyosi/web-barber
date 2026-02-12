@@ -1,7 +1,7 @@
 import React from 'react';
 import { HiMenuAlt3 } from 'react-icons/hi';
 
-const Header = ({ currentStep }) => {
+const Header = ({ currentStep, toggleSidebar }) => {
   return (
     <header className="bg-linear-to-r from-zinc-900/95 via-zinc-950/95 to-zinc-900/95 backdrop-blur-lg text-white shadow-md shadow-emerald-500 sticky top-0 z-40">
       <div className="container mx-auto pl-4 pr-7 py-0">
@@ -55,6 +55,7 @@ const Header = ({ currentStep }) => {
           
           {/* Burger Menu Icon - Right Side */}
           <button 
+            onClick={toggleSidebar}
             className="text-white hover:text-emerald-500 transition-colors duration-300"
             aria-label="Menu"
           >
