@@ -3,18 +3,9 @@ import { HiMenuAlt3 } from 'react-icons/hi';
 
 const Header = ({ currentStep, toggleSidebar }) => {
   return (
-    <header className="bg-linear-to-r from-zinc-900/95 via-zinc-950/95 to-zinc-900/95 backdrop-blur-lg text-white shadow-md shadow-emerald-500 sticky top-0 z-40">
+    <header className="w-full lg:w-5/6 ml-auto bg-linear-to-r from-zinc-900/95 via-zinc-950/95 to-zinc-900/95 backdrop-blur-lg text-white shadow-md shadow-emerald-500 sticky top-0 z-40">
       <div className="container mx-auto pl-4 pr-7 py-0">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <img className='w-20' src="logo.png" alt="" />
-            <div>
-              <h1 className="text-2xl font-bold uppercase">Web Barber</h1>
-              <p className="text-sm text-emerald-500">Professional Sartaroshxona</p>
-            </div>
-          </div>
-
+        <div className="flex items-center justify-end py-4">
           {/* Step Indicator - Centered */}
           <div className="hidden md:flex items-center gap-3" role="navigation" aria-label="Booking progress">
             {[1, 2, 3, 4].map((step) => (
