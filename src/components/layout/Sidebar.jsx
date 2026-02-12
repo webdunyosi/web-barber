@@ -28,10 +28,10 @@ const Sidebar = ({ isMobileMenuOpen, closeMobileMenu }) => {
       
       {/* Sidebar */}
       <aside className={`
-        w-64 bg-zinc-900/95 backdrop-blur-lg border-r border-emerald-500/30 min-h-screen sticky top-0
-        md:block
-        ${isMobileMenuOpen ? 'fixed left-0 top-0 z-50 translate-x-0' : 'fixed left-0 top-0 z-50 -translate-x-full md:translate-x-0'}
+        w-64 bg-zinc-900/95 backdrop-blur-lg border-r border-emerald-500/30 min-h-screen 
+        fixed left-0 top-0 z-50 md:sticky
         transition-transform duration-300 ease-in-out
+        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="p-6">
           {/* Mobile Menu Header */}
