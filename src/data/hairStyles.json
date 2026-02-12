@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Klassik Pompadour",
+    "description": "Yuqori qismi hajmli va orqaga taragan zamonaviy klassik stil. Elegant va professional ko'rinish.",
+    "image": "/styles/1.png",
+    "category": "Soch Stili"
+  },
+  {
+    "id": 2,
+    "title": "Undercut",
+    "description": "Yon taraflar juda qisqa, yuqori qismi uzun bo'lgan bold stil. Kontrast va zamonaviy.",
+    "image": "/styles/2.png",
+    "category": "Soch Stili"
+  },
+  {
+    "id": 3,
+    "title": "Textured Crop",
+    "description": "Qisqa va tabiy ko'rinishli, oson parvarish qilinadigan zamonaviy stil.",
+    "image": "/styles/3.png",
+    "category": "Soch Stili"
+  },
+  {
+    "id": 4,
+    "title": "Side Part",
+    "description": "Yon tarafdan bo'lingan klassik stil. Professional va pok ko'rinish beradi.",
+    "image": "/styles/4.png",
+    "category": "Soch Stili"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Klassik Soch Kesimi",
+    "description": "An'anaviy va professional ko'rinish uchun klassik soch kesimi. Rasmiy va kundalik hayot uchun juda mos.",
+    "image": "/barber/1.png",
+    "category": "Soch Kesimi"
+  },
+  {
+    "id": 2,
+    "title": "Zamonaviy Fade",
+    "description": "Yon taraflari qisqa, yuqori qismi uzunroq bo'lgan zamonaviy stil. Yoshlar orasida juda mashhur.",
+    "image": "/barber/2.png",
+    "category": "Soch Kesimi"
+  },
+  {
+    "id": 3,
+    "title": "Krem Berish va Stilizatsiya",
+    "description": "Professional soch kesimi, yuvish va krem bilan stilizatsiya. To'liq parvarish xizmati.",
+    "image": "/barber/3.png",
+    "category": "Soch Kesimi"
+  },
+  {
+    "id": 4,
+    "title": "Soqol Tashkil Etish",
+    "description": "Professional soqol kesish va tashkil etish. Yuz chizig'iga mos ravishda toza va aniq.",
+    "image": "/barber/4.png",
+    "category": "Soqol"
+  }
+]
