@@ -135,7 +135,7 @@ const BookingPage = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen w-full lg:w-5/6 ml-auto">
       {/* Step indicator for mobile */}
       <div className="md:hidden mb-6 flex items-center justify-center gap-2">
         {[1, 2, 3, 4].map((step) => (

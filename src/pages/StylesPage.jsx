@@ -65,10 +65,10 @@ const StylesPage = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen w-full lg:w-5/6 ml-auto">
       {/* Page Header */}
       <div className="mb-12 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-green-500">
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 bg-clip-text bg-linear-to-r from-emerald-400 to-green-500">
           Soch va Soqol Stillari
         </h1>
         <p className="text-white/70 text-lg max-w-2xl mx-auto">
@@ -95,7 +95,7 @@ const StylesPage = () => {
                   alt={`${style.title} - ${style.description}`}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-linear-to-t from-zinc-900 via-zinc-900/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
                 
                 {/* Category Badge */}
                 <div className="absolute top-4 right-4">
@@ -116,7 +116,7 @@ const StylesPage = () => {
               </div>
 
               {/* Hover Effect Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              <div className="absolute inset-0 bg-linear-to-t from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
             </div>
           ))}
         </div>
@@ -141,7 +141,7 @@ const StylesPage = () => {
                   alt={`Soch stili: ${style.title} - ${style.description}`}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-linear-to-t from-zinc-900 via-zinc-900/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
                 
                 {/* Category Badge */}
                 <div className="absolute top-4 right-4">
@@ -162,14 +162,14 @@ const StylesPage = () => {
               </div>
 
               {/* Hover Effect Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              <div className="absolute inset-0 bg-linear-to-t from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
             </div>
           ))}
         </div>
       </section>
 
       {/* Call to Action */}
-      <div className="mt-16 p-8 bg-gradient-to-br from-emerald-500/10 to-green-500/10 rounded-2xl border border-emerald-500/30 text-center">
+      <div className="mt-16 p-8 bg-linear-to-br from-emerald-500/10 to-green-500/10 rounded-2xl border border-emerald-500/30 text-center">
         <h3 className="text-2xl font-bold text-white mb-4">
           O'zingizga mos stilni tanladingizmi?
         </h3>
@@ -178,7 +178,7 @@ const StylesPage = () => {
         </p>
         <a
           href="/"
-          className="inline-block bg-gradient-to-r from-emerald-500 to-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/50 transition-all duration-300 hover:scale-105"
+          className="inline-block bg-linear-to-r from-emerald-500 to-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/50 transition-all duration-300 hover:scale-105"
         >
           Buyurtma Qilish
         </a>
