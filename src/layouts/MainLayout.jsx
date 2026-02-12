@@ -17,7 +17,7 @@ const MainLayout = ({ currentStep = 1 }) => {
   return (
     <div className="min-h-screen bg-zinc-950 web-pattern">
       {/* Header */}
-      <Header currentStep={currentStep} toggleSidebar={toggleSidebar} />
+      <Header currentStep={currentStep} toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
       
       {/* Main Content with Sidebar */}
       <div className="flex relative">
