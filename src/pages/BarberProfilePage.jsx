@@ -50,9 +50,9 @@ const BarberProfilePage = () => {
 
               {/* Stats */}
               <div className="grid grid-cols-2 gap-4 mt-6">
-                {barberProfile.stats.map((stat, index) => (
+                {barberProfile.stats.map((stat) => (
                   <div
-                    key={index}
+                    key={stat.id}
                     className="bg-zinc-800/50 backdrop-blur-sm rounded-xl p-4 border border-emerald-500/20 hover:border-emerald-500/50 transition-all duration-300 hover:scale-105"
                   >
                     <div className="text-2xl md:text-3xl font-bold text-emerald-400">
@@ -112,9 +112,9 @@ const BarberProfilePage = () => {
             Ijtimoiy tarmoqlar
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {barberProfile.socialMedia.map((social, index) => (
+            {barberProfile.socialMedia.map((social) => (
               <a
-                key={index}
+                key={social.id}
                 href={social.url}
                 target="_blank"
                 rel="noopener noreferrer"

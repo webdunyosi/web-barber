@@ -36,6 +36,7 @@
   ],
   "socialMedia": [
     {
+      "id": 1,
       "platform": "Instagram",
       "icon": "📷",
       "url": "https://instagram.com/webbarber",
@@ -43,6 +44,7 @@
       "color": "from-pink-500 to-purple-600"
     },
     {
+      "id": 2,
       "platform": "Telegram",
       "icon": "✈️",
       "url": "https://t.me/webbarber",
@@ -50,6 +52,7 @@
       "color": "from-blue-400 to-blue-600"
     },
     {
+      "id": 3,
       "platform": "Facebook",
       "icon": "📘",
       "url": "https://facebook.com/webbarber",
@@ -57,6 +60,7 @@
       "color": "from-blue-600 to-blue-800"
     },
     {
+      "id": 4,
       "platform": "YouTube",
       "icon": "🎥",
       "url": "https://youtube.com/@webbarber",
@@ -66,18 +70,22 @@
   ],
   "stats": [
     {
+      "id": 1,
       "value": "15+",
       "label": "Yillik tajriba"
     },
     {
+      "id": 2,
       "value": "5000+",
       "label": "Mamnun mijozlar"
     },
     {
+      "id": 3,
       "value": "10+",
       "label": "Mukofotlar"
     },
     {
+      "id": 4,
       "value": "100%",
       "label": "Sifat kafolati"
     }
