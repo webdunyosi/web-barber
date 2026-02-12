@@ -8,6 +8,11 @@ const Sidebar = () => {
       path: '/',
       icon: '📅',
     },
+    {
+      name: 'Soch va Soqol Stillari',
+      path: '/stillar',
+      icon: '✂️',
+    },
   ];
 
   return (
