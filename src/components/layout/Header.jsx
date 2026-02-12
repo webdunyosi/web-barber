@@ -1,4 +1,5 @@
 import React from 'react';
+import { HiMenuAlt3 } from 'react-icons/hi';
 
 const Header = ({ currentStep }) => {
   return (
@@ -12,8 +13,8 @@ const Header = ({ currentStep }) => {
               <p className="text-sm text-emerald-500">Professional Sartaroshxona</p>
             </div>
           </div>
-          {/* Step Indicator */}
-          <div className="hidden md:flex items-center gap-3" role="navigation" aria-label="Booking progress">
+          {/* Step Indicator - Centered */}
+          <div className="hidden md:flex items-center gap-3 absolute left-1/2 transform -translate-x-1/2" role="navigation" aria-label="Booking progress">
             {[1, 2, 3, 4].map((step) => (
               <React.Fragment key={step}>
                 <div
@@ -52,6 +53,13 @@ const Header = ({ currentStep }) => {
             ))}
           </div>
           
+          {/* Burger Menu Icon - Right Side */}
+          <button 
+            className="text-white hover:text-emerald-500 transition-colors duration-300"
+            aria-label="Menu"
+          >
+            <HiMenuAlt3 className="w-8 h-8" />
+          </button>
         </div>
       </div>
     </header>

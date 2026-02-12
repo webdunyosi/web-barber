@@ -45,6 +45,34 @@ npm run dev
 
 The app will be available at `http://localhost:5173`
 
+### Troubleshooting
+
+#### ❌ "Failed to resolve import 'react-icons/hi'" Error
+
+**Cause:** The `node_modules` directory is missing or incomplete.
+
+**Solution:**
+```bash
+npm install
+```
+
+#### ❌ Vite Command Not Found
+
+**Cause:** Dependencies not installed.
+
+**Solution:**
+```bash
+npm install
+npm run dev
+```
+
+If problems persist:
+1. Delete `node_modules` and `package-lock.json`
+2. Reinstall: `npm install`
+3. Restart server: `npm run dev`
+
+See [SETUP.md](./SETUP.md) for detailed setup instructions in Uzbek.
+
 ## 🔧 Configuration
 
 The Telegram bot is already configured and will send booking confirmations and payment receipts automatically.
@@ -136,8 +164,10 @@ Sizni kutib qolamiz! 💈
 ## 🛠️ Technologies
 
 - **React 19.2.0** - UI framework
+- **React Icons 5.5.0** - Icon library
 - **TailwindCSS 4.1.18** - Styling
 - **Vite 7.2.4** - Build tool
+- **React Router DOM 7.13.0** - Routing
 - **Telegram Bot API** - Notifications
 
 ## 🔒 Security
