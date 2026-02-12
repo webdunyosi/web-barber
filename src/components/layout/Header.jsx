@@ -6,6 +6,7 @@ const Header = ({ currentStep, toggleSidebar }) => {
     <header className="bg-linear-to-r from-zinc-900/95 via-zinc-950/95 to-zinc-900/95 backdrop-blur-lg text-white shadow-md shadow-emerald-500 sticky top-0 z-40">
       <div className="container mx-auto pl-4 pr-7 py-0">
         <div className="flex items-center justify-between">
+          {/* Logo */}
           <div className="flex items-center gap-3">
             <img className='w-20' src="logo.png" alt="" />
             <div>
@@ -13,8 +14,9 @@ const Header = ({ currentStep, toggleSidebar }) => {
               <p className="text-sm text-emerald-500">Professional Sartaroshxona</p>
             </div>
           </div>
+
           {/* Step Indicator - Centered */}
-          <div className="hidden md:flex items-center gap-3 absolute left-1/2 transform -translate-x-1/2" role="navigation" aria-label="Booking progress">
+          <div className="hidden md:flex items-center gap-3" role="navigation" aria-label="Booking progress">
             {[1, 2, 3, 4].map((step) => (
               <React.Fragment key={step}>
                 <div
@@ -56,7 +58,7 @@ const Header = ({ currentStep, toggleSidebar }) => {
           {/* Burger Menu Icon - Right Side */}
           <button 
             onClick={toggleSidebar}
-            className="text-white hover:text-emerald-500 transition-colors duration-300"
+            className="block md:hidden text-white hover:text-emerald-500 transition-colors duration-300"
             aria-label="Menu"
           >
             <HiMenuAlt3 className="w-8 h-8" />
