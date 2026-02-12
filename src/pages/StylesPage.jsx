@@ -1,68 +1,9 @@
 
 import React from 'react';
+import barberStyles from '../data/barberStyles.json';
+import hairStyles from '../data/hairStyles.json';
 
 const StylesPage = () => {
-  const barberStyles = [
-    {
-      id: 1,
-      title: "Klassik Soch Kesimi",
-      description: "An'anaviy va professional ko'rinish uchun klassik soch kesimi. Rasmiy va kundalik hayot uchun juda mos.",
-      image: "/barber/1.png",
-      category: "Soch Kesimi"
-    },
-    {
-      id: 2,
-      title: "Zamonaviy Fade",
-      description: "Yon taraflari qisqa, yuqori qismi uzunroq bo'lgan zamonaviy stil. Yoshlar orasida juda mashhur.",
-      image: "/barber/2.png",
-      category: "Soch Kesimi"
-    },
-    {
-      id: 3,
-      title: "Krem Berish va Stilizatsiya",
-      description: "Professional soch kesimi, yuvish va krem bilan stilizatsiya. To'liq parvarish xizmati.",
-      image: "/barber/3.png",
-      category: "Soch Kesimi"
-    },
-    {
-      id: 4,
-      title: "Soqol Tashkil Etish",
-      description: "Professional soqol kesish va tashkil etish. Yuz chizig'iga mos ravishda toza va aniq.",
-      image: "/barber/4.png",
-      category: "Soqol"
-    }
-  ];
-
-  const hairStyles = [
-    {
-      id: 1,
-      title: "Klassik Pompadour",
-      description: "Yuqori qismi hajmli va orqaga taragan zamonaviy klassik stil. Elegant va professional ko'rinish.",
-      image: "/styles/1.png",
-      category: "Soch Stili"
-    },
-    {
-      id: 2,
-      title: "Undercut",
-      description: "Yon taraflar juda qisqa, yuqori qismi uzun bo'lgan bold stil. Kontrast va zamonaviy.",
-      image: "/styles/2.png",
-      category: "Soch Stili"
-    },
-    {
-      id: 3,
-      title: "Textured Crop",
-      description: "Qisqa va tabiy ko'rinishli, oson parvarish qilinadigan zamonaviy stil.",
-      image: "/styles/3.png",
-      category: "Soch Stili"
-    },
-    {
-      id: 4,
-      title: "Side Part",
-      description: "Yon tarafdan bo'lingan klassik stil. Professional va pok ko'rinish beradi.",
-      image: "/styles/4.png",
-      category: "Soch Stili"
-    }
-  ];
 
   return (
     <div className="min-h-screen w-full lg:w-5/6 ml-auto">
