@@ -1,4 +1,5 @@
 import React from "react"
+import { Link } from "react-router-dom"
 import barberStyles from "../data/barberStyles.json"
 import hairStyles from "../data/hairStyles.json"
 
@@ -121,12 +122,12 @@ const StylesPage = () => {
           Sartaroshxonamizga tashrif buyuring va professional ustalarimiz sizga
           eng yaxshi stilni tanlab berishadi
         </p>
-        <a
-          href="/"
+        <Link
+          to="/"
           className="inline-block bg-linear-to-r from-emerald-500 to-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/50 transition-all duration-300 hover:scale-105"
         >
           Buyurtma Qilish
-        </a>
+        </Link>
       </div>
     </div>
   )
