@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Buyurtma qilish",
+    "path": "/",
+    "icon": "📅"
+  },
+  {
+    "name": "Soch va Soqol Stillari",
+    "path": "/stillar",
+    "icon": "✂️"
+  }
+]

@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 
 const Sidebar = () => {
-  const menuItems = [
-    {
-      name: 'Buyurtma qilish',
-      path: '/',
-      icon: '📅',
-    },
-  ];
+  const [menuItems, setMenuItems] = useState([]);
+
+  useEffect(() => {
+    fetch('/menu.json')
+      .then((response) => response.json())
+      .then((data) => setMenuItems(data))
+      .catch((error) => console.error('Error loading menu:', error));
+  }, []);
 
   return (
     <aside className="w-64 bg-zinc-900/95 backdrop-blur-lg border-r border-emerald-500/30 min-h-screen sticky top-0">
