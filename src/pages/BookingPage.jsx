@@ -6,6 +6,7 @@ import PaymentForm from '../components/features/payment/PaymentForm';
 import SuccessModal from '../components/features/payment/SuccessModal';
 import barberData from '../data/barber.json';
 import { sendBookingToTelegram, sendPaymentReceiptToTelegram } from '../utils/telegram';
+import { useStep } from '../hooks/useStep';
 
 const STEPS = {
   SERVICE: 1,
@@ -15,7 +16,7 @@ const STEPS = {
 };
 
 const BookingPage = () => {
-  const [currentStep, setCurrentStep] = useState(STEPS.SERVICE);
+  const { currentStep, setCurrentStep } = useStep();
   const [selectedService, setSelectedService] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);

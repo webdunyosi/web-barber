@@ -4,7 +4,7 @@ import hairStyles from "../data/hairStyles.json"
 
 const StylesPage = () => {
   return (
-    <div className="min-h-screen w-full lg:w-5/6 ml-auto">
+    <div className="min-h-screen w-full lg:w-5/6 ml-auto px-2 md:px-[1%]">
       {/* Page Header */}
       <div className="mb-12 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 bg-clip-text bg-linear-to-r from-emerald-400 to-green-500">
