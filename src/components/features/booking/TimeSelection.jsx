@@ -1,7 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, onSelectTime }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const timeSlotsRef = useRef(null);
+
+  const handleSelectDate = (date) => {
+    onSelectDate(date);
+    // Small delay so React can render the time slots section before scrolling
+    setTimeout(() => {
+      timeSlotsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  };
   
   // Generate calendar days
   const generateCalendarDays = () => {
@@ -109,7 +118,7 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
               <div key={index} className="aspect-square">
                 {date && (
                   <button
-                    onClick={() => available && onSelectDate(date)}
+                    onClick={() => available && handleSelectDate(date)}
                     disabled={!available}
                     className={`w-full h-full rounded-lg font-medium transition-all duration-300 backdrop-blur-sm ${
                       selected
@@ -130,7 +139,7 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
 
       {/* Time Slots */}
       {selectedDate && (
-        <div className="bg-zinc-800/70 border border-green-500/50 rounded-xl p-8 backdrop-blur-md">
+        <div ref={timeSlotsRef} className="bg-zinc-800/70 border border-green-500/50 rounded-xl p-8 backdrop-blur-md">
           <h3 className="text-xl font-semibold mb-4 text-white">
             Vaqtni tanlang ({formatDate(selectedDate)})
           </h3>
