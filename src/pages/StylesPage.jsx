@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { Link } from "react-router-dom"
+import { FaCut, FaUserAlt } from "react-icons/fa"
 import barberStyles from "../data/barberStyles.json"
 import hairStyles from "../data/hairStyles.json"
 
@@ -67,9 +68,7 @@ const StylesPage = () => {
                 : "text-white/60 hover:text-white hover:bg-zinc-800/50"
             }`}
           >
-            <span className="text-2xl" role="img" aria-label="Soch">
-              💇
-            </span>
+            <FaCut size={22} aria-label="Soch" />
             <span className="text-sm sm:text-base">Soch Stillari</span>
           </button>
           <button
@@ -80,9 +79,7 @@ const StylesPage = () => {
                 : "text-white/60 hover:text-white hover:bg-zinc-800/50"
             }`}
           >
-            <span className="text-2xl" role="img" aria-label="Soqol">
-              🧔
-            </span>
+            <FaUserAlt size={22} aria-label="Soqol" />
             <span className="text-sm sm:text-base">Soqol Stillari</span>
           </button>
         </div>
@@ -93,9 +90,7 @@ const StylesPage = () => {
         {activeTab === "soch" && (
           <div className="animate-fadeIn">
             <h2 className="text-3xl font-bold text-white mb-8 flex items-center gap-3">
-              <span className="text-4xl" role="img" aria-label="Soch">
-                💇
-              </span>
+              <FaCut size={32} aria-label="Soch" />
               Soch Stillari
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -107,9 +102,7 @@ const StylesPage = () => {
         {activeTab === "soqol" && (
           <div className="animate-fadeIn">
             <h2 className="text-3xl font-bold text-white mb-8 flex items-center gap-3">
-              <span className="text-4xl" role="img" aria-label="Soqol">
-                🧔
-              </span>
+              <FaUserAlt size={32} aria-label="Soqol" />
               Soqol Stillari
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
