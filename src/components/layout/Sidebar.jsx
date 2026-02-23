@@ -1,6 +1,13 @@
 import React from "react"
 import { NavLink } from "react-router-dom"
+import { FaCalendarAlt, FaCut, FaUserTie } from "react-icons/fa"
 import menuItems from "../../data/menu.json"
+
+const menuIcons = {
+  FaCalendarAlt: <FaCalendarAlt size={24} />,
+  FaCut: <FaCut size={24} />,
+  FaUserTie: <FaUserTie size={24} />,
+}
 
 const Sidebar = ({ isOpen, onClose }) => {
   return (
@@ -49,8 +56,8 @@ const Sidebar = ({ isOpen, onClose }) => {
                   }`
                 }
               >
-                <span className="text-2xl" role="img" aria-hidden="true">
-                  {item.icon}
+                <span aria-hidden="true">
+                  {menuIcons[item.icon]}
                 </span>
                 <span className="font-semibold">{item.name}</span>
               </NavLink>

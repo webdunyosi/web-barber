@@ -1,5 +1,24 @@
 import React from "react"
+import {
+  FaTrophy, FaStar, FaGraduationCap, FaUsers,
+  FaInstagram, FaTelegramPlane, FaFacebook, FaYoutube,
+  FaBriefcase, FaCalendarAlt, FaUser, FaGlobe,
+} from "react-icons/fa"
 import barberProfile from "../data/barberProfile.json"
+
+const achievementIcons = {
+  FaTrophy: <FaTrophy size={48} />,
+  FaStar: <FaStar size={48} />,
+  FaGraduationCap: <FaGraduationCap size={48} />,
+  FaUsers: <FaUsers size={48} />,
+}
+
+const socialIcons = {
+  FaInstagram: <FaInstagram size={48} />,
+  FaTelegramPlane: <FaTelegramPlane size={48} />,
+  FaFacebook: <FaFacebook size={48} />,
+  FaYoutube: <FaYoutube size={48} />,
+}
 
 const BarberProfilePage = () => {
   return (
@@ -37,11 +56,11 @@ const BarberProfilePage = () => {
 
               <div className="space-y-3">
                 <div className="flex items-center gap-3 text-white/80">
-                  <span className="text-2xl">💼</span>
+                  <span className="text-emerald-400"><FaBriefcase size={24} /></span>
                   <span className="text-lg">{barberProfile.experience.specialization}</span>
                 </div>
                 <div className="flex items-center gap-3 text-white/80">
-                  <span className="text-2xl">📅</span>
+                  <span className="text-emerald-400"><FaCalendarAlt size={24} /></span>
                   <span className="text-lg">
                     {barberProfile.experience.years} yillik tajriba ({barberProfile.experience.startYear} yildan beri)
                   </span>
@@ -69,7 +88,7 @@ const BarberProfilePage = () => {
         {/* About Section */}
         <div className="bg-zinc-900/50 backdrop-blur-lg rounded-2xl p-8 border border-emerald-500/20 shadow-xl">
           <h2 className="text-3xl font-bold text-white mb-6 flex items-center gap-3">
-            <span className="text-4xl">👤</span>
+            <span className="text-emerald-400"><FaUser size={36} /></span>
             Men haqimda
           </h2>
           <p className="text-white/70 text-lg leading-relaxed">
@@ -80,7 +99,7 @@ const BarberProfilePage = () => {
         {/* Achievements Section */}
         <div className="bg-zinc-900/50 backdrop-blur-lg rounded-2xl p-8 border border-emerald-500/20 shadow-xl">
           <h2 className="text-3xl font-bold text-white mb-8 flex items-center gap-3">
-            <span className="text-4xl">🏆</span>
+            <span className="text-emerald-400"><FaTrophy size={36} /></span>
             Yutuqlarim
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -90,7 +109,7 @@ const BarberProfilePage = () => {
                 className="group relative bg-zinc-800/50 backdrop-blur-sm rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-emerald-500/20"
               >
                 <div className="flex items-start gap-4">
-                  <span className="text-5xl">{achievement.icon}</span>
+                  <span className="text-emerald-400">{achievementIcons[achievement.icon]}</span>
                   <div className="flex-1">
                     <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
                       {achievement.title}
@@ -108,7 +127,7 @@ const BarberProfilePage = () => {
         {/* Social Media Section */}
         <div className="bg-zinc-900/50 backdrop-blur-lg rounded-2xl p-8 border border-emerald-500/20 shadow-xl">
           <h2 className="text-3xl font-bold text-white mb-8 flex items-center gap-3">
-            <span className="text-4xl">🌐</span>
+            <span className="text-emerald-400"><FaGlobe size={36} /></span>
             Ijtimoiy tarmoqlar
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -121,7 +140,7 @@ const BarberProfilePage = () => {
                 className="group relative bg-zinc-800/50 backdrop-blur-sm rounded-xl p-6 border border-emerald-500/20 hover:border-emerald-500/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-emerald-500/20 text-center"
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${social.color} opacity-0 group-hover:opacity-10 rounded-xl transition-opacity duration-300`}></div>
-                <span className="text-5xl mb-3 block">{social.icon}</span>
+                <span className="mb-3 flex justify-center text-white">{socialIcons[social.icon]}</span>
                 <h3 className="text-lg font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">
                   {social.platform}
                 </h3>
