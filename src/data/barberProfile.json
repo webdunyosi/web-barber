@@ -11,25 +11,25 @@
   "achievements": [
     {
       "id": 1,
-      "icon": "🏆",
+      "icon": "FaTrophy",
       "title": "O'zbekiston chempioni",
       "description": "2020 yilda O'zbekiston sartaroshlik chempionatida 1-o'rin"
     },
     {
       "id": 2,
-      "icon": "⭐",
+      "icon": "FaStar",
       "title": "Mijozlar tanlovi",
       "description": "2021-2023 yillarda eng yaxshi sartarosh mukofoti"
     },
     {
       "id": 3,
-      "icon": "🎓",
+      "icon": "FaGraduationCap",
       "title": "Xalqaro sertifikat",
       "description": "Londonda professional sartaroshlik kurslari va sertifikati"
     },
     {
       "id": 4,
-      "icon": "👥",
+      "icon": "FaUsers",
       "title": "5000+ mijoz",
       "description": "5000 dan ortiq mamnun mijozlar va ijobiy fikrlar"
     }
@@ -38,7 +38,7 @@
     {
       "id": 1,
       "platform": "Instagram",
-      "icon": "📷",
+      "icon": "FaInstagram",
       "url": "https://instagram.com/webbarber",
       "username": "@webbarber",
       "color": "from-pink-500 to-purple-600"
@@ -46,7 +46,7 @@
     {
       "id": 2,
       "platform": "Telegram",
-      "icon": "✈️",
+      "icon": "FaTelegramPlane",
       "url": "https://t.me/webbarber",
       "username": "@webbarber",
       "color": "from-blue-400 to-blue-600"
@@ -54,7 +54,7 @@
     {
       "id": 3,
       "platform": "Facebook",
-      "icon": "📘",
+      "icon": "FaFacebook",
       "url": "https://facebook.com/webbarber",
       "username": "@webbarber",
       "color": "from-blue-600 to-blue-800"
@@ -62,7 +62,7 @@
     {
       "id": 4,
       "platform": "YouTube",
-      "icon": "🎥",
+      "icon": "FaYoutube",
       "url": "https://youtube.com/@webbarber",
       "username": "@webbarber",
       "color": "from-red-500 to-red-700"
