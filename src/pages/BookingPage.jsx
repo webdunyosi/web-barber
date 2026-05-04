@@ -5,7 +5,8 @@ import PersonalInfoForm from '../components/features/booking/PersonalInfoForm';
 import PaymentForm from '../components/features/payment/PaymentForm';
 import SuccessModal from '../components/features/payment/SuccessModal';
 import barberData from '../data/barber.json';
-import { sendBookingToTelegram, sendPaymentReceiptToTelegram } from '../utils/telegram';
+// Eski telegram.js o'rniga biz yaratgan api.js ni chaqiramiz
+import { submitBooking } from '../utils/api'; 
 import { useStep } from '../hooks/useStep';
 
 const STEPS = {
@@ -78,32 +79,33 @@ const BookingPage = () => {
     }
   };
 
+  // YANGILANGAN TO'LOV FUNKSIYASI
   const handlePayment = async () => {
     setIsProcessing(true);
     
     try {
+      // 1. Backend kutayotgan formatda ma'lumotlarni yig'amiz
       const bookingInfo = {
-        service: selectedService,
-        date: formatDate(selectedDate),
-        time: selectedTime,
         name: personalInfo.name,
         phone: personalInfo.phone,
-        telegram: personalInfo.telegram,
+        telegram_user: personalInfo.telegram,
+        service: {
+          name: selectedService.name,
+          price: selectedService.price,
+        },
+        date: formatDate(selectedDate),
+        time: selectedTime,
       };
 
-      await sendBookingToTelegram(bookingInfo);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // 2. api.js dagi funksiya orqali Render backendimizga jo'natamiz
+      const result = await submitBooking(bookingInfo, paymentData);
+      console.log(result.message); // "Buyurtma qabul qilindi..."
 
-      const paymentInfo = {
-        ...bookingInfo,
-        receipt: paymentData.receipt,
-      };
-      await sendPaymentReceiptToTelegram(paymentInfo);
-
+      // 3. Muvaffaqiyatli bo'lsa modalni ochamiz
       setShowSuccessModal(true);
     } catch (error) {
       console.error('Error processing payment:', error);
-      alert('Xatolik yuz berdi. Iltimos, qaytadan urinib ko\'ring.');
+      alert(error.message || 'Xatolik yuz berdi. Iltimos, server ulanishini tekshiring.');
     } finally {
       setIsProcessing(false);
     }
