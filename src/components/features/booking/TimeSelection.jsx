@@ -1,33 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getBookedTimes } from '../../../utils/api';
 
 const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, onSelectTime }) => {
   const [bookedTimes, setBookedTimes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Kalendar uchun state'lar
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [currentViewDate, setCurrentViewDate] = useState(selectedDate || new Date());
+  
+  const calendarRef = useRef(null);
 
-  // Bugungi va keyingi 7 kunni yaratish
-  const generateDates = () => {
-    const dates = [];
-    const today = new Date();
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      dates.push(date);
+  const months = ['Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'];
+  const daysOfWeek = ['Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh', 'Ya']; // Dushanbadan boshlanadi
+
+  // YANGI QO'SHILGAN QISM: Boshlang'ich holatda bugungi sanani tanlab qo'yish
+  useEffect(() => {
+    if (!selectedDate) {
+      onSelectDate(new Date());
     }
-    return dates;
-  };
+  }, []); // Bo'sh array - faqat sahifa ochilganda 1 marta ishlaydi
 
-  const dates = generateDates();
+  // Tashqariga bosilganda kalendarni yopish
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+        setIsCalendarOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
-  const days = ['Yak', 'Dush', 'Sesh', 'Chor', 'Pay', 'Jum', 'Shan'];
-  const months = ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyun', 'Iyul', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek'];
-
+  // Backenddan band vaqtlarni tekshirib olish
   useEffect(() => {
     if (selectedDate) {
       const fetchTimes = async () => {
         setIsLoading(true);
         try {
-          // Tanlangan sanani "DD.MM.YYYY" formatiga o'tkazish
           const day = selectedDate.getDate().toString().padStart(2, '0');
           const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
           const year = selectedDate.getFullYear();
@@ -45,56 +55,150 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
     }
   }, [selectedDate]);
 
+  // Kalendar oynasi uchun kunlarni hisoblash
+  const getCalendarDays = () => {
+    const year = currentViewDate.getFullYear();
+    const month = currentViewDate.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    // Oydagi birinchi kun qaysi haftasiga to'g'ri kelishini topish (Dushanba = 0)
+    let firstDayIndex = new Date(year, month, 1).getDay() - 1;
+    if (firstDayIndex === -1) firstDayIndex = 6; // Yakshanba
+
+    const days = [];
+    // Bo'sh kataklar
+    for (let i = 0; i < firstDayIndex; i++) {
+      days.push(null);
+    }
+    // Oydagi kunlar
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push(new Date(year, month, i));
+    }
+    return days;
+  };
+
+  const handlePrevMonth = () => {
+    setCurrentViewDate(new Date(currentViewDate.getFullYear(), currentViewDate.getMonth() - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentViewDate(new Date(currentViewDate.getFullYear(), currentViewDate.getMonth() + 1, 1));
+  };
+
+  const handleDateSelect = (date) => {
+    onSelectDate(date);
+    onSelectTime(null); // Sana o'zgarganda vaqtni tozalaymiz
+    setIsCalendarOpen(false); // Kalendarni yopamiz
+  };
+
+  const isDateDisabled = (date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date < today; // O'tib ketgan kunlarni tanlab bo'lmaydi
+  };
+
+  // Tanlangan sanani formatlash (tugmada ko'rsatish uchun)
+  const formatSelectedDate = () => {
+    if (!selectedDate) return "Sanani tanlang";
+    return `${selectedDate.getDate()}-${months[selectedDate.getMonth()]} ${selectedDate.getFullYear()}-yil`;
+  };
+
   return (
-    <div className="w-full max-w-4xl mx-auto p-4">
+    <div className="w-full max-w-4xl mx-auto p-4 md:p-0 mt-4 md:mt-0">
       
-      {/* 1. SANA TANLASH QISMI */}
-      <div className="mb-8">
+      {/* 1. SANA TANLASH QISMI (Dropdown Calendar) */}
+      <div className="mb-8 relative z-50" ref={calendarRef}>
         <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
           <span className="text-2xl">📅</span>
           Sanani tanlang
         </h3>
-        <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-emerald-500/30 scrollbar-track-transparent">
-          {dates.map((date, index) => {
-            const isSelected = selectedDate?.toDateString() === date.toDateString();
-            return (
-              <button
-                key={index}
-                onClick={() => {
-                  onSelectDate(date);
-                  onSelectTime(null); // Sana o'zgarganda vaqtni tozalash
-                }}
-                className={`flex-shrink-0 flex flex-col items-center justify-center w-20 h-24 rounded-2xl border transition-all duration-300 ${
-                  isSelected
-                    ? 'bg-linear-to-br from-emerald-500 via-emerald-600 to-green-600 border-emerald-400 text-white shadow-lg shadow-emerald-500/30 scale-105'
-                    : 'bg-zinc-800/80 border-zinc-700/50 text-gray-400 hover:border-emerald-500/50 hover:bg-zinc-800 hover:text-white'
-                }`}
-              >
-                <span className={`text-sm font-medium mb-1 ${isSelected ? 'text-emerald-100' : 'text-gray-500'}`}>
-                  {days[date.getDay()]}
-                </span>
-                <span className="text-2xl font-bold mb-1">
-                  {date.getDate()}
-                </span>
-                <span className={`text-xs font-medium ${isSelected ? 'text-emerald-100' : 'text-gray-500'}`}>
-                  {months[date.getMonth()]}
-                </span>
+        
+        {/* Toggle Button */}
+        <button
+          onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+          className={`w-full md:w-96 flex items-center justify-between p-4 rounded-xl border transition-all duration-300 ${
+            isCalendarOpen || selectedDate
+              ? 'bg-zinc-800/90 border-emerald-500 shadow-lg shadow-emerald-500/20'
+              : 'bg-zinc-800/50 border-zinc-700/50 hover:bg-zinc-800 hover:border-emerald-500/50'
+          }`}
+        >
+          <span className={`font-medium ${selectedDate ? 'text-white' : 'text-gray-400'}`}>
+            {formatSelectedDate()}
+          </span>
+          <svg 
+            className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isCalendarOpen ? 'rotate-180' : ''}`} 
+            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        {/* Calendar Popup */}
+        {isCalendarOpen && (
+          <div className="absolute top-full mt-2 w-full md:w-96 bg-zinc-900 border border-zinc-700/80 rounded-2xl shadow-2xl p-5 animate-fade-in-up backdrop-blur-xl">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+              <button onClick={handlePrevMonth} className="p-2 hover:bg-zinc-800 rounded-lg text-gray-400 hover:text-white transition-colors">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
               </button>
-            );
-          })}
-        </div>
+              <h4 className="text-lg font-semibold text-white">
+                {months[currentViewDate.getMonth()]} {currentViewDate.getFullYear()}
+              </h4>
+              <button onClick={handleNextMonth} className="p-2 hover:bg-zinc-800 rounded-lg text-gray-400 hover:text-white transition-colors">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+              </button>
+            </div>
+
+            {/* Weekdays */}
+            <div className="grid grid-cols-7 gap-1 mb-2">
+              {daysOfWeek.map(day => (
+                <div key={day} className="text-center text-xs font-medium text-emerald-500/70 py-1">
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            {/* Days Grid */}
+            <div className="grid grid-cols-7 gap-1">
+              {getCalendarDays().map((date, index) => {
+                if (!date) return <div key={`empty-${index}`} className="h-10"></div>; // Bo'sh joylar
+
+                const isDisabled = isDateDisabled(date);
+                const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
+                const isToday = date.toDateString() === new Date().toDateString();
+
+                return (
+                  <button
+                    key={index}
+                    disabled={isDisabled}
+                    onClick={() => handleDateSelect(date)}
+                    className={`
+                      h-10 w-full flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200
+                      ${isDisabled ? 'text-zinc-600 cursor-not-allowed opacity-50' : 'hover:bg-emerald-500/20 hover:text-emerald-400'}
+                      ${isSelected ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/40 hover:bg-emerald-400 hover:text-white' : ''}
+                      ${isToday && !isSelected ? 'border border-emerald-500/50 text-emerald-400' : ''}
+                      ${!isDisabled && !isSelected && !isToday ? 'text-gray-300' : ''}
+                    `}
+                  >
+                    {date.getDate()}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 2. VAQT TANLASH QISMI */}
       {selectedDate && (
-        <div className="animate-fade-in-up">
+        <div className="animate-fade-in-up mt-8">
           <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
             <span className="text-2xl">⏰</span>
             Vaqtni tanlang
           </h3>
           
           {isLoading ? (
-            <div className="flex items-center gap-3 text-emerald-400 bg-emerald-500/10 p-4 rounded-xl border border-emerald-500/20">
+            <div className="flex items-center gap-3 text-emerald-400 bg-emerald-500/10 p-4 rounded-xl border border-emerald-500/20 max-w-sm">
               <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
