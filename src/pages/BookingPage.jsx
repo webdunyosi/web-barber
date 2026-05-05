@@ -138,9 +138,11 @@ const BookingPage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full lg:w-5/6 ml-auto">
+    // 1-O'ZGARISH: Eng oxiriga pb-32 qo'shildi (tugmalar kontentni to'sib qo'ymasligi uchun)
+    <div className="min-h-screen w-full lg:w-5/6 ml-auto pb-32">
+      
       {/* Step indicator for mobile */}
-      <div className="md:hidden mb-6 flex items-center justify-center gap-2">
+      <div className="md:hidden mb-6 flex items-center justify-center gap-2 pt-6">
         {[1, 2, 3, 4].map((step) => (
           <React.Fragment key={step}>
             <div
@@ -162,7 +164,7 @@ const BookingPage = () => {
       </div>
 
       {/* Title */}
-      <div className="mb-8">
+      <div className="mb-8 px-4">
         <h2 className="text-center text-3xl font-bold text-white mb-2">
           {getStepTitle()}
         </h2>
@@ -175,7 +177,7 @@ const BookingPage = () => {
       </div>
 
       {/* Step Content */}
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-5xl mx-auto px-4 md:px-8">
         {currentStep === STEPS.SERVICE && (
           <ServiceSelection
             services={barberData.services}
@@ -214,58 +216,61 @@ const BookingPage = () => {
         )}
       </div>
 
-      {/* Navigation Buttons */}
-      <div className="max-w-5xl mx-auto mt-8 flex gap-4">
-        {currentStep > STEPS.SERVICE && (
+      {/* 2-O'ZGARISH: Navigation Buttons QOTIRILDI */}
+      <div className="fixed bottom-0 right-0 w-full lg:w-5/6 bg-zinc-950/90 backdrop-blur-xl border-t border-white/5 p-4 md:p-6 z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.3)]">
+        <div className="max-w-5xl mx-auto flex gap-3 md:gap-4">
+          {currentStep > STEPS.SERVICE && (
+            <button
+              onClick={handleBack}
+              className="group relative w-1/3 md:flex-1 bg-linear-to-br from-zinc-700 via-zinc-800 to-zinc-900 text-white py-3 md:py-4 px-4 rounded-xl font-semibold overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 ease-out active:scale-[0.98] border border-zinc-600 hover:border-zinc-500 backdrop-blur-xl"
+            >
+              <span className="absolute inset-0 bg-linear-to-r from-zinc-600/0 via-zinc-500/30 to-zinc-600/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></span>
+              <span className="relative flex items-center justify-center gap-2">
+                <svg className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                </svg>
+                <span className="text-base md:text-lg hidden xs:block">Ortga</span>
+              </span>
+            </button>
+          )}
+          
           <button
-            onClick={handleBack}
-            className="group relative flex-1 bg-linear-to-br from-zinc-700 via-zinc-800 to-zinc-900 text-white py-4 px-6 rounded-xl font-semibold overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] border border-zinc-600 hover:border-zinc-500 backdrop-blur-xl"
+            onClick={handleNext}
+            disabled={!validateStep() || isProcessing}
+            className={`group relative flex-1 py-3 md:py-4 px-4 rounded-xl font-semibold overflow-hidden shadow-lg transition-all duration-300 ease-out border backdrop-blur-xl ${
+              validateStep() && !isProcessing
+                ? 'bg-linear-to-br from-emerald-500 via-emerald-600 to-green-600 text-white hover:shadow-2xl hover:shadow-emerald-500/50 active:scale-[0.98] border-emerald-400'
+                : 'bg-white/10 text-gray-400 cursor-not-allowed border-white/20'
+            }`}
           >
-            <span className="absolute inset-0 bg-linear-to-r from-zinc-600/0 via-zinc-500/30 to-zinc-600/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></span>
+            {validateStep() && !isProcessing && (
+              <span className="absolute inset-0 bg-linear-to-r from-emerald-400/0 via-white/30 to-emerald-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></span>
+            )}
             <span className="relative flex items-center justify-center gap-2">
-              <svg className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-              </svg>
-              <span className="text-lg">Ortga</span>
+              {isProcessing ? (
+                <>
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span className="text-base md:text-lg animate-pulse">Kutilmoqda...</span>
+                </>
+              ) : currentStep === STEPS.PAYMENT ? (
+                <>
+                  <span className="text-xl md:text-2xl transition-transform duration-300 group-hover:scale-110">💳</span>
+                  <span className="text-base md:text-lg">To'lovni amalga oshirish</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-base md:text-lg">Keyingisi</span>
+                  <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                  </svg>
+                </>
+              )}
             </span>
           </button>
-        )}
-        <button
-          onClick={handleNext}
-          disabled={!validateStep() || isProcessing}
-          className={`group relative flex-1 py-4 px-6 rounded-xl font-semibold overflow-hidden shadow-lg transition-all duration-300 ease-out border backdrop-blur-xl ${
-            validateStep() && !isProcessing
-              ? 'bg-linear-to-br from-emerald-500 via-emerald-600 to-green-600 text-white hover:shadow-2xl hover:shadow-emerald-500/50 hover:scale-[1.02] active:scale-[0.98] border-emerald-400 hover:border-emerald-300 animate-glow-pulse'
-              : 'bg-white/10 text-gray-400 cursor-not-allowed border-white/20 hover:bg-white/15 hover:border-white/30'
-          }`}
-        >
-          {validateStep() && !isProcessing && (
-            <span className="absolute inset-0 bg-linear-to-r from-emerald-400/0 via-white/30 to-emerald-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></span>
-          )}
-          <span className="relative flex items-center justify-center gap-2">
-            {isProcessing ? (
-              <>
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                <span className="text-lg animate-pulse">Kutilmoqda...</span>
-              </>
-            ) : currentStep === STEPS.PAYMENT ? (
-              <>
-                <span className="text-2xl transition-transform duration-300 group-hover:scale-110" role="img" aria-label="Karta belgisi">💳</span>
-                <span className="text-lg">To'lovni amalga oshirish</span>
-              </>
-            ) : (
-              <>
-                <span className="text-lg">Keyingisi</span>
-                <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                </svg>
-              </>
-            )}
-          </span>
-        </button>
+        </div>
       </div>
 
       {/* Success Modal */}
