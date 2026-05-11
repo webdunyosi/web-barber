@@ -3,7 +3,8 @@ import { HiMenuAlt3 } from 'react-icons/hi';
 
 const Header = ({ currentStep, toggleSidebar }) => {
   return (
-    <header className="w-full lg:w-5/6 ml-auto bg-linear-to-r from-zinc-900/95 via-zinc-950/95 to-zinc-900/95 backdrop-blur-lg text-white shadow-md shadow-emerald-500 sticky top-0 z-40">
+    // O'ZGARISH SHU YERDA: z-40 o'rniga z-[60] qilingan
+    <header className="w-full lg:w-5/6 ml-auto bg-linear-to-r from-zinc-900/95 via-zinc-950/95 to-zinc-900/95 backdrop-blur-lg text-white shadow-md shadow-emerald-500 sticky top-0 z-[60]">
       <div className="container mx-auto pl-4 pr-7 py-0">
         <div className="flex items-center justify-between lg:justify-end py-4">
           {/* Logo */}
