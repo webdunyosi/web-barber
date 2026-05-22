@@ -77,7 +77,7 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
           </div>
         </div>
         {/* Card Information Display */}
-        <div className="bg-linear-to-br from-emerald-600 via-emerald-700 to-teal-700 rounded-2xl p-8 mb-6 text-white shadow-2xl relative overflow-hidden">
+        <div className="bg-linear-to-br from-emerald-600 via-emerald-700 to-teal-700 rounded-2xl p-5 sm:p-8 mb-6 text-white shadow-2xl relative overflow-hidden">
           {/* Decorative elements */}
           <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
@@ -122,19 +122,19 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
 
             <div className="mb-6">
               <p className="text-sm opacity-80 mb-2">Karta raqami</p>
-              <p className="text-3xl font-bold tracking-wider font-mono">
+              <p className="text-lg sm:text-2xl md:text-3xl font-bold tracking-wider font-mono whitespace-nowrap">
                 4073 4200 6820 8093
               </p>
             </div>
 
-            <div className="flex items-end justify-between">
-              <div>
+            <div className="flex items-end justify-between gap-4">
+              <div className="min-w-0">
                 <p className="text-xs opacity-80 mb-1">Karta egasi</p>
-                <p className="text-lg font-semibold uppercase tracking-wide">
+                <p className="text-sm sm:text-base md:text-lg font-semibold uppercase tracking-wide truncate whitespace-nowrap">
                   Alimardon Toshpulatov
                 </p>
               </div>
-              <div className="text-right">
+              <div className="text-right shrink-0">
                 <p className="text-xs opacity-80">💳 Uzcard</p>
               </div>
             </div>
