@@ -5,7 +5,7 @@ const SuccessModal = ({ isOpen, onClose, bookingData }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
       <div className="bg-zinc-800/70 border border-green-500/50 rounded-2xl shadow-2xl max-w-md w-full p-8 animate-bounce-in backdrop-blur-md">
         {/* Success Icon */}
         <div className="flex justify-center mb-6">
