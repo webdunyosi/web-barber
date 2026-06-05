@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ServiceSelection from '../components/features/booking/ServiceSelection';
 import TimeSelection from '../components/features/booking/TimeSelection';
 import PersonalInfoForm from '../components/features/booking/PersonalInfoForm';
 import PaymentForm from '../components/features/payment/PaymentForm';
 import SuccessModal from '../components/features/payment/SuccessModal';
+import AuthModal from '../components/features/auth/AuthModal';
 import barberData from '../data/barber.json';
 // Eski telegram.js o'rniga biz yaratgan api.js ni chaqiramiz
 import { submitBooking } from '../utils/api'; 
 import { useStep } from '../hooks/useStep';
+import { useAuth } from '../hooks/useAuth';
 
 const STEPS = {
   SERVICE: 1,
@@ -18,6 +20,8 @@ const STEPS = {
 
 const BookingPage = () => {
   const { currentStep, setCurrentStep } = useStep();
+  const { isAuthenticated, user } = useAuth();
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
@@ -31,6 +35,17 @@ const BookingPage = () => {
   });
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Auto-fill info if user is authenticated
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      setPersonalInfo({
+        name: user.name,
+        phone: user.phone,
+        telegram: user.telegram || '',
+      });
+    }
+  }, [isAuthenticated, user]);
 
   const formatDate = (date) => {
     if (!date) return '';
@@ -61,7 +76,20 @@ const BookingPage = () => {
 
   const handleNext = () => {
     if (validateStep()) {
-      if (currentStep < STEPS.PAYMENT) {
+      if (currentStep === STEPS.TIME) {
+        if (!isAuthenticated) {
+          setIsAuthModalOpen(true);
+        } else {
+          // Pre-fill user data and navigate
+          setPersonalInfo({
+            name: user.name,
+            phone: user.phone,
+            telegram: user.telegram || '',
+          });
+          setCurrentStep(STEPS.PERSONAL_INFO);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      } else if (currentStep < STEPS.PAYMENT) {
         setCurrentStep(currentStep + 1);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
@@ -77,6 +105,16 @@ const BookingPage = () => {
       setCurrentStep(currentStep - 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  };
+
+  const handleAuthSuccess = (loggedInUser) => {
+    setPersonalInfo({
+      name: loggedInUser.name,
+      phone: loggedInUser.phone,
+      telegram: loggedInUser.telegram || '',
+    });
+    setCurrentStep(STEPS.PERSONAL_INFO);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // YANGILANGAN TO'LOV FUNKSIYASI
@@ -138,7 +176,6 @@ const BookingPage = () => {
   };
 
   return (
-    // 1-O'ZGARISH: Eng oxiriga pb-32 qo'shildi (tugmalar kontentni to'sib qo'ymasligi uchun)
     <div className="w-full lg:w-5/6 ml-auto pb-28 md:pb-32">
       
       {/* Step indicator for mobile */}
@@ -216,7 +253,7 @@ const BookingPage = () => {
         )}
       </div>
 
-      {/* 2-O'ZGARISH: Navigation Buttons QOTIRILDI */}
+      {/* Navigation Buttons */}
       <div className="fixed bottom-0 right-0 w-full lg:w-5/6 bg-zinc-950/90 backdrop-blur-xl border-t border-white/5 p-4 md:p-6 z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.3)]">
         <div className="max-w-5xl mx-auto flex gap-3 md:gap-4">
           {currentStep > STEPS.SERVICE && (
@@ -282,6 +319,13 @@ const BookingPage = () => {
           date: formatDate(selectedDate),
           time: selectedTime,
         }}
+      />
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
       />
     </div>
   );
