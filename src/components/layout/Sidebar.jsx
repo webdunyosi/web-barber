@@ -1,9 +1,8 @@
-import React, { useState } from "react"
+import React from "react"
 import { NavLink } from "react-router-dom"
-import { FaCalendarAlt, FaCut, FaUserTie, FaUserShield, FaSignOutAlt, FaSignInAlt } from "react-icons/fa"
+import { FaCalendarAlt, FaCut, FaUserTie, FaUserShield, FaSignOutAlt } from "react-icons/fa"
 import menuItems from "../../data/menu.json"
 import { useAuth } from "../../hooks/useAuth"
-import AuthModal from "../features/auth/AuthModal"
 
 const menuIcons = {
   FaCalendarAlt: <FaCalendarAlt size={24} />,
@@ -14,7 +13,6 @@ const menuIcons = {
 
 const Sidebar = ({ isOpen, onClose }) => {
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   return (
     <>
@@ -97,8 +95,8 @@ const Sidebar = ({ isOpen, onClose }) => {
         </div>
 
         {/* Footer User Info section */}
-        <div className="p-4 border-t border-white/10 bg-zinc-950/40 shrink-0">
-          {isAuthenticated ? (
+        {isAuthenticated && (
+          <div className="p-4 border-t border-white/10 bg-zinc-950/40 shrink-0">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold uppercase">
@@ -122,23 +120,10 @@ const Sidebar = ({ isOpen, onClose }) => {
                 <span>Chiqish</span>
               </button>
             </div>
-          ) : (
-            <button
-              onClick={() => setIsAuthModalOpen(true)}
-              className="w-full flex items-center justify-center gap-2 bg-linear-to-br from-emerald-500 to-green-600 hover:shadow-lg hover:shadow-emerald-500/25 text-white text-sm font-semibold py-2.5 px-4 rounded-xl transition-all active:scale-[0.98] border border-emerald-400 cursor-pointer"
-            >
-              <FaSignInAlt size={14} />
-              <span>Tizimga kirish</span>
-            </button>
-          )}
-        </div>
+          </div>
+        )}
       </aside>
 
-      {/* Auth Modal for Sidebar */}
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-      />
     </>
   )
 }

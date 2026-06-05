@@ -276,7 +276,7 @@ const BookingPage = () => {
 
       {/* Navigation Buttons */}
       <div className={`fixed bottom-0 right-0 w-full lg:w-5/6 bg-zinc-950/90 backdrop-blur-xl border-t border-white/5 p-4 md:p-6 z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.3)] ${
-        currentStep <= STEPS.TIME ? 'hidden md:block' : 'block'
+        currentStep <= STEPS.TIME ? 'hidden' : 'block'
       }`}>
         <div className="max-w-5xl mx-auto flex gap-3 md:gap-4">
           <button
