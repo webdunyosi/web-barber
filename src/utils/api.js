@@ -1,12 +1,12 @@
 // src/utils/api.js
 import axios from 'axios';
 
-const API_URL = 'https://web-barber-backend.onrender.com/api';
+const API_URL = 'http://localhost:5000/api';
 const TELEGRAM_BOT_TOKEN = '8598199374:AAF2PC8uHwutdUg0VU9Q8jeypNzV3egcOXk';
 const TELEGRAM_CHAT_ID = '5414733748';
 
 // Set this to false when connecting to the real deployed backend
-const MOCK_MODE = true;
+const MOCK_MODE = false;
 
 // Utility to send messages to the Telegram Bot
 const sendTelegramNotification = async (text) => {

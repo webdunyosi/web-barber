@@ -219,7 +219,13 @@ const BookingPage = () => {
           <ServiceSelection
             services={barberData.services}
             selectedService={selectedService}
-            onSelectService={setSelectedService}
+            onSelectService={(service) => {
+              setSelectedService(service);
+              setTimeout(() => {
+                setCurrentStep(STEPS.TIME);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }, 400);
+            }}
           />
         )}
 
@@ -229,7 +235,22 @@ const BookingPage = () => {
             selectedDate={selectedDate}
             selectedTime={selectedTime}
             onSelectDate={setSelectedDate}
-            onSelectTime={setSelectedTime}
+            onSelectTime={(time) => {
+              setSelectedTime(time);
+              setTimeout(() => {
+                if (!isAuthenticated) {
+                  setIsAuthModalOpen(true);
+                } else {
+                  setPersonalInfo({
+                    name: user.name,
+                    phone: user.phone,
+                    telegram: user.telegram || '',
+                  });
+                  setCurrentStep(STEPS.PERSONAL_INFO);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }, 400);
+            }}
           />
         )}
 
@@ -254,23 +275,10 @@ const BookingPage = () => {
       </div>
 
       {/* Navigation Buttons */}
-      <div className="fixed bottom-0 right-0 w-full lg:w-5/6 bg-zinc-950/90 backdrop-blur-xl border-t border-white/5 p-4 md:p-6 z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.3)]">
+      <div className={`fixed bottom-0 right-0 w-full lg:w-5/6 bg-zinc-950/90 backdrop-blur-xl border-t border-white/5 p-4 md:p-6 z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.3)] ${
+        currentStep <= STEPS.TIME ? 'hidden md:block' : 'block'
+      }`}>
         <div className="max-w-5xl mx-auto flex gap-3 md:gap-4">
-          {currentStep > STEPS.SERVICE && (
-            <button
-              onClick={handleBack}
-              className="group relative w-1/3 md:flex-1 bg-linear-to-br from-zinc-700 via-zinc-800 to-zinc-900 text-white py-3 md:py-4 px-4 rounded-xl font-semibold overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 ease-out active:scale-[0.98] border border-zinc-600 hover:border-zinc-500 backdrop-blur-xl"
-            >
-              <span className="absolute inset-0 bg-linear-to-r from-zinc-600/0 via-zinc-500/30 to-zinc-600/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></span>
-              <span className="relative flex items-center justify-center gap-2">
-                <svg className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-                </svg>
-                <span className="text-base md:text-lg hidden xs:block">Ortga</span>
-              </span>
-            </button>
-          )}
-          
           <button
             onClick={handleNext}
             disabled={!validateStep() || isProcessing}

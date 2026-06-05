@@ -4,11 +4,20 @@ import { useAuth } from '../../hooks/useAuth';
 import { FaUserCircle, FaSignOutAlt, FaSignInAlt, FaUserShield } from 'react-icons/fa';
 import { Link, useLocation } from 'react-router-dom';
 import AuthModal from '../features/auth/AuthModal';
+import { useStep } from '../../hooks/useStep';
 
 const Header = ({ currentStep, toggleSidebar }) => {
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
+  const { setCurrentStep } = useStep();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const location = useLocation();
+
+  const handleBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   return (
     <>
@@ -16,10 +25,24 @@ const Header = ({ currentStep, toggleSidebar }) => {
         <div className="container mx-auto pl-4 pr-7 py-0">
           <div className="flex items-center justify-between py-4">
             
-            {/* Logo */}
-            <div className="flex lg:hidden items-center gap-3">
-              <img className="w-14" src="logo.png" alt="" />
-              <h1 className="text-xl font-bold uppercase text-emerald-500">Web Barber</h1>
+            {/* Logo / Back Button */}
+            <div className="flex items-center gap-3">
+              {location.pathname === '/' && currentStep > 1 ? (
+                <button
+                  onClick={handleBack}
+                  className="flex items-center gap-2 bg-zinc-800/80 hover:bg-zinc-700 border border-emerald-500/30 hover:border-emerald-500/60 text-white px-3.5 py-2 rounded-xl transition-all active:scale-[0.95] cursor-pointer shadow-md"
+                >
+                  <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <span className="text-sm font-semibold">Ortga</span>
+                </button>
+              ) : (
+                <div className="flex lg:hidden items-center gap-3">
+                  <img className="w-14" src="logo.png" alt="" />
+                  <h1 className="text-xl font-bold uppercase text-emerald-500">Web Barber</h1>
+                </div>
+              )}
             </div>
 
             {/* Step Indicator - Centered (Hidden on Admin page) */}
