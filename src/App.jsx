@@ -6,6 +6,7 @@ import StylesPage from './pages/StylesPage';
 import BarberProfilePage from './pages/BarberProfilePage';
 import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage';
+import ScrollToTop from './components/layout/ScrollToTop';
 import { StepProvider } from './contexts/StepContext.jsx';
 import { AuthProvider } from './contexts/AuthContext.jsx';
 
@@ -14,6 +15,7 @@ const App = () => {
     <AuthProvider>
       <StepProvider>
         <Router>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<MainLayout />}>
               <Route index element={<BookingPage />} />
