@@ -95,7 +95,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
       }
     } catch (err) {
       console.error(err);
-      setErrors({ api: err.message || 'Xatolik yuz berdi. Iltimos qaytadan urinib ko\'ring.' });
+      setErrors({ api: err.response?.data?.error || err.message || 'Xatolik yuz berdi. Iltimos qaytadan urinib ko\'ring.' });
     } finally {
       setIsLoading(false);
     }
