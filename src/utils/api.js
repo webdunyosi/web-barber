@@ -1,7 +1,7 @@
 // src/utils/api.js
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://web-barber-backend.onrender.com/api'; // 'http://localhost:5000/api' - local backend uchun
 const TELEGRAM_BOT_TOKEN = '8598199374:AAF2PC8uHwutdUg0VU9Q8jeypNzV3egcOXk';
 const TELEGRAM_CHAT_ID = '5414733748';
 
