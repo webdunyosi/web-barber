@@ -28,7 +28,7 @@ const MainLayout = () => {
         <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
         
         {/* Page Content */}
-        <main className="flex-1 container mx-auto px-4 py-8 pb-28 md:pb-8">
+        <main className="flex-1 container mx-auto px-4 py-8 pb-24 lg:pb-8">
           <Outlet />
         </main>
       </div>

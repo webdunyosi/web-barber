@@ -160,7 +160,7 @@ const BookingPage = () => {
   };
 
   return (
-    <div className="w-full lg:w-5/6 ml-auto pb-28 md:pb-32">
+    <div className="w-full lg:w-5/6 ml-auto pb-4 lg:pb-32">
       
       {/* Step indicator for mobile */}
       <div className="md:hidden mb-6 flex items-center justify-center gap-2 pt-6">
