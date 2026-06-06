@@ -9,7 +9,8 @@ import {
   deleteUserApi,
   getBookingsApi,
   updateBookingStatusApi,
-  getStatisticsApi
+  getStatisticsApi,
+  getMyBookingsApi
 } from '../utils/api';
 
 export const AuthProvider = ({ children }) => {
@@ -108,6 +109,11 @@ export const AuthProvider = ({ children }) => {
     return await getStatisticsApi(token);
   };
 
+  const getMyBookings = async () => {
+    if (!token) throw new Error('Unauthenticated');
+    return await getMyBookingsApi(token);
+  };
+
   const value = {
     user,
     token,
@@ -122,7 +128,8 @@ export const AuthProvider = ({ children }) => {
     deleteUser,
     getBookings,
     updateBookingStatus,
-    getStatistics
+    getStatistics,
+    getMyBookings
   };
 
   return (

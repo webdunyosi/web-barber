@@ -516,4 +516,17 @@ export const getStatisticsApi = async (token) => {
     headers: { Authorization: `Bearer ${token}` }
   });
   return response.data;
+};
+
+// Get my bookings
+export const getMyBookingsApi = async (token) => {
+  if (MOCK_MODE) {
+    const bookings = getMockBookings();
+    return bookings;
+  }
+
+  const response = await axios.get(`${API_URL}/appointments/my`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
 };

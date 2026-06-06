@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { FaCalendarAlt, FaCut, FaUserTie } from 'react-icons/fa';
+import { FaCalendarAlt, FaCut, FaUserTie, FaUserCircle } from 'react-icons/fa';
 
 const BottomNavigation = () => {
   const location = useLocation();
@@ -12,14 +12,14 @@ const BottomNavigation = () => {
         <NavLink
           to="/"
           className={({ isActive }) =>
-            `flex flex-col items-center justify-center gap-1.5 py-1 px-4 rounded-xl transition-all duration-300 ${
+            `flex flex-col items-center justify-center gap-1.5 py-1 px-3 rounded-xl transition-all duration-300 ${
               isActive && location.pathname === '/'
                 ? 'text-emerald-400 scale-105 font-semibold'
                 : 'text-gray-400 hover:text-white'
             }`
           }
         >
-          <FaCalendarAlt size={20} />
+          <FaCalendarAlt size={19} />
           <span className="text-[10px] tracking-wide">Buyurtma</span>
         </NavLink>
 
@@ -27,14 +27,14 @@ const BottomNavigation = () => {
         <NavLink
           to="/stillar"
           className={({ isActive }) =>
-            `flex flex-col items-center justify-center gap-1.5 py-1 px-4 rounded-xl transition-all duration-300 ${
+            `flex flex-col items-center justify-center gap-1.5 py-1 px-3 rounded-xl transition-all duration-300 ${
               isActive
                 ? 'text-emerald-400 scale-105 font-semibold'
                 : 'text-gray-400 hover:text-white'
             }`
           }
         >
-          <FaCut size={20} />
+          <FaCut size={19} />
           <span className="text-[10px] tracking-wide">Stillar</span>
         </NavLink>
 
@@ -42,15 +42,30 @@ const BottomNavigation = () => {
         <NavLink
           to="/sartarosh"
           className={({ isActive }) =>
-            `flex flex-col items-center justify-center gap-1.5 py-1 px-4 rounded-xl transition-all duration-300 ${
+            `flex flex-col items-center justify-center gap-1.5 py-1 px-3 rounded-xl transition-all duration-300 ${
               isActive
                 ? 'text-emerald-400 scale-105 font-semibold'
                 : 'text-gray-400 hover:text-white'
             }`
           }
         >
-          <FaUserTie size={20} />
+          <FaUserTie size={19} />
           <span className="text-[10px] tracking-wide">Sartarosh</span>
+        </NavLink>
+
+        {/* Profil Tab */}
+        <NavLink
+          to="/profil"
+          className={({ isActive }) =>
+            `flex flex-col items-center justify-center gap-1.5 py-1 px-3 rounded-xl transition-all duration-300 ${
+              isActive
+                ? 'text-emerald-400 scale-105 font-semibold'
+                : 'text-gray-400 hover:text-white'
+            }`
+          }
+        >
+          <FaUserCircle size={19} />
+          <span className="text-[10px] tracking-wide">Profil</span>
         </NavLink>
       </div>
     </div>
