@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ServiceSelection from '../components/features/booking/ServiceSelection';
 import TimeSelection from '../components/features/booking/TimeSelection';
-import PersonalInfoForm from '../components/features/booking/PersonalInfoForm';
 import PaymentForm from '../components/features/payment/PaymentForm';
 import SuccessModal from '../components/features/payment/SuccessModal';
 import AuthModal from '../components/features/auth/AuthModal';
@@ -14,8 +13,7 @@ import { useAuth } from '../hooks/useAuth';
 const STEPS = {
   SERVICE: 1,
   TIME: 2,
-  PERSONAL_INFO: 3,
-  PAYMENT: 4,
+  PAYMENT: 3,
 };
 
 const BookingPage = () => {
@@ -61,12 +59,6 @@ const BookingPage = () => {
         return selectedService !== null;
       case STEPS.TIME:
         return selectedDate !== null && selectedTime !== null;
-      case STEPS.PERSONAL_INFO:
-        return (
-          personalInfo.name.trim() !== '' &&
-          personalInfo.phone.trim() !== '' &&
-          personalInfo.phone.replace(/\D/g, '').length === 12
-        );
       case STEPS.PAYMENT:
         return paymentData.receipt !== null;
       default:
@@ -80,13 +72,7 @@ const BookingPage = () => {
         if (!isAuthenticated) {
           setIsAuthModalOpen(true);
         } else {
-          // Pre-fill user data and navigate
-          setPersonalInfo({
-            name: user.name,
-            phone: user.phone,
-            telegram: user.telegram || '',
-          });
-          setCurrentStep(STEPS.PERSONAL_INFO);
+          setCurrentStep(STEPS.PAYMENT);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }
       } else if (currentStep < STEPS.PAYMENT) {
@@ -113,7 +99,7 @@ const BookingPage = () => {
       phone: loggedInUser.phone,
       telegram: loggedInUser.telegram || '',
     });
-    setCurrentStep(STEPS.PERSONAL_INFO);
+    setCurrentStep(STEPS.PAYMENT);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -166,8 +152,6 @@ const BookingPage = () => {
         return 'Xizmatni tanlang';
       case STEPS.TIME:
         return 'Sana va vaqtni tanlang';
-      case STEPS.PERSONAL_INFO:
-        return 'Ma\'lumotlaringizni kiriting';
       case STEPS.PAYMENT:
         return 'To\'lov';
       default:
@@ -180,7 +164,7 @@ const BookingPage = () => {
       
       {/* Step indicator for mobile */}
       <div className="md:hidden mb-6 flex items-center justify-center gap-2 pt-6">
-        {[1, 2, 3, 4].map((step) => (
+        {[1, 2, 3].map((step) => (
           <React.Fragment key={step}>
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
@@ -193,7 +177,7 @@ const BookingPage = () => {
             >
               {step < currentStep ? '✓' : step}
             </div>
-            {step < 4 && (
+            {step < 3 && (
               <div className={`w-8 h-1 rounded-full ${step < currentStep ? 'bg-emerald-400' : 'bg-white/10'}`} />
             )}
           </React.Fragment>
@@ -208,7 +192,6 @@ const BookingPage = () => {
         <p className="text-center text-white/70">
           {currentStep === STEPS.SERVICE && 'Qaysi xizmatni tanlamoqchisiz?'}
           {currentStep === STEPS.TIME && 'Sizga qulay vaqtni tanlang'}
-          {currentStep === STEPS.PERSONAL_INFO && 'Bog\'lanish uchun ma\'lumotlar'}
           {currentStep === STEPS.PAYMENT && 'To\'lov ma\'lumotlarini kiriting'}
         </p>
       </div>
@@ -241,23 +224,11 @@ const BookingPage = () => {
                 if (!isAuthenticated) {
                   setIsAuthModalOpen(true);
                 } else {
-                  setPersonalInfo({
-                    name: user.name,
-                    phone: user.phone,
-                    telegram: user.telegram || '',
-                  });
-                  setCurrentStep(STEPS.PERSONAL_INFO);
+                  setCurrentStep(STEPS.PAYMENT);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
               }, 400);
             }}
-          />
-        )}
-
-        {currentStep === STEPS.PERSONAL_INFO && (
-          <PersonalInfoForm
-            formData={personalInfo}
-            onUpdate={setPersonalInfo}
           />
         )}
 
@@ -275,8 +246,8 @@ const BookingPage = () => {
       </div>
 
       {/* Navigation Buttons */}
-      <div className={`fixed bottom-0 right-0 w-full lg:w-5/6 bg-zinc-950/90 backdrop-blur-xl border-t border-white/5 p-4 md:p-6 z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.3)] ${
-        currentStep <= STEPS.TIME ? 'hidden' : 'block'
+      <div className={`w-full p-4 mt-6 border-t border-white/5 bg-zinc-900/30 rounded-2xl lg:fixed lg:bottom-0 lg:right-0 lg:w-5/6 lg:bg-zinc-950/90 lg:backdrop-blur-xl lg:border-t lg:border-white/5 lg:p-6 lg:z-40 lg:shadow-[0_-10px_30px_rgba(0,0,0,0.3)] lg:rounded-none lg:border-none lg:mt-0 ${
+        currentStep <= STEPS.TIME ? 'hidden lg:hidden' : 'block lg:block'
       }`}>
         <div className="max-w-5xl mx-auto flex gap-3 md:gap-4">
           <button

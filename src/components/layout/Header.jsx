@@ -48,7 +48,7 @@ const Header = ({ currentStep, toggleSidebar }) => {
             {/* Step Indicator - Centered (Hidden on Admin page) */}
             {location.pathname !== '/admin' ? (
               <div className="hidden md:flex items-center gap-3" role="navigation" aria-label="Booking progress">
-                {[1, 2, 3, 4].map((step) => (
+                {[1, 2, 3].map((step) => (
                   <React.Fragment key={step}>
                     <div
                       role="status"
@@ -71,7 +71,7 @@ const Header = ({ currentStep, toggleSidebar }) => {
                         <span className="absolute inset-0 rounded-2xl bg-emerald-400/30 animate-ping" aria-hidden="true"></span>
                       )}
                     </div>
-                    {step < 4 && (
+                    {step < 3 && (
                       <div className="relative w-12 h-1 rounded-full overflow-hidden bg-white/10 backdrop-blur-sm" aria-hidden="true">
                         <div
                           className={`h-full rounded-full transition-all duration-700 ease-out ${
@@ -104,10 +104,10 @@ const Header = ({ currentStep, toggleSidebar }) => {
                       <span>Admin Panel</span>
                     </Link>
                   ) : (
-                    <div className="flex items-center gap-1.5 text-zinc-300 text-xs sm:text-sm">
-                      <FaUserCircle size={16} className="text-emerald-500" />
+                    <Link to="/profil" className="flex items-center gap-1.5 text-zinc-300 hover:text-emerald-400 transition-colors text-xs sm:text-sm font-semibold">
+                      <img src="/avatar/men.png" alt="Profile" className="w-5 h-5 rounded-full object-cover border border-emerald-500/30" />
                       <span className="max-w-[80px] sm:max-w-[120px] truncate">{user?.name}</span>
-                    </div>
+                    </Link>
                   )}
                   <span className="w-[1px] h-4 bg-zinc-700"></span>
                   <button
@@ -124,7 +124,7 @@ const Header = ({ currentStep, toggleSidebar }) => {
                     onClick={() => setIsAuthModalOpen(true)}
                     className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition-colors text-xs sm:text-sm cursor-pointer"
                   >
-                    <FaUserCircle size={16} className="text-zinc-500" />
+                    <img src="/avatar/men.png" alt="Guest" className="w-5 h-5 rounded-full object-cover border border-zinc-700/50" />
                     <span>Mehmon</span>
                   </div>
                   <span className="w-[1px] h-4 bg-zinc-700"></span>

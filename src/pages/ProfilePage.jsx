@@ -58,7 +58,11 @@ const ProfilePage = () => {
     return (
       <div className="w-full lg:w-5/6 ml-auto min-h-[70vh] flex flex-col items-center justify-center px-4 py-12 text-white text-center">
         <div className="max-w-md w-full bg-zinc-900/80 border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl">
-          <FaUserCircle className="text-zinc-700 text-7xl mx-auto mb-4" />
+          <img 
+            src="/avatar/men.png" 
+            alt="Guest" 
+            className="w-20 h-20 rounded-full object-cover border border-zinc-700/50 mx-auto mb-4" 
+          />
           <h2 className="text-2xl font-bold mb-2">Profilga kirish</h2>
           <p className="text-gray-400 text-sm mb-6">
             Profilingizni ko'rish va buyurtmalaringiz ro'yxatini kuzatish uchun iltimos tizimga kiring.
@@ -92,9 +96,11 @@ const ProfilePage = () => {
             <div>
               {/* Profile Avatar */}
               <div className="text-center mb-6 border-b border-white/5 pb-6">
-                <div className="w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-3xl font-bold uppercase mx-auto mb-3 shadow-lg shadow-emerald-500/10">
-                  {user?.name?.charAt(0)}
-                </div>
+                <img 
+                  src="/avatar/men.png" 
+                  alt="Profile" 
+                  className="w-20 h-20 rounded-full object-cover border border-emerald-500/30 mx-auto mb-3 shadow-lg shadow-emerald-500/10" 
+                />
                 <h3 className="text-xl font-bold tracking-wide">{user?.name}</h3>
                 <span className="inline-block mt-2 px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                   {isAdmin ? 'Sartarosh (Admin)' : 'Mijoz'}

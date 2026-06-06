@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         try {
           const res = await getCurrentUserApi(token);
-          setUser(res.user);
+          setUser(res.user || res);
         } catch (err) {
           console.error('Auth check error:', err);
           // Token expired or invalid

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { FaCalendarAlt, FaCut, FaUserTie, FaUserCircle } from 'react-icons/fa';
+import { FaCalendarAlt, FaCut, FaUserTie } from 'react-icons/fa';
 
 const BottomNavigation = () => {
   const location = useLocation();
@@ -64,7 +64,13 @@ const BottomNavigation = () => {
             }`
           }
         >
-          <FaUserCircle size={19} />
+          <img 
+            src="/avatar/men.png" 
+            alt="Profile" 
+            className={`w-5 h-5 rounded-full object-cover border transition-all ${
+              location.pathname === '/profil' ? 'border-emerald-400' : 'border-zinc-700'
+            }`} 
+          />
           <span className="text-[10px] tracking-wide">Profil</span>
         </NavLink>
       </div>
