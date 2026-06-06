@@ -94,48 +94,49 @@ const Header = ({ currentStep, toggleSidebar }) => {
               </div>
             )}
 
-            {/* Auth section */}
-            <div className="flex items-center gap-3">
+            {/* Auth section - Visible on all screens */}
+            <div className="flex items-center gap-2">
               {isAuthenticated ? (
-                <div className="flex items-center gap-2 bg-zinc-800/60 border border-zinc-700 rounded-xl px-3 py-1.5 backdrop-blur-sm">
+                <div className="flex items-center gap-2 bg-zinc-800/60 border border-zinc-700 rounded-xl px-2.5 py-1.5 backdrop-blur-sm animate-fadeIn">
                   {isAdmin ? (
-                    <Link to="/admin" className="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 text-sm font-semibold">
-                      <FaUserShield size={16} />
-                      <span className="hidden sm:inline">Admin Panel</span>
+                    <Link to="/admin" className="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 text-xs sm:text-sm font-semibold">
+                      <FaUserShield size={15} />
+                      <span>Admin Panel</span>
                     </Link>
                   ) : (
-                    <div className="flex items-center gap-1.5 text-zinc-300 text-sm">
+                    <div className="flex items-center gap-1.5 text-zinc-300 text-xs sm:text-sm">
                       <FaUserCircle size={16} className="text-emerald-500" />
-                      <span className="max-w-[100px] truncate hidden sm:inline">{user?.name}</span>
+                      <span className="max-w-[80px] sm:max-w-[120px] truncate">{user?.name}</span>
                     </div>
                   )}
-                  <span className="w-[1px] h-4 bg-zinc-700 hidden sm:inline"></span>
+                  <span className="w-[1px] h-4 bg-zinc-700"></span>
                   <button
                     onClick={logout}
-                    className="text-zinc-400 hover:text-red-400 transition-colors flex items-center justify-center p-1 cursor-pointer"
+                    className="text-zinc-400 hover:text-red-400 transition-colors flex items-center justify-center p-0.5 cursor-pointer"
                     title="Chiqish"
                   >
-                    <FaSignOutAlt size={16} />
+                    <FaSignOutAlt size={15} />
                   </button>
                 </div>
               ) : (
-                <button
-                  onClick={() => setIsAuthModalOpen(true)}
-                  className="bg-linear-to-br from-emerald-500 to-green-600 hover:shadow-lg hover:shadow-emerald-500/25 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all active:scale-[0.98] border border-emerald-400 flex items-center gap-2 cursor-pointer"
-                >
-                  <FaSignInAlt size={14} />
-                  <span>Kirish</span>
-                </button>
+                <div className="flex items-center gap-2 bg-zinc-800/60 border border-zinc-700 rounded-xl px-2.5 py-1.5 backdrop-blur-sm animate-fadeIn">
+                  <div 
+                    onClick={() => setIsAuthModalOpen(true)}
+                    className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition-colors text-xs sm:text-sm cursor-pointer"
+                  >
+                    <FaUserCircle size={16} className="text-zinc-500" />
+                    <span>Mehmon</span>
+                  </div>
+                  <span className="w-[1px] h-4 bg-zinc-700"></span>
+                  <button
+                    onClick={() => setIsAuthModalOpen(true)}
+                    className="text-emerald-400 hover:text-emerald-300 transition-colors text-xs sm:text-sm font-semibold flex items-center gap-1 cursor-pointer"
+                  >
+                    <FaSignInAlt size={12} />
+                    <span>Kirish</span>
+                  </button>
+                </div>
               )}
-
-              {/* Burger Menu Icon - Right Side */}
-              <button 
-                onClick={toggleSidebar}
-                className="block md:hidden text-white hover:text-emerald-500 transition-colors duration-300 ml-2"
-                aria-label="Menu"
-              >
-                <HiMenuAlt3 className="w-8 h-8" />
-              </button>
             </div>
 
           </div>

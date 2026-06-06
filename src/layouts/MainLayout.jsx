@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import Sidebar from '../components/layout/Sidebar';
+import BottomNavigation from '../components/layout/BottomNavigation';
 import { useStep } from '../hooks/useStep';
 
 const MainLayout = () => {
@@ -27,10 +28,13 @@ const MainLayout = () => {
         <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
         
         {/* Page Content */}
-        <main className="flex-1 container mx-auto px-4 py-8">
+        <main className="flex-1 container mx-auto px-4 py-8 pb-28 md:pb-8">
           <Outlet />
         </main>
       </div>
+
+      {/* Bottom Navigation for Mobile */}
+      <BottomNavigation />
     </div>
   );
 };
