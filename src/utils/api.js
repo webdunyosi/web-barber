@@ -517,7 +517,24 @@ export const getStatisticsApi = async (token) => {
   const response = await axios.get(`${API_URL}/admin/statistics`, {
     headers: { Authorization: `Bearer ${token}` }
   });
-  return response.data;
+  const data = response.data;
+  return {
+    dailyRevenue: data.revenues?.daily ?? 0,
+    weeklyRevenue: data.revenues?.weekly ?? 0,
+    monthlyRevenue: data.revenues?.monthly ?? 0,
+    totalRevenue: data.revenues?.total ?? 0,
+    totalUsers: data.counts?.totalUsers ?? 0,
+    blockedUsersCount: data.counts?.blockedUsers ?? 0,
+    totalBookings: data.counts?.totalBookings ?? 0,
+    pendingBookings: data.counts?.pendingBookings ?? 0,
+    confirmedBookings: data.counts?.confirmedBookings ?? 0,
+    popularServices: (data.popularServices || []).map(s => ({
+      name: s.serviceName,
+      count: s.bookingCount,
+      revenue: s.totalConfirmedRevenue
+    })),
+    chartData: data.chartData || []
+  };
 };
 
 // Get my bookings
