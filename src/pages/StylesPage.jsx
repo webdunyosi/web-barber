@@ -59,28 +59,28 @@ const StylesPage = () => {
 
       {/* Modern Tabs */}
       <div className="mb-12">
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-2 bg-zinc-900/30 backdrop-blur-lg p-2 rounded-2xl border border-emerald-500/20 max-w-md mx-auto">
+        <div className="flex flex-row gap-2 bg-zinc-900/30 backdrop-blur-lg p-2 rounded-2xl border border-emerald-500/20 max-w-md mx-auto">
           <button
             onClick={() => setActiveTab("soch")}
-            className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl font-semibold transition-all duration-300 ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-3 px-3 sm:py-4 sm:px-6 rounded-xl font-semibold transition-all duration-300 ${
               activeTab === "soch"
                 ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-500/50 scale-105"
                 : "text-white/60 hover:text-white hover:bg-zinc-800/50"
             }`}
           >
-            <FaCut size={22} aria-label="Soch" />
-            <span className="text-sm sm:text-base">Soch Stillari</span>
+            <FaCut size={18} className="shrink-0" aria-label="Soch" />
+            <span className="text-xs sm:text-base whitespace-nowrap">Soch Stillari</span>
           </button>
           <button
             onClick={() => setActiveTab("soqol")}
-            className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl font-semibold transition-all duration-300 ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-3 px-3 sm:py-4 sm:px-6 rounded-xl font-semibold transition-all duration-300 ${
               activeTab === "soqol"
                 ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-500/50 scale-105"
                 : "text-white/60 hover:text-white hover:bg-zinc-800/50"
             }`}
           >
-            <FaUserAlt size={22} aria-label="Soqol" />
-            <span className="text-sm sm:text-base">Soqol Stillari</span>
+            <FaUserAlt size={18} className="shrink-0" aria-label="Soqol" />
+            <span className="text-xs sm:text-base whitespace-nowrap">Soqol Stillari</span>
           </button>
         </div>
       </div>
