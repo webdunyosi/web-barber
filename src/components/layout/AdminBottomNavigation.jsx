@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaChartBar, FaCalendarCheck, FaUsers, FaUser } from 'react-icons/fa';
+import { FaChartBar, FaCalendarCheck, FaUsers, FaUser, FaTachometerAlt } from 'react-icons/fa';
 import { useAuth } from '../../hooks/useAuth';
 
 const AdminBottomNavigation = () => {
@@ -9,7 +9,7 @@ const AdminBottomNavigation = () => {
   const [pendingCount, setPendingCount] = useState(0);
 
   const searchParams = new URLSearchParams(location.search);
-  const currentTab = searchParams.get('tab') || 'statistics';
+  const currentTab = searchParams.get('tab') || 'dashboard';
 
   const fetchPendingCount = async () => {
     try {
@@ -45,12 +45,24 @@ const AdminBottomNavigation = () => {
       </div>
 
       {/* Navigation Links */}
-      <div className="relative w-full h-full flex items-center justify-between px-4">
-        {/* Left Tab - Statistics */}
-        <div className="flex-1 flex justify-center">
+      <div className="relative w-full h-full flex items-center justify-between px-2">
+        {/* Left Tabs */}
+        <div className="flex-1 flex justify-around pr-2">
+          <Link
+            to="/admin?tab=dashboard"
+            className={`flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all duration-300 ${
+              currentTab === 'dashboard'
+                ? 'text-emerald-400 scale-105 font-semibold'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            <FaTachometerAlt size={19} />
+            <span className="text-[10px] tracking-wide">Boshqaruv</span>
+          </Link>
+
           <Link
             to="/admin?tab=statistics"
-            className={`flex flex-col items-center justify-center gap-1 py-1 px-4 rounded-xl transition-all duration-300 ${
+            className={`flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all duration-300 ${
               currentTab === 'statistics'
                 ? 'text-emerald-400 scale-105 font-semibold'
                 : 'text-gray-400 hover:text-white'
@@ -80,7 +92,7 @@ const AdminBottomNavigation = () => {
           </Link>
         </div>
 
-        {/* Right Tab - Users & Profile */}
+        {/* Right Tabs */}
         <div className="flex-1 flex justify-around pl-2">
           <Link
             to="/admin?tab=users"

@@ -18,7 +18,8 @@ import {
   FaTimesCircle,
   FaEye,
   FaSync,
-  FaSignOutAlt
+  FaSignOutAlt,
+  FaTachometerAlt
 } from 'react-icons/fa';
 import { formatPrice } from '../utils/format';
 
@@ -38,7 +39,7 @@ const AdminDashboard = () => {
   } = useAuth();
 
   const [searchParams] = useSearchParams();
-  const activeTab = searchParams.get('tab') || 'statistics';
+  const activeTab = searchParams.get('tab') || 'dashboard';
 
   const [usersList, setUsersList] = useState([]);
   const [bookingsList, setBookingsList] = useState([]);
@@ -471,10 +472,9 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* ================= TAB: STATISTICS ================= */}
-          {activeTab === 'statistics' && stats && (
+          {/* ================= TAB: DASHBOARD ================= */}
+          {activeTab === 'dashboard' && stats && (
             <div className="space-y-8 animate-fadeIn">
-              
               {/* Cards Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 {/* Daily income */}
@@ -520,13 +520,121 @@ const AdminDashboard = () => {
                     <h3 className="text-2xl font-bold text-white">
                       {stats.totalUsers} <span className="text-sm font-normal text-zinc-400">ta faol</span>
                     </h3>
-                    <p className="text-xxs text-red-400 font-semibold">{stats.blockedUsersCount} blocked/begona</p>
+                    <p className="text-xxs text-red-400 font-semibold">{stats.blockedUsersCount} bloklangan</p>
                   </div>
                   <div className="w-12 h-12 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-400">
                     <FaUserPlus size={20} />
                   </div>
                 </div>
               </div>
+
+              {/* Quick Actions & Recent Pending Bookings */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Recent Pending Bookings */}
+                <div className="lg:col-span-2 bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm">
+                  <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
+                    <span className="text-amber-500">⏳</span>
+                    Kutilayotgan yangi buyurtmalar
+                  </h4>
+
+                  {bookingsList.filter(b => b && b.status === 'pending').length === 0 ? (
+                    <div className="text-center py-8 bg-zinc-950/40 border border-dashed border-zinc-850 rounded-xl">
+                      <p className="text-zinc-500 text-sm">Barcha buyurtmalar ko'rib chiqilgan. Yangi buyurtmalar yo'q! 🎉</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {bookingsList.filter(b => b && b.status === 'pending').slice(0, 3).map((booking) => (
+                        <div key={booking.id || booking._id} className="bg-zinc-950/40 border border-zinc-800 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-white">{booking.name}</span>
+                              <span className="text-xs text-zinc-550 font-mono">{booking.phone}</span>
+                            </div>
+                            <div className="text-xs text-zinc-400 mt-1">
+                              <span>{booking.serviceName}</span> • <span className="text-emerald-400 font-bold">{formatPrice(booking.servicePrice)} so'm</span>
+                            </div>
+                            <div className="text-xs text-zinc-500 mt-0.5">
+                              ⏱ {booking.date} soat {booking.time}
+                            </div>
+                          </div>
+                          
+                          <div className="flex gap-2">
+                            <button
+                              disabled={actionLoading === (booking.id || booking._id)}
+                              onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'confirmed')}
+                              className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-1.5 px-3 rounded-lg text-xs transition-all active:scale-[0.97] flex items-center gap-1 disabled:opacity-50 cursor-pointer border-none"
+                            >
+                              <FaCheck size={9} /> Tasdiqlash
+                            </button>
+                            <button
+                              disabled={actionLoading === (booking.id || booking._id)}
+                              onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'rejected')}
+                              className="bg-red-500 hover:bg-red-600 text-white font-bold py-1.5 px-3 rounded-lg text-xs transition-all active:scale-[0.97] flex items-center gap-1 disabled:opacity-50 cursor-pointer border-none"
+                            >
+                              <FaTimes size={9} /> Rad etish
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                      
+                      {bookingsList.filter(b => b && b.status === 'pending').length > 3 && (
+                        <div className="text-center pt-2">
+                          <Link
+                            to="/admin?tab=bookings"
+                            className="text-xs text-emerald-400 font-bold hover:underline"
+                          >
+                            Barcha kutilayotgan buyurtmalarni ko'rish ({bookingsList.filter(b => b && b.status === 'pending').length} ta) →
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* System Stats Summary */}
+                <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm flex flex-col justify-between">
+                  <div>
+                    <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
+                      <span className="text-emerald-500">⚙️</span>
+                      Tizim Xulosasi
+                    </h4>
+                    
+                    <div className="space-y-3 text-sm">
+                      <div className="flex justify-between border-b border-white/5 pb-2">
+                        <span className="text-zinc-400">Jami buyurtmalar:</span>
+                        <span className="font-bold text-white">{stats.totalBookings} ta</span>
+                      </div>
+                      <div className="flex justify-between border-b border-white/5 pb-2">
+                        <span className="text-zinc-400">Kutilmoqda:</span>
+                        <span className="font-bold text-amber-400">{bookingsList.filter(b => b && b.status === 'pending').length} ta</span>
+                      </div>
+                      <div className="flex justify-between border-b border-white/5 pb-2">
+                        <span className="text-zinc-400">Tasdiqlangan:</span>
+                        <span className="font-bold text-emerald-400">{bookingsList.filter(b => b && b.status === 'confirmed').length} ta</span>
+                      </div>
+                      <div className="flex justify-between pb-2">
+                        <span className="text-zinc-400">Rad etilgan:</span>
+                        <span className="font-bold text-red-400">{bookingsList.filter(b => b && b.status === 'rejected').length} ta</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4 border-t border-white/5">
+                    <Link
+                      to="/admin?tab=statistics"
+                      className="w-full inline-flex items-center justify-center bg-zinc-800 hover:bg-zinc-700 text-zinc-200 hover:text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all text-center"
+                    >
+                      Batafsil Moliya & Grafiklar →
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ================= TAB: STATISTICS ================= */}
+          {activeTab === 'statistics' && stats && (
+            <div className="space-y-8 animate-fadeIn">
 
               {/* Charts Panel: SVG Trend Line Chart & Popular Services */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

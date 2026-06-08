@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { FaUserShield, FaSignOutAlt, FaHome, FaChartBar, FaCalendarCheck, FaUsers, FaUser } from 'react-icons/fa';
+import { FaUserShield, FaSignOutAlt, FaHome, FaChartBar, FaCalendarCheck, FaUsers, FaUser, FaTachometerAlt } from 'react-icons/fa';
 import AdminBottomNavigation from '../components/layout/AdminBottomNavigation';
 
 const AdminLayout = () => {
@@ -62,9 +62,21 @@ const AdminLayout = () => {
           {/* Nav Items */}
           <nav className="space-y-1.5">
             <Link
+              to="/admin?tab=dashboard"
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
+                location.pathname === '/admin' && (new URLSearchParams(location.search).get('tab') || 'dashboard') === 'dashboard'
+                  ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/40'
+                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <FaTachometerAlt size={18} />
+              <span>Boshqaruv Paneli</span>
+            </Link>
+
+            <Link
               to="/admin?tab=statistics"
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
-                location.pathname === '/admin' && (new URLSearchParams(location.search).get('tab') || 'statistics') === 'statistics'
+                location.pathname === '/admin' && new URLSearchParams(location.search).get('tab') === 'statistics'
                   ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/40'
                   : 'text-zinc-400 hover:text-white hover:bg-white/5'
               }`}
