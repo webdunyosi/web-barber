@@ -415,27 +415,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="w-full text-white">
-      {/* Title Header */}
-      <div className="hidden md:flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6 mb-8">
-        <div>
-          <h2 className="text-3xl font-extrabold bg-linear-to-r from-emerald-400 to-green-500 bg-clip-text text-transparent uppercase tracking-wider">
-            Boshqaruv Markazi
-          </h2>
-          <p className="text-gray-400 text-sm mt-1">Foydalanuvchilar, buyurtmalar va kunlik tushumlarni real vaqt rejimida boshqarish</p>
-        </div>
-        
-        {/* Header Actions */}
-        <div className="hidden sm:flex items-center gap-2">
-          <button
-            onClick={loadData}
-            disabled={isDataLoading}
-            className="bg-zinc-900 border border-zinc-800 hover:border-emerald-500/50 hover:bg-zinc-800/80 text-white font-semibold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 text-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-          >
-            <FaSync size={13} className={isDataLoading ? 'animate-spin' : ''} />
-            {isDataLoading ? 'Yangilanmoqda...' : 'Yangilash'}
-          </button>
-        </div>
-      </div>
+
 
 
 
