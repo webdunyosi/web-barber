@@ -272,7 +272,7 @@ const AiChatPage = () => {
   };
 
   return (
-    <div className="w-full lg:w-5/6 ml-auto min-h-[calc(100vh-80px)] flex flex-col pb-24 lg:pb-6 pt-4 px-2 sm:px-4 animate-fadeIn">
+    <div className="w-full lg:w-5/6 ml-auto min-h-[calc(100vh-80px)] flex flex-col pb-4 lg:pb-6 pt-4 px-2 sm:px-4 animate-fadeIn">
       {/* Chat Container */}
       <div className="flex-1 max-w-4xl w-full mx-auto bg-zinc-900/60 backdrop-blur-xl border border-emerald-500/20 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden">
         
