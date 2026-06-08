@@ -533,17 +533,24 @@ const AdminDashboard = () => {
                           </div>
                           <div>
                             <p className="text-xs text-zinc-500 uppercase font-semibold">Holati</p>
-                            <span className={`inline-block text-xs font-extrabold uppercase px-2.5 py-1 rounded-full mt-1.5 ${
-                              booking.status === 'pending'
-                                ? 'bg-amber-400/10 text-amber-400 border border-amber-400/30'
-                                : booking.status === 'confirmed'
-                                ? 'bg-emerald-400/10 text-emerald-400 border border-emerald-400/30'
-                                : 'bg-red-500/10 text-red-400 border border-red-500/30'
-                            }`}>
-                              {booking.status === 'pending' && 'Kutilmoqda'}
-                              {booking.status === 'confirmed' && 'Tasdiqlangan'}
-                              {booking.status === 'rejected' && 'Rad etilgan'}
-                            </span>
+                            <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                              <span className={`inline-block text-xs font-extrabold uppercase px-2.5 py-1 rounded-full ${
+                                booking.status === 'pending'
+                                  ? 'bg-amber-400/10 text-amber-400 border border-amber-400/30'
+                                  : booking.status === 'confirmed'
+                                  ? 'bg-emerald-400/10 text-emerald-400 border border-emerald-400/30'
+                                  : 'bg-red-500/10 text-red-400 border border-red-500/30'
+                              }`}>
+                                {booking.status === 'pending' && 'Kutilmoqda'}
+                                {booking.status === 'confirmed' && 'Tasdiqlangan'}
+                                {booking.status === 'rejected' && 'Rad etilgan'}
+                              </span>
+                              {booking.receipt && !booking.receipt.includes('res.cloudinary.com') && (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-zinc-800 border border-zinc-700/60 text-zinc-300 px-2 py-0.5 rounded-full select-none">
+                                  <span>💬</span> Chek Telegramda
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -551,7 +558,7 @@ const AdminDashboard = () => {
                       {/* Right: Receipt Image & Actions */}
                       <div className="flex flex-col sm:flex-row md:flex-col items-center justify-between gap-4 md:border-l md:border-white/5 md:pl-6 shrink-0 min-w-[150px]">
                         {/* Receipt Thumbnail */}
-                        {booking.receipt && (
+                        {booking.receipt && booking.receipt.includes('res.cloudinary.com') && (
                           <div className="relative group overflow-hidden rounded-xl border border-zinc-700 w-28 h-20 shrink-0 bg-zinc-950">
                             <img
                               src={booking.receipt}
@@ -569,91 +576,93 @@ const AdminDashboard = () => {
                         )}
 
                         {/* Actions */}
-                        <div className="flex flex-wrap gap-2 w-full">
-                          {/* Tasdiqlash Button */}
-                          <button
-                            disabled={actionLoading === (booking.id || booking._id) || successActions[booking.id || booking._id]}
-                            onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'confirmed')}
-                            className={`flex-1 font-bold py-2 px-3 rounded-xl text-xs transition-all active:scale-[0.97] flex items-center justify-center gap-1.5 border cursor-pointer ${
-                              booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed'
-                                ? 'bg-emerald-600 border-emerald-500 text-white shadow-lg shadow-emerald-600/20'
-                                : 'bg-transparent border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10'
-                            }`}
-                          >
-                            {actionLoading === (booking.id || booking._id) && successActions[booking.id || booking._id] !== 'confirmed' ? (
-                              <>
-                                <svg className="animate-spin h-3.5 w-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                <span>Kutilmoqda...</span>
-                              </>
-                            ) : (
-                              <>
-                                <FaCheck size={10} />
-                                <span>{booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed' ? 'Tasdiqlangan' : 'Tasdiqlash'}</span>
-                              </>
-                            )}
-                          </button>
-
-                          {/* Rad etish Button */}
-                          <button
-                            disabled={actionLoading === (booking.id || booking._id) || successActions[booking.id || booking._id]}
-                            onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'rejected')}
-                            className={`flex-1 font-bold py-2 px-3 rounded-xl text-xs transition-all active:scale-[0.97] flex items-center justify-center gap-1.5 border cursor-pointer ${
-                              booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected'
-                                ? 'bg-red-600 border-red-500 text-white shadow-lg shadow-red-600/20'
-                                : 'bg-transparent border-red-500/30 text-red-400 hover:bg-red-500/10'
-                            }`}
-                          >
-                            {actionLoading === (booking.id || booking._id) && successActions[booking.id || booking._id] !== 'rejected' ? (
-                              <>
-                                <svg className="animate-spin h-3.5 w-3.5 text-red-400" viewBox="0 0 24 24" fill="none">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                <span>Kutilmoqda...</span>
-                              </>
-                            ) : (
-                              <>
-                                <FaTimes size={10} />
-                                <span>{booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected' ? 'Rad etilgan' : 'Rad etish'}</span>
-                              </>
-                            )}
-                          </button>
-
-                          {/* Bloklash Button */}
-                          {booking.userId && (
+                        <div className="flex flex-col gap-2 w-full">
+                          <div className={`grid gap-2 w-full ${booking.userId ? 'grid-cols-3' : 'grid-cols-2'}`}>
+                            {/* Tasdiqlash Button */}
                             <button
-                              disabled={actionLoading === (booking.userId._id || booking.userId.id)}
-                              onClick={() => handleBlockUser(booking.userId._id || booking.userId.id, booking.userId.status)}
-                              className={`w-full font-bold py-2 px-3 rounded-xl text-xs transition-all active:scale-[0.97] flex items-center justify-center gap-1.5 border cursor-pointer ${
-                                booking.userId.status === 'blocked'
-                                  ? 'bg-amber-600 border-amber-500 text-white shadow-lg shadow-amber-600/20'
-                                  : 'bg-transparent border-amber-500/30 text-amber-400 hover:bg-amber-500/10'
+                              disabled={actionLoading === (booking.id || booking._id) || successActions[booking.id || booking._id]}
+                              onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'confirmed')}
+                              className={`flex flex-col items-center justify-center gap-1 font-bold py-2 px-1 rounded-xl text-center transition-all active:scale-[0.97] border cursor-pointer ${
+                                booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed'
+                                  ? 'bg-emerald-600 border-emerald-500 text-white shadow-lg shadow-emerald-600/20'
+                                  : 'bg-transparent border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10'
                               }`}
                             >
-                              {actionLoading === (booking.userId._id || booking.userId.id) ? (
+                              {actionLoading === (booking.id || booking._id) && successActions[booking.id || booking._id] !== 'confirmed' ? (
                                 <>
-                                  <svg className="animate-spin h-3.5 w-3.5 text-amber-400" viewBox="0 0 24 24" fill="none">
+                                  <svg className="animate-spin h-3.5 w-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                   </svg>
-                                  <span>Kutilmoqda...</span>
-                                </>
-                              ) : booking.userId.status === 'blocked' ? (
-                                <>
-                                  <FaBan size={10} />
-                                  <span>Mijoz bloklangan</span>
+                                  <span className="text-[10px] leading-tight">Kutilmoqda</span>
                                 </>
                               ) : (
                                 <>
-                                  <FaBan size={10} />
-                                  <span>Mijozni bloklash</span>
+                                  <FaCheck size={11} className="shrink-0" />
+                                  <span className="text-[10px] leading-tight">{booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed' ? 'Tasdiqlandi' : 'Tasdiqlash'}</span>
                                 </>
                               )}
                             </button>
-                          )}
+
+                            {/* Rad etish Button */}
+                            <button
+                              disabled={actionLoading === (booking.id || booking._id) || successActions[booking.id || booking._id]}
+                              onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'rejected')}
+                              className={`flex flex-col items-center justify-center gap-1 font-bold py-2 px-1 rounded-xl text-center transition-all active:scale-[0.97] border cursor-pointer ${
+                                booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected'
+                                  ? 'bg-red-600 border-red-500 text-white shadow-lg shadow-red-600/20'
+                                  : 'bg-transparent border-red-500/30 text-red-400 hover:bg-red-500/10'
+                              }`}
+                            >
+                              {actionLoading === (booking.id || booking._id) && successActions[booking.id || booking._id] !== 'rejected' ? (
+                                <>
+                                  <svg className="animate-spin h-3.5 w-3.5 text-red-400" viewBox="0 0 24 24" fill="none">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                  </svg>
+                                  <span className="text-[10px] leading-tight">Kutilmoqda</span>
+                                </>
+                              ) : (
+                                <>
+                                  <FaTimes size={11} className="shrink-0" />
+                                  <span className="text-[10px] leading-tight">{booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected' ? 'Rad etildi' : 'Rad etish'}</span>
+                                </>
+                              )}
+                            </button>
+
+                            {/* Bloklash Button */}
+                            {booking.userId && (
+                              <button
+                                disabled={actionLoading === (booking.userId._id || booking.userId.id)}
+                                onClick={() => handleBlockUser(booking.userId._id || booking.userId.id, booking.userId.status)}
+                                className={`flex flex-col items-center justify-center gap-1 font-bold py-2 px-1 rounded-xl text-center transition-all active:scale-[0.97] border cursor-pointer ${
+                                  booking.userId.status === 'blocked'
+                                    ? 'bg-amber-600 border-amber-500 text-white shadow-lg shadow-amber-600/20'
+                                    : 'bg-transparent border-amber-500/30 text-amber-400 hover:bg-amber-500/10'
+                                }`}
+                              >
+                                {actionLoading === (booking.userId._id || booking.userId.id) ? (
+                                  <>
+                                    <svg className="animate-spin h-3.5 w-3.5 text-amber-400" viewBox="0 0 24 24" fill="none">
+                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span className="text-[10px] leading-tight">Kutilmoqda</span>
+                                  </>
+                                ) : booking.userId.status === 'blocked' ? (
+                                  <>
+                                    <FaBan size={11} className="shrink-0" />
+                                    <span className="text-[10px] leading-tight">Bloklangan</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <FaBan size={11} className="shrink-0" />
+                                    <span className="text-[10px] leading-tight">Bloklash</span>
+                                  </>
+                                )}
+                              </button>
+                            )}
+                          </div>
 
                           {/* Revert link */}
                           {booking.status !== 'pending' && (
@@ -871,9 +880,23 @@ const AdminDashboard = () => {
                       {bookingsList.filter(b => b && b.status === 'pending').slice(0, 3).map((booking) => (
                         <div key={booking.id || booking._id} className="bg-zinc-950/40 border border-zinc-800 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                           <div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-wrap items-center gap-2">
                               <span className="font-bold text-white">{booking.name}</span>
                               <span className="text-xs text-zinc-550 font-mono">{booking.phone}</span>
+                              {booking.receipt && (
+                                booking.receipt.includes('res.cloudinary.com') ? (
+                                  <button
+                                    onClick={() => setZoomedReceipt(booking.receipt)}
+                                    className="text-[10px] font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full hover:bg-emerald-500/25 transition-colors cursor-pointer select-none"
+                                  >
+                                    🖼 Chekni ko'rish
+                                  </button>
+                                ) : (
+                                  <span className="text-[10px] font-semibold bg-zinc-800 border border-zinc-700/60 text-zinc-400 px-2 py-0.5 rounded-full select-none">
+                                    💬 Chek Telegramda
+                                  </span>
+                                )
+                              )}
                             </div>
                             <div className="text-xs text-zinc-400 mt-1">
                               <span>{booking.serviceName}</span> • <span className="text-emerald-400 font-bold">{formatPrice(booking.servicePrice)} so'm</span>
@@ -883,12 +906,12 @@ const AdminDashboard = () => {
                             </div>
                           </div>
                           
-                          <div className="flex flex-wrap gap-2">
+                          <div className={`grid gap-2 shrink-0 ${booking.userId ? 'grid-cols-3 w-full sm:w-auto' : 'grid-cols-2 w-full sm:w-auto'}`}>
                             {/* Tasdiqlash Button */}
                             <button
                               disabled={actionLoading === (booking.id || booking._id) || successActions[booking.id || booking._id]}
                               onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'confirmed')}
-                              className={`font-bold py-1.5 px-3 rounded-lg text-xs transition-all active:scale-[0.97] flex items-center gap-1 border cursor-pointer ${
+                              className={`flex flex-col items-center justify-center gap-1 font-bold py-2 px-2.5 rounded-xl text-center transition-all active:scale-[0.97] border cursor-pointer ${
                                 booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed'
                                   ? 'bg-emerald-600 border-emerald-500 text-white shadow-lg shadow-emerald-600/20'
                                   : 'bg-transparent border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10'
@@ -900,12 +923,12 @@ const AdminDashboard = () => {
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                   </svg>
-                                  <span>Kutilmoqda...</span>
+                                  <span className="text-[10px] leading-tight">Kutilmoqda</span>
                                 </>
                               ) : (
                                 <>
-                                  <FaCheck size={9} />
-                                  <span>{booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed' ? 'Tasdiqlangan' : 'Tasdiqlash'}</span>
+                                  <FaCheck size={11} className="shrink-0" />
+                                  <span className="text-[10px] leading-tight">{booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed' ? 'Tasdiqlandi' : 'Tasdiqlash'}</span>
                                 </>
                               )}
                             </button>
@@ -914,7 +937,7 @@ const AdminDashboard = () => {
                             <button
                               disabled={actionLoading === (booking.id || booking._id) || successActions[booking.id || booking._id]}
                               onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'rejected')}
-                              className={`font-bold py-1.5 px-3 rounded-lg text-xs transition-all active:scale-[0.97] flex items-center gap-1 border cursor-pointer ${
+                              className={`flex flex-col items-center justify-center gap-1 font-bold py-2 px-2.5 rounded-xl text-center transition-all active:scale-[0.97] border cursor-pointer ${
                                 booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected'
                                   ? 'bg-red-600 border-red-500 text-white shadow-lg shadow-red-600/20'
                                   : 'bg-transparent border-red-500/30 text-red-400 hover:bg-red-500/10'
@@ -926,12 +949,12 @@ const AdminDashboard = () => {
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                   </svg>
-                                  <span>Kutilmoqda...</span>
+                                  <span className="text-[10px] leading-tight">Kutilmoqda</span>
                                 </>
                               ) : (
                                 <>
-                                  <FaTimes size={9} />
-                                  <span>{booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected' ? 'Rad etilgan' : 'Rad etish'}</span>
+                                  <FaTimes size={11} className="shrink-0" />
+                                  <span className="text-[10px] leading-tight">{booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected' ? 'Rad etildi' : 'Rad etish'}</span>
                                 </>
                               )}
                             </button>
@@ -941,7 +964,7 @@ const AdminDashboard = () => {
                               <button
                                 disabled={actionLoading === (booking.userId._id || booking.userId.id)}
                                 onClick={() => handleBlockUser(booking.userId._id || booking.userId.id, booking.userId.status)}
-                                className={`font-bold py-1.5 px-3 rounded-lg text-xs transition-all active:scale-[0.97] flex items-center gap-1 border cursor-pointer ${
+                                className={`flex flex-col items-center justify-center gap-1 font-bold py-2 px-2.5 rounded-xl text-center transition-all active:scale-[0.97] border cursor-pointer ${
                                   booking.userId.status === 'blocked'
                                     ? 'bg-amber-600 border-amber-500 text-white shadow-lg shadow-amber-600/20'
                                     : 'bg-transparent border-amber-500/30 text-amber-400 hover:bg-amber-500/10'
@@ -953,17 +976,17 @@ const AdminDashboard = () => {
                                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
-                                    <span>Kutilmoqda...</span>
+                                    <span className="text-[10px] leading-tight">Kutilmoqda</span>
                                   </>
                                 ) : booking.userId.status === 'blocked' ? (
                                   <>
-                                    <FaBan size={9} />
-                                    <span>Mijoz bloklangan</span>
+                                    <FaBan size={11} className="shrink-0" />
+                                    <span className="text-[10px] leading-tight">Bloklangan</span>
                                   </>
                                 ) : (
                                   <>
-                                    <FaBan size={9} />
-                                    <span>Mijozni bloklash</span>
+                                    <FaBan size={11} className="shrink-0" />
+                                    <span className="text-[10px] leading-tight">Bloklash</span>
                                   </>
                                 )}
                               </button>
