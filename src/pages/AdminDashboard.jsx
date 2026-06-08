@@ -1278,7 +1278,7 @@ const AdminDashboard = () => {
 
           {/* ================= TAB: PROFILE ================= */}
           {activeTab === 'profile' && (
-            <div className="max-w-xl mx-auto space-y-6 animate-fadeIn">
+            <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 items-start animate-fadeIn">
               {/* Profile Card */}
               <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 md:p-8 backdrop-blur-sm shadow-xl text-center space-y-6 relative overflow-hidden">
                 {/* Glowing decorative border */}
