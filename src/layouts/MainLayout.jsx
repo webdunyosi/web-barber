@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import Sidebar from '../components/layout/Sidebar';
 import BottomNavigation from '../components/layout/BottomNavigation';
 import { useStep } from '../hooks/useStep';
+import { useAuth } from '../hooks/useAuth';
 
 const MainLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { currentStep } = useStep();
+  const { isAuthenticated, isAdmin, loading } = useAuth();
+
+  if (!loading && isAuthenticated && isAdmin) {
+    return <Navigate to="/admin" replace />;
+  }
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);

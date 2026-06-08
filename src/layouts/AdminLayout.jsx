@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { FaUserShield, FaSignOutAlt, FaHome, FaChartBar, FaCalendarCheck, FaUsers } from 'react-icons/fa';
+import AdminBottomNavigation from '../components/layout/AdminBottomNavigation';
 
 const AdminLayout = () => {
   const { user, isAuthenticated, isAdmin, loading, logout } = useAuth();
@@ -47,7 +48,7 @@ const AdminLayout = () => {
   return (
     <div className="min-h-screen bg-zinc-950 text-white flex flex-col lg:flex-row web-pattern">
       {/* Admin Sidebar */}
-      <aside className="w-full lg:w-64 bg-zinc-900/90 backdrop-blur-xl border-b lg:border-b-0 lg:border-r border-emerald-500/30 flex flex-col justify-between shrink-0">
+      <aside className="hidden lg:flex w-full lg:w-64 bg-zinc-900/90 backdrop-blur-xl border-b lg:border-b-0 lg:border-r border-emerald-500/30 flex-col justify-between shrink-0">
         <div className="p-4">
           {/* Logo */}
           <div className="flex items-center gap-3 border-b border-white/10 pb-4 mb-6">
@@ -59,25 +60,41 @@ const AdminLayout = () => {
           </div>
 
           {/* Nav Items */}
-          <nav className="space-y-1">
+          <nav className="space-y-1.5">
             <Link
-              to="/admin"
+              to="/admin?tab=statistics"
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
-                location.pathname === '/admin'
+                location.pathname === '/admin' && (new URLSearchParams(location.search).get('tab') || 'statistics') === 'statistics'
                   ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/40'
                   : 'text-zinc-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              <FaUserShield size={18} />
-              <span>Dashboard</span>
+              <FaChartBar size={18} />
+              <span>Moliya & Statistika</span>
             </Link>
 
             <Link
-              to="/"
-              className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm text-zinc-400 hover:text-white hover:bg-white/5"
+              to="/admin?tab=bookings"
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
+                location.pathname === '/admin' && new URLSearchParams(location.search).get('tab') === 'bookings'
+                  ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/40'
+                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+              }`}
             >
-              <FaHome size={18} />
-              <span>Mijoz Saytiga O'tish</span>
+              <FaCalendarCheck size={18} />
+              <span>Buyurtmalar & To'lovlar</span>
+            </Link>
+
+            <Link
+              to="/admin?tab=users"
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
+                location.pathname === '/admin' && new URLSearchParams(location.search).get('tab') === 'users'
+                  ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/40'
+                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <FaUsers size={18} />
+              <span>Mijozlar Boshqaruvi</span>
             </Link>
           </nav>
         </div>
@@ -104,9 +121,11 @@ const AdminLayout = () => {
       </aside>
 
       {/* Main Admin Dashboard Workspace */}
-      <main className="flex-1 min-w-0 p-4 md:p-8 overflow-y-auto">
+      <main className="flex-1 min-w-0 p-4 md:p-8 pb-24 md:pb-8 overflow-y-auto">
         <Outlet />
       </main>
+
+      <AdminBottomNavigation />
     </div>
   );
 };

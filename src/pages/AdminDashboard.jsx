@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   FaUser,
   FaCheck,
@@ -17,7 +17,8 @@ import {
   FaSearch,
   FaTimesCircle,
   FaEye,
-  FaSync
+  FaSync,
+  FaSignOutAlt
 } from 'react-icons/fa';
 import { formatPrice } from '../utils/format';
 
@@ -27,6 +28,7 @@ const AdminDashboard = () => {
     isAuthenticated,
     isAdmin,
     loading,
+    logout,
     getUsers,
     blockUser,
     deleteUser,
@@ -35,7 +37,9 @@ const AdminDashboard = () => {
     getStatistics
   } = useAuth();
 
-  const [activeTab, setActiveTab] = useState('bookings'); // 'bookings' | 'users' | 'statistics'
+  const [searchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'statistics';
+
   const [usersList, setUsersList] = useState([]);
   const [bookingsList, setBookingsList] = useState([]);
   const [stats, setStats] = useState(null);
@@ -72,6 +76,10 @@ const AdminDashboard = () => {
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    setSearchTerm('');
+  }, [activeTab]);
 
   // User Actions handlers
   const handleBlockUser = async (targetUserId, currentStatus) => {
@@ -140,58 +148,28 @@ const AdminDashboard = () => {
           <p className="text-gray-400 text-sm mt-1">Foydalanuvchilar, buyurtmalar va kunlik tushumlarni real vaqt rejimida boshqarish</p>
         </div>
         
-        {/* Sync/Reload button */}
-        <button
-          onClick={loadData}
-          disabled={isDataLoading}
-          className="bg-zinc-900 border border-zinc-800 hover:border-emerald-500/50 hover:bg-zinc-800/80 text-white font-semibold py-2.5 px-5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-        >
-          <FaSync size={13} className={isDataLoading ? 'animate-spin' : ''} />
-          {isDataLoading ? 'Yangilanmoqda...' : 'Yangilash'}
-        </button>
+        {/* Header Actions */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={loadData}
+            disabled={isDataLoading}
+            className="bg-zinc-900 border border-zinc-800 hover:border-emerald-500/50 hover:bg-zinc-800/80 text-white font-semibold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 text-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <FaSync size={13} className={isDataLoading ? 'animate-spin' : ''} />
+            {isDataLoading ? 'Yangilanmoqda...' : 'Yangilash'}
+          </button>
+
+          <button
+            onClick={logout}
+            className="lg:hidden bg-red-950/40 border border-red-800/60 hover:bg-red-900/50 text-red-400 font-semibold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 text-sm active:scale-95 cursor-pointer"
+          >
+            <FaSignOutAlt size={13} />
+            <span>Chiqish</span>
+          </button>
+        </div>
       </div>
 
-      {/* Tabs Navigator */}
-      <div className="flex border-b border-zinc-800 mb-8 overflow-x-auto gap-2 scrollbar-none">
-        <button
-          onClick={() => { setActiveTab('bookings'); setSearchTerm(''); }}
-          className={`flex items-center gap-2 px-6 py-3.5 font-bold whitespace-nowrap transition-all rounded-t-xl text-base relative cursor-pointer ${
-            activeTab === 'bookings'
-              ? 'text-emerald-400 bg-zinc-900/60 border border-b-0 border-zinc-800 border-t-2 border-t-emerald-500'
-              : 'text-gray-400 hover:text-white hover:bg-zinc-900/30'
-          }`}
-        >
-          <FaCalendarCheck />
-          <span>Buyurtmalar & To'lovlar</span>
-          {stats?.pendingBookings > 0 && (
-            <span className="bg-amber-500 text-zinc-950 font-extrabold text-xs w-5 h-5 rounded-full flex items-center justify-center shrink-0 animate-pulse">
-              {stats.pendingBookings}
-            </span>
-          )}
-        </button>
-        <button
-          onClick={() => { setActiveTab('users'); setSearchTerm(''); }}
-          className={`flex items-center gap-2 px-6 py-3.5 font-bold whitespace-nowrap transition-all rounded-t-xl text-base relative cursor-pointer ${
-            activeTab === 'users'
-              ? 'text-emerald-400 bg-zinc-900/60 border border-b-0 border-zinc-800 border-t-2 border-t-emerald-500'
-              : 'text-gray-400 hover:text-white hover:bg-zinc-900/30'
-          }`}
-        >
-          <FaUser />
-          <span>Mijozlar</span>
-        </button>
-        <button
-          onClick={() => { setActiveTab('statistics'); setSearchTerm(''); }}
-          className={`flex items-center gap-2 px-6 py-3.5 font-bold whitespace-nowrap transition-all rounded-t-xl text-base relative cursor-pointer ${
-            activeTab === 'statistics'
-              ? 'text-emerald-400 bg-zinc-900/60 border border-b-0 border-zinc-800 border-t-2 border-t-emerald-500'
-              : 'text-gray-400 hover:text-white hover:bg-zinc-900/30'
-          }`}
-        >
-          <FaChartBar />
-          <span>Moliya & Statistika</span>
-        </button>
-      </div>
+
 
       {/* Loading Overlay inside tabs */}
       {isDataLoading && !stats ? (
