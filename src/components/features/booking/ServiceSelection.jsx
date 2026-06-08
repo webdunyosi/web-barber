@@ -2,6 +2,12 @@ import React from 'react';
 import { formatPrice } from '../../../utils/format';
 
 const ServiceSelection = ({ services, selectedService, onSelectService }) => {
+  const [loadedImages, setLoadedImages] = React.useState({});
+
+  const handleImageLoad = (id) => {
+    setLoadedImages((prev) => ({ ...prev, [id]: true }));
+  };
+
   return (
     <div className="w-full mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -36,14 +42,21 @@ const ServiceSelection = ({ services, selectedService, onSelectService }) => {
               <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
             </div>
             <div className="flex items-center gap-4 relative z-10">
-              <div className={`transition-all duration-300 ${
+              <div className={`transition-all duration-300 relative w-20 h-20 overflow-hidden rounded-xl bg-zinc-700/50 ${
                 selectedService?.id === service.id ? 'scale-110' : 'group-hover:scale-110'
               }`}>
+                {!loadedImages[service.id] && (
+                  <div className="absolute inset-0 bg-zinc-800 animate-pulse rounded-xl" />
+                )}
                 <img 
                   src={service.image_url} 
                   alt={service.name}
-                  className="w-20 h-20 object-cover rounded-xl shadow-lg"
+                  className={`w-full h-full object-cover rounded-xl shadow-lg transition-all duration-300 ${
+                    loadedImages[service.id] ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                  }`}
+                  onLoad={() => handleImageLoad(service.id)}
                   onError={(e) => {
+                    handleImageLoad(service.id);
                     e.target.style.display = 'none';
                     e.target.parentElement.classList.add('text-5xl');
                     e.target.parentElement.innerHTML = '🔧';
