@@ -160,7 +160,7 @@ const AdminDashboard = () => {
   return (
     <div className="w-full pb-16 text-white">
       {/* Title Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6 mb-8">
+      <div className="hidden md:flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6 mb-8">
         <div>
           <h2 className="text-3xl font-extrabold bg-linear-to-r from-emerald-400 to-green-500 bg-clip-text text-transparent uppercase tracking-wider">
             Boshqaruv Markazi
