@@ -6,6 +6,7 @@ import StylesPage from './pages/StylesPage';
 import BarberProfilePage from './pages/BarberProfilePage';
 import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage';
+import AiChatPage from './pages/AiChatPage';
 import ScrollToTop from './components/layout/ScrollToTop';
 import { StepProvider } from './contexts/StepContext.jsx';
 import { AuthProvider } from './contexts/AuthContext.jsx';
@@ -23,6 +24,7 @@ const App = () => {
               <Route path="/sartarosh" element={<BarberProfilePage />} />
               <Route path="/profil" element={<ProfilePage />} />
               <Route path="/admin" element={<AdminPage />} />
+              <Route path="/ai-chat" element={<AiChatPage />} />
             </Route>
           </Routes>
         </Router>

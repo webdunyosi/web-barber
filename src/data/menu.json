@@ -14,5 +14,10 @@
     "name": "Sartarosh haqida",
     "path": "/sartarosh",
     "icon": "FaUserTie"
+  },
+  {
+    "name": "AI bot",
+    "path": "/ai-chat",
+    "icon": "FaRobot"
   }
 ]

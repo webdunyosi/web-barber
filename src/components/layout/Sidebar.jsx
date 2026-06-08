@@ -1,6 +1,6 @@
 import React from "react"
 import { NavLink } from "react-router-dom"
-import { FaCalendarAlt, FaCut, FaUserTie, FaUserShield, FaSignOutAlt } from "react-icons/fa"
+import { FaCalendarAlt, FaCut, FaUserTie, FaUserShield, FaSignOutAlt, FaRobot } from "react-icons/fa"
 import menuItems from "../../data/menu.json"
 import { useAuth } from "../../hooks/useAuth"
 
@@ -9,6 +9,7 @@ const menuIcons = {
   FaCut: <FaCut size={24} />,
   FaUserTie: <FaUserTie size={24} />,
   FaUserShield: <FaUserShield size={24} />,
+  FaRobot: <FaRobot size={24} />,
 }
 
 const Sidebar = ({ isOpen, onClose }) => {

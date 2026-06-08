@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { FaCalendarAlt, FaCut, FaUserTie } from 'react-icons/fa';
+import { FaCalendarAlt, FaCut, FaUserTie, FaRobot } from 'react-icons/fa';
 
 const BottomNavigation = () => {
   const location = useLocation();
@@ -51,6 +51,21 @@ const BottomNavigation = () => {
         >
           <FaUserTie size={19} />
           <span className="text-[10px] tracking-wide">Sartarosh</span>
+        </NavLink>
+
+        {/* AI Chat Tab */}
+        <NavLink
+          to="/ai-chat"
+          className={({ isActive }) =>
+            `flex flex-col items-center justify-center gap-1.5 py-1 px-3 rounded-xl transition-all duration-300 ${
+              isActive
+                ? 'text-emerald-400 scale-105 font-semibold'
+                : 'text-gray-400 hover:text-white'
+            }`
+          }
+        >
+          <FaRobot size={19} />
+          <span className="text-[10px] tracking-wide">AI bot</span>
         </NavLink>
 
         {/* Profil Tab */}
