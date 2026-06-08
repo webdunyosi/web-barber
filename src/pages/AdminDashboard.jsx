@@ -281,6 +281,7 @@ const AdminDashboard = () => {
   const [zoomedReceipt, setZoomedReceipt] = useState(null);
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null); // stores item ID currently updating
+  const [successActions, setSuccessActions] = useState({}); // stores item ID and status after successful update
 
   const loadData = async () => {
     setIsDataLoading(true);
@@ -360,7 +361,17 @@ const AdminDashboard = () => {
     setActionLoading(bookingId);
     try {
       await updateBookingStatus(bookingId, newStatus);
-      await loadData();
+      setSuccessActions(prev => ({ ...prev, [bookingId]: newStatus }));
+      
+      // Delay local reloading to let the button transition finish
+      setTimeout(async () => {
+        await loadData();
+        setSuccessActions(prev => {
+          const copy = { ...prev };
+          delete copy[bookingId];
+          return copy;
+        });
+      }, 1000);
     } catch (err) {
       alert(err.message || 'Xatolik yuz berdi');
     } finally {
@@ -558,32 +569,103 @@ const AdminDashboard = () => {
                         )}
 
                         {/* Actions */}
-                        {booking.status === 'pending' ? (
-                          <div className="flex gap-2 w-full">
-                            <button
-                              disabled={actionLoading === (booking.id || booking._id)}
-                              onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'confirmed')}
-                              className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition-all active:scale-[0.97] flex items-center justify-center gap-1 disabled:opacity-50 cursor-pointer border-none"
-                            >
-                              <FaCheck size={10} /> Tasdiqlash
-                            </button>
-                            <button
-                              disabled={actionLoading === (booking.id || booking._id)}
-                              onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'rejected')}
-                              className="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition-all active:scale-[0.97] flex items-center justify-center gap-1 disabled:opacity-50 cursor-pointer border-none"
-                            >
-                              <FaTimes size={10} /> Rad etish
-                            </button>
-                          </div>
-                        ) : (
+                        <div className="flex flex-wrap gap-2 w-full">
+                          {/* Tasdiqlash Button */}
                           <button
-                            disabled={actionLoading === (booking.id || booking._id)}
-                            onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'pending')}
-                            className="w-full text-center text-xs text-white/40 hover:text-white hover:underline transition-colors disabled:opacity-50 bg-transparent border-none cursor-pointer"
+                            disabled={actionLoading === (booking.id || booking._id) || successActions[booking.id || booking._id]}
+                            onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'confirmed')}
+                            className={`flex-1 font-bold py-2 px-3 rounded-xl text-xs transition-all active:scale-[0.97] flex items-center justify-center gap-1.5 border cursor-pointer ${
+                              booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed'
+                                ? 'bg-emerald-600 border-emerald-500 text-white shadow-lg shadow-emerald-600/20'
+                                : 'bg-transparent border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10'
+                            }`}
                           >
-                            Kutilmoqda holatiga qaytarish
+                            {actionLoading === (booking.id || booking._id) && successActions[booking.id || booking._id] !== 'confirmed' ? (
+                              <>
+                                <svg className="animate-spin h-3.5 w-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>Kutilmoqda...</span>
+                              </>
+                            ) : (
+                              <>
+                                <FaCheck size={10} />
+                                <span>{booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed' ? 'Tasdiqlangan' : 'Tasdiqlash'}</span>
+                              </>
+                            )}
                           </button>
-                        )}
+
+                          {/* Rad etish Button */}
+                          <button
+                            disabled={actionLoading === (booking.id || booking._id) || successActions[booking.id || booking._id]}
+                            onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'rejected')}
+                            className={`flex-1 font-bold py-2 px-3 rounded-xl text-xs transition-all active:scale-[0.97] flex items-center justify-center gap-1.5 border cursor-pointer ${
+                              booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected'
+                                ? 'bg-red-600 border-red-500 text-white shadow-lg shadow-red-600/20'
+                                : 'bg-transparent border-red-500/30 text-red-400 hover:bg-red-500/10'
+                            }`}
+                          >
+                            {actionLoading === (booking.id || booking._id) && successActions[booking.id || booking._id] !== 'rejected' ? (
+                              <>
+                                <svg className="animate-spin h-3.5 w-3.5 text-red-400" viewBox="0 0 24 24" fill="none">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>Kutilmoqda...</span>
+                              </>
+                            ) : (
+                              <>
+                                <FaTimes size={10} />
+                                <span>{booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected' ? 'Rad etilgan' : 'Rad etish'}</span>
+                              </>
+                            )}
+                          </button>
+
+                          {/* Bloklash Button */}
+                          {booking.userId && (
+                            <button
+                              disabled={actionLoading === (booking.userId._id || booking.userId.id)}
+                              onClick={() => handleBlockUser(booking.userId._id || booking.userId.id, booking.userId.status)}
+                              className={`w-full font-bold py-2 px-3 rounded-xl text-xs transition-all active:scale-[0.97] flex items-center justify-center gap-1.5 border cursor-pointer ${
+                                booking.userId.status === 'blocked'
+                                  ? 'bg-amber-600 border-amber-500 text-white shadow-lg shadow-amber-600/20'
+                                  : 'bg-transparent border-amber-500/30 text-amber-400 hover:bg-amber-500/10'
+                              }`}
+                            >
+                              {actionLoading === (booking.userId._id || booking.userId.id) ? (
+                                <>
+                                  <svg className="animate-spin h-3.5 w-3.5 text-amber-400" viewBox="0 0 24 24" fill="none">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                  </svg>
+                                  <span>Kutilmoqda...</span>
+                                </>
+                              ) : booking.userId.status === 'blocked' ? (
+                                <>
+                                  <FaBan size={10} />
+                                  <span>Mijoz bloklangan</span>
+                                </>
+                              ) : (
+                                <>
+                                  <FaBan size={10} />
+                                  <span>Mijozni bloklash</span>
+                                </>
+                              )}
+                            </button>
+                          )}
+
+                          {/* Revert link */}
+                          {booking.status !== 'pending' && (
+                            <button
+                              disabled={actionLoading === (booking.id || booking._id)}
+                              onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'pending')}
+                              className="w-full text-center text-xs text-white/40 hover:text-white hover:underline transition-colors disabled:opacity-50 bg-transparent border-none cursor-pointer mt-1"
+                            >
+                              Kutilmoqda holatiga qaytarish
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -801,21 +883,91 @@ const AdminDashboard = () => {
                             </div>
                           </div>
                           
-                          <div className="flex gap-2">
+                          <div className="flex flex-wrap gap-2">
+                            {/* Tasdiqlash Button */}
                             <button
-                              disabled={actionLoading === (booking.id || booking._id)}
+                              disabled={actionLoading === (booking.id || booking._id) || successActions[booking.id || booking._id]}
                               onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'confirmed')}
-                              className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-1.5 px-3 rounded-lg text-xs transition-all active:scale-[0.97] flex items-center gap-1 disabled:opacity-50 cursor-pointer border-none"
+                              className={`font-bold py-1.5 px-3 rounded-lg text-xs transition-all active:scale-[0.97] flex items-center gap-1 border cursor-pointer ${
+                                booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed'
+                                  ? 'bg-emerald-600 border-emerald-500 text-white shadow-lg shadow-emerald-600/20'
+                                  : 'bg-transparent border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10'
+                              }`}
                             >
-                              <FaCheck size={9} /> Tasdiqlash
+                              {actionLoading === (booking.id || booking._id) && successActions[booking.id || booking._id] !== 'confirmed' ? (
+                                <>
+                                  <svg className="animate-spin h-3.5 w-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                  </svg>
+                                  <span>Kutilmoqda...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <FaCheck size={9} />
+                                  <span>{booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed' ? 'Tasdiqlangan' : 'Tasdiqlash'}</span>
+                                </>
+                              )}
                             </button>
+
+                            {/* Rad etish Button */}
                             <button
-                              disabled={actionLoading === (booking.id || booking._id)}
+                              disabled={actionLoading === (booking.id || booking._id) || successActions[booking.id || booking._id]}
                               onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'rejected')}
-                              className="bg-red-500 hover:bg-red-600 text-white font-bold py-1.5 px-3 rounded-lg text-xs transition-all active:scale-[0.97] flex items-center gap-1 disabled:opacity-50 cursor-pointer border-none"
+                              className={`font-bold py-1.5 px-3 rounded-lg text-xs transition-all active:scale-[0.97] flex items-center gap-1 border cursor-pointer ${
+                                booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected'
+                                  ? 'bg-red-600 border-red-500 text-white shadow-lg shadow-red-600/20'
+                                  : 'bg-transparent border-red-500/30 text-red-400 hover:bg-red-500/10'
+                              }`}
                             >
-                              <FaTimes size={9} /> Rad etish
+                              {actionLoading === (booking.id || booking._id) && successActions[booking.id || booking._id] !== 'rejected' ? (
+                                <>
+                                  <svg className="animate-spin h-3.5 w-3.5 text-red-400" viewBox="0 0 24 24" fill="none">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                  </svg>
+                                  <span>Kutilmoqda...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <FaTimes size={9} />
+                                  <span>{booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected' ? 'Rad etilgan' : 'Rad etish'}</span>
+                                </>
+                              )}
                             </button>
+
+                            {/* Bloklash Button */}
+                            {booking.userId && (
+                              <button
+                                disabled={actionLoading === (booking.userId._id || booking.userId.id)}
+                                onClick={() => handleBlockUser(booking.userId._id || booking.userId.id, booking.userId.status)}
+                                className={`font-bold py-1.5 px-3 rounded-lg text-xs transition-all active:scale-[0.97] flex items-center gap-1 border cursor-pointer ${
+                                  booking.userId.status === 'blocked'
+                                    ? 'bg-amber-600 border-amber-500 text-white shadow-lg shadow-amber-600/20'
+                                    : 'bg-transparent border-amber-500/30 text-amber-400 hover:bg-amber-500/10'
+                                }`}
+                              >
+                                {actionLoading === (booking.userId._id || booking.userId.id) ? (
+                                  <>
+                                    <svg className="animate-spin h-3.5 w-3.5 text-amber-400" viewBox="0 0 24 24" fill="none">
+                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span>Kutilmoqda...</span>
+                                  </>
+                                ) : booking.userId.status === 'blocked' ? (
+                                  <>
+                                    <FaBan size={9} />
+                                    <span>Mijoz bloklangan</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <FaBan size={9} />
+                                    <span>Mijozni bloklash</span>
+                                  </>
+                                )}
+                              </button>
+                            )}
                           </div>
                         </div>
                       ))}
