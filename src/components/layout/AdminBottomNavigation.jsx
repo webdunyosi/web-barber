@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaChartBar, FaCalendarCheck, FaUsers } from 'react-icons/fa';
+import { FaChartBar, FaCalendarCheck, FaUsers, FaUser } from 'react-icons/fa';
 import { useAuth } from '../../hooks/useAuth';
 
 const AdminBottomNavigation = () => {
@@ -31,7 +31,7 @@ const AdminBottomNavigation = () => {
   }, []);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden h-[68px] flex items-end">
+    <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden h-[68px] flex items-end">
       {/* Background with Notch */}
       <div className="absolute inset-0 flex items-end h-[68px] -z-10 pointer-events-none">
         <div className="flex-1 h-full bg-zinc-950/95 border-t border-white/10 rounded-tl-2xl"></div>
@@ -80,11 +80,11 @@ const AdminBottomNavigation = () => {
           </Link>
         </div>
 
-        {/* Right Tab - Users */}
-        <div className="flex-1 flex justify-center">
+        {/* Right Tab - Users & Profile */}
+        <div className="flex-1 flex justify-around pl-2">
           <Link
             to="/admin?tab=users"
-            className={`flex flex-col items-center justify-center gap-1 py-1 px-4 rounded-xl transition-all duration-300 ${
+            className={`flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all duration-300 ${
               currentTab === 'users'
                 ? 'text-emerald-400 scale-105 font-semibold'
                 : 'text-gray-400 hover:text-white'
@@ -92,6 +92,18 @@ const AdminBottomNavigation = () => {
           >
             <FaUsers size={19} />
             <span className="text-[10px] tracking-wide">Mijozlar</span>
+          </Link>
+
+          <Link
+            to="/admin?tab=profile"
+            className={`flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all duration-300 ${
+              currentTab === 'profile'
+                ? 'text-emerald-400 scale-105 font-semibold'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            <FaUser size={19} />
+            <span className="text-[10px] tracking-wide">Profil</span>
           </Link>
         </div>
       </div>

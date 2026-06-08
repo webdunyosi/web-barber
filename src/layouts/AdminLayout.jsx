@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { FaUserShield, FaSignOutAlt, FaHome, FaChartBar, FaCalendarCheck, FaUsers } from 'react-icons/fa';
+import { FaUserShield, FaSignOutAlt, FaHome, FaChartBar, FaCalendarCheck, FaUsers, FaUser } from 'react-icons/fa';
 import AdminBottomNavigation from '../components/layout/AdminBottomNavigation';
 
 const AdminLayout = () => {
@@ -96,6 +96,18 @@ const AdminLayout = () => {
               <FaUsers size={18} />
               <span>Mijozlar Boshqaruvi</span>
             </Link>
+
+            <Link
+              to="/admin?tab=profile"
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
+                location.pathname === '/admin' && new URLSearchParams(location.search).get('tab') === 'profile'
+                  ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/40'
+                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <FaUser size={18} />
+              <span>Profil Boshqaruvi</span>
+            </Link>
           </nav>
         </div>
 
@@ -121,7 +133,7 @@ const AdminLayout = () => {
       </aside>
 
       {/* Main Admin Dashboard Workspace */}
-      <main className="flex-1 min-w-0 p-4 md:p-8 pb-24 md:pb-8 overflow-y-auto">
+      <main className="flex-1 min-w-0 p-4 md:p-8 pb-24 lg:pb-8 overflow-y-auto">
         <Outlet />
       </main>
 

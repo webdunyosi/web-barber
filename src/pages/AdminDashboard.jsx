@@ -168,7 +168,7 @@ const AdminDashboard = () => {
         </div>
         
         {/* Header Actions */}
-        <div className="flex items-center gap-2">
+        <div className="hidden sm:flex items-center gap-2">
           <button
             onClick={loadData}
             disabled={isDataLoading}
@@ -176,14 +176,6 @@ const AdminDashboard = () => {
           >
             <FaSync size={13} className={isDataLoading ? 'animate-spin' : ''} />
             {isDataLoading ? 'Yangilanmoqda...' : 'Yangilash'}
-          </button>
-
-          <button
-            onClick={logout}
-            className="lg:hidden bg-red-950/40 border border-red-800/60 hover:bg-red-900/50 text-red-400 font-semibold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 text-sm active:scale-95 cursor-pointer"
-          >
-            <FaSignOutAlt size={13} />
-            <span>Chiqish</span>
           </button>
         </div>
       </div>
@@ -680,6 +672,75 @@ const AdminDashboard = () => {
                     Jami ko'rsatilgan xizmatlar: <strong className="text-white">{stats.totalBookings} ta</strong>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* ================= TAB: PROFILE ================= */}
+          {activeTab === 'profile' && (
+            <div className="max-w-xl mx-auto space-y-6 animate-fadeIn">
+              {/* Profile Card */}
+              <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 md:p-8 backdrop-blur-sm shadow-xl text-center space-y-6 relative overflow-hidden">
+                {/* Glowing decorative border */}
+                <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-emerald-500 to-green-500"></div>
+
+                {/* Avatar */}
+                <div className="relative w-28 h-28 mx-auto">
+                  <div className="w-full h-full rounded-full bg-zinc-800 border-2 border-emerald-500/30 flex items-center justify-center overflow-hidden shadow-lg shadow-emerald-500/5">
+                    <img 
+                      src="/avatar/men.png" 
+                      alt="Admin Avatar" 
+                      className="w-24 h-24 rounded-full object-cover border border-emerald-500/20" 
+                    />
+                  </div>
+                  <span className="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-zinc-900 flex items-center justify-center text-[10px]" title="Online">
+                    ✓
+                  </span>
+                </div>
+
+                {/* Details */}
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-bold text-white">{user?.name || 'Administrator'}</h3>
+                  <p className="text-emerald-400 font-bold text-sm tracking-wider uppercase">Sartarosh (Administrator)</p>
+                </div>
+
+                {/* Info List */}
+                <div className="border-t border-b border-white/5 py-4 my-2 text-left space-y-3 font-medium text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-zinc-500">Telefon raqami:</span>
+                    <span className="text-zinc-200 font-mono font-semibold">{user?.phone || '+998 99 999 99 99'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-zinc-500">Telegram:</span>
+                    <span className="text-emerald-400 font-semibold">@{user?.telegram || 'kiritilmagan'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-zinc-500">Boshqaruv roli:</span>
+                    <span className="text-zinc-200 font-semibold">Bosh Admin</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-zinc-500">Holati:</span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold">Faol</span>
+                  </div>
+                </div>
+
+                {/* Logout Action */}
+                <button
+                  onClick={logout}
+                  className="w-full bg-red-500/10 border border-red-500/25 hover:bg-red-500/25 text-red-400 hover:text-red-300 font-bold py-3.5 px-4 rounded-xl transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <FaSignOutAlt size={16} />
+                  <span>Tizimdan chiqish</span>
+                </button>
+              </div>
+
+              {/* Server Details & Guidance */}
+              <div className="bg-zinc-900/30 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm text-xs text-zinc-500 leading-relaxed space-y-3">
+                <h4 className="font-bold text-zinc-400 text-sm">Boshqaruv Tizimi Bo'yicha Yo'riqnoma:</h4>
+                <p>1. <strong>Moliya & Statistika:</strong> Kunlik, haftalik va oylik tushumlarni hamda ommabop xizmatlar taqsimotini nazorat qilish.</p>
+                <p>2. <strong>Buyurtmalar:</strong> Mijozlar tomonidan yuklangan to'lov cheklarini tekshirish, tasdiqlash yoki rad etish.</p>
+                <p>3. <strong>Mijozlar:</strong> Ro'yxatdan o'tgan mijozlarni bloklash yoki o'chirish.</p>
+                <p className="text-emerald-500/70 font-semibold border-t border-white/5 pt-3 mt-1 text-center">Tizim holati: Real vaqt rejimi (MongoDB ulanishi faol)</p>
               </div>
             </div>
           )}
