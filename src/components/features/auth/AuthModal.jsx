@@ -171,7 +171,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {activeTab === 'register' && (
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5 pl-1">
+              <label className="block text-left text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5 pl-1">
                 Ismingiz *
               </label>
               <div className="relative">
@@ -193,7 +193,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
           )}
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5 pl-1">
+            <label className="block text-left text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5 pl-1">
               Telefon raqamingiz *
             </label>
             <div className="relative">
@@ -215,7 +215,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
 
           {activeTab === 'register' && (
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5 pl-1">
+              <label className="block text-left text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5 pl-1">
                 Telegram username (ixtiyoriy)
               </label>
               <div className="relative">
@@ -234,7 +234,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
           )}
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5 pl-1">
+            <label className="block text-left text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5 pl-1">
               Parol *
             </label>
             <div className="relative">
