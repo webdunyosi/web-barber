@@ -243,7 +243,7 @@ const AdminLayout = () => {
       </aside>
 
       {/* Main Admin Dashboard Workspace */}
-      <main className="flex-1 min-w-0 p-4 md:p-8 pb-24 lg:pb-8 overflow-y-auto">
+      <main className="flex-1 min-w-0 p-4 md:p-8 pb-20 lg:pb-8 overflow-y-auto">
         <Outlet />
       </main>
 

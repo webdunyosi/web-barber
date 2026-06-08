@@ -414,7 +414,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="w-full pb-16 text-white">
+    <div className="w-full text-white">
       {/* Title Header */}
       <div className="hidden md:flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6 mb-8">
         <div>
@@ -720,87 +720,161 @@ const AdminDashboard = () => {
                   <p className="text-gray-400 text-sm">Hech qanday mijoz topilmadi.</p>
                 </div>
               ) : (
-                <div className="overflow-x-auto bg-zinc-900/50 border border-zinc-800 rounded-2xl backdrop-blur-sm">
-                  <table className="w-full text-left border-collapse min-w-[600px]">
-                    <thead>
-                      <tr className="border-b border-zinc-800 text-xs font-bold uppercase tracking-wider text-zinc-400">
-                        <th className="p-4 pl-6">Foydalanuvchi</th>
-                        <th className="p-4">Telefon</th>
-                        <th className="p-4">Telegram</th>
-                        <th className="p-4">Ro'yxatdan o'tdi</th>
-                        <th className="p-4">Holat</th>
-                        <th className="p-4 pr-6 text-right">Amallar</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-zinc-850">
-                      {filteredUsers.map((client) => (
-                        <tr
-                          key={client.id || client._id}
-                          className="hover:bg-zinc-800/20 transition-colors text-sm"
-                        >
-                          <td className="p-4 pl-6 font-semibold flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-750 flex items-center justify-center font-bold text-xs uppercase text-zinc-300">
+                <div className="space-y-4">
+                  {/* Mobile list view: visible only on small screens */}
+                  <div className="grid grid-cols-1 gap-4 md:hidden">
+                    {filteredUsers.map((client) => (
+                      <div key={client.id || client._id} className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4 space-y-3 backdrop-blur-sm">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-750 flex items-center justify-center font-bold text-xs uppercase text-zinc-300 select-none">
                               {(client.name || 'M').charAt(0)}
                             </div>
-                            <span>{client.name}</span>
-                          </td>
-                          <td className="p-4 font-mono text-zinc-300">{client.phone}</td>
-                          <td className="p-4">
+                            <div>
+                              <h5 className="font-semibold text-white text-sm">{client.name}</h5>
+                              <p className="text-[10px] text-zinc-550">{new Date(client.createdAt).toLocaleDateString('uz-UZ')} da qo'shildi</p>
+                            </div>
+                          </div>
+                          <span className={`inline-block text-xxs font-bold px-2 py-0.5 rounded-full ${
+                            client.status === 'active'
+                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25'
+                              : 'bg-red-500/10 text-red-400 border border-red-500/25'
+                          }`}>
+                            {client.status === 'active' ? 'Faol' : 'Bloklangan'}
+                          </span>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-2 text-xs border-t border-white/5 pt-3">
+                          <div>
+                            <span className="text-zinc-500 block text-[10px] uppercase font-bold tracking-wider mb-0.5">Telefon</span>
+                            <span className="font-mono text-zinc-300 whitespace-nowrap">{client.phone}</span>
+                          </div>
+                          <div>
+                            <span className="text-zinc-500 block text-[10px] uppercase font-bold tracking-wider mb-0.5">Telegram</span>
                             {client.telegram ? (
                               <a
                                 href={`https://t.me/${client.telegram}`}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="text-emerald-400 hover:underline hover:text-emerald-300"
+                                className="text-emerald-400 hover:underline truncate block"
                               >
                                 @{client.telegram}
                               </a>
                             ) : (
                               <span className="text-zinc-650">-</span>
                             )}
-                          </td>
-                          <td className="p-4 text-zinc-400">
-                            {new Date(client.createdAt).toLocaleDateString('uz-UZ')}
-                          </td>
-                          <td className="p-4">
-                            <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full ${
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-end gap-2 border-t border-white/5 pt-3">
+                          <button
+                            disabled={actionLoading === (client.id || client._id)}
+                            onClick={() => handleBlockUser(client.id || client._id, client.status)}
+                            className={`flex-1 py-2 px-3 rounded-xl border text-xs font-bold transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 ${
                               client.status === 'active'
-                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25'
-                                : 'bg-red-500/10 text-red-400 border border-red-500/25'
-                            }`}>
-                              {client.status === 'active' ? 'Faol' : 'Bloklangan'}
-                            </span>
-                          </td>
-                          <td className="p-4 pr-6 text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              {/* Block toggle */}
-                              <button
-                                disabled={actionLoading === (client.id || client._id)}
-                                onClick={() => handleBlockUser(client.id || client._id, client.status)}
-                                className={`p-2 rounded-lg border transition-all active:scale-95 cursor-pointer ${
-                                  client.status === 'active'
-                                    ? 'bg-amber-500/10 border-amber-500/25 text-amber-400 hover:bg-amber-500/25'
-                                    : 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25'
-                                }`}
-                                title={client.status === 'active' ? 'Bloklash' : 'Blokdan chiqarish'}
-                              >
-                                <FaBan size={12} />
-                              </button>
-                              {/* Delete */}
-                              <button
-                                disabled={actionLoading === (client.id || client._id)}
-                                onClick={() => handleDeleteUser(client.id || client._id)}
-                                className="p-2 bg-red-500/10 border border-red-500/25 text-red-400 hover:bg-red-500/25 rounded-lg transition-all active:scale-95 cursor-pointer"
-                                title="O'chirish"
-                              >
-                                <FaTrash size={12} />
-                              </button>
-                            </div>
-                          </td>
+                                ? 'bg-amber-500/10 border-amber-500/25 text-amber-400 hover:bg-amber-500/25'
+                                : 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25'
+                            }`}
+                          >
+                            <FaBan size={11} />
+                            <span>{client.status === 'active' ? 'Bloklash' : 'Faollashtirish'}</span>
+                          </button>
+                          <button
+                            disabled={actionLoading === (client.id || client._id)}
+                            onClick={() => handleDeleteUser(client.id || client._id)}
+                            className="p-2 bg-red-500/10 border border-red-500/25 text-red-400 hover:bg-red-500/25 rounded-xl transition-all active:scale-95 cursor-pointer"
+                            title="O'chirish"
+                          >
+                            <FaTrash size={12} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Desktop table view: visible on medium screens and up */}
+                  <div className="hidden md:block overflow-x-auto bg-zinc-900/50 border border-zinc-800 rounded-2xl backdrop-blur-sm">
+                    <table className="w-full text-left border-collapse min-w-[600px]">
+                      <thead>
+                        <tr className="border-b border-zinc-800 text-xs font-bold uppercase tracking-wider text-zinc-400">
+                          <th className="p-4 pl-6 whitespace-nowrap">Foydalanuvchi</th>
+                          <th className="p-4 whitespace-nowrap">Telefon</th>
+                          <th className="p-4 whitespace-nowrap">Telegram</th>
+                          <th className="p-4 whitespace-nowrap">Ro'yxatdan o'tdi</th>
+                          <th className="p-4 whitespace-nowrap">Holat</th>
+                          <th className="p-4 pr-6 text-right whitespace-nowrap">Amallar</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-zinc-850">
+                        {filteredUsers.map((client) => (
+                          <tr
+                            key={client.id || client._id}
+                            className="hover:bg-zinc-800/20 transition-colors text-sm"
+                          >
+                            <td className="p-4 pl-6 font-semibold flex items-center gap-2.5 whitespace-nowrap">
+                              <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-750 flex items-center justify-center font-bold text-xs uppercase text-zinc-300">
+                                {(client.name || 'M').charAt(0)}
+                              </div>
+                              <span>{client.name}</span>
+                            </td>
+                            <td className="p-4 font-mono text-zinc-300 whitespace-nowrap">{client.phone}</td>
+                            <td className="p-4 whitespace-nowrap">
+                              {client.telegram ? (
+                                <a
+                                  href={`https://t.me/${client.telegram}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-emerald-400 hover:underline hover:text-emerald-300"
+                                >
+                                  @{client.telegram}
+                                </a>
+                              ) : (
+                                <span className="text-zinc-655">-</span>
+                              )}
+                            </td>
+                            <td className="p-4 text-zinc-400 whitespace-nowrap">
+                              {new Date(client.createdAt).toLocaleDateString('uz-UZ')}
+                            </td>
+                            <td className="p-4 whitespace-nowrap">
+                              <span className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full ${
+                                client.status === 'active'
+                                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25'
+                                  : 'bg-red-500/10 text-red-400 border border-red-500/25'
+                              }`}>
+                                {client.status === 'active' ? 'Faol' : 'Bloklangan'}
+                              </span>
+                            </td>
+                            <td className="p-4 pr-6 text-right whitespace-nowrap">
+                              <div className="flex items-center justify-end gap-2">
+                                {/* Block toggle */}
+                                <button
+                                  disabled={actionLoading === (client.id || client._id)}
+                                  onClick={() => handleBlockUser(client.id || client._id, client.status)}
+                                  className={`p-2 rounded-lg border transition-all active:scale-95 cursor-pointer ${
+                                    client.status === 'active'
+                                      ? 'bg-amber-500/10 border-amber-500/25 text-amber-400 hover:bg-amber-500/25'
+                                      : 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25'
+                                  }`}
+                                  title={client.status === 'active' ? 'Bloklash' : 'Blokdan chiqarish'}
+                                >
+                                  <FaBan size={12} />
+                                </button>
+                                {/* Delete */}
+                                <button
+                                  disabled={actionLoading === (client.id || client._id)}
+                                  onClick={() => handleDeleteUser(client.id || client._id)}
+                                  className="p-2 bg-red-500/10 border border-red-500/25 text-red-400 hover:bg-red-500/25 rounded-lg transition-all active:scale-95 cursor-pointer"
+                                  title="O'chirish"
+                                >
+                                  <FaTrash size={12} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
             </div>
