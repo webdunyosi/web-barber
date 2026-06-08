@@ -23,6 +23,235 @@ import {
 } from 'react-icons/fa';
 import { formatPrice } from '../utils/format';
 
+// ================= SKELETON LOADERS =================
+
+const DashboardSkeleton = () => (
+  <div className="space-y-8 animate-pulse">
+    {/* Cards Grid */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="bg-zinc-900/40 border border-zinc-800/40 rounded-2xl p-6 flex items-center justify-between">
+          <div className="space-y-3 flex-1 pr-4">
+            <div className="h-3 w-1/2 bg-zinc-800 rounded"></div>
+            <div className="h-7 w-3/4 bg-zinc-800 rounded"></div>
+            <div className="h-2.5 w-2/3 bg-zinc-800 rounded"></div>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-zinc-800/80 shrink-0"></div>
+        </div>
+      ))}
+    </div>
+
+    {/* Quick Actions & Recent Pending Bookings */}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Recent Pending Bookings */}
+      <div className="lg:col-span-2 bg-zinc-900/30 border border-zinc-800/40 rounded-2xl p-6 space-y-4">
+        <div className="h-5 w-1/3 bg-zinc-800 rounded"></div>
+        <div className="space-y-3">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="bg-zinc-950/20 border border-zinc-800/40 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-2 flex-1">
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-24 bg-zinc-800 rounded"></div>
+                  <div className="h-3.5 w-20 bg-zinc-800 rounded"></div>
+                </div>
+                <div className="h-3.5 w-1/2 bg-zinc-800 rounded"></div>
+                <div className="h-3 w-1/3 bg-zinc-800 rounded"></div>
+              </div>
+              <div className="flex gap-2">
+                <div className="h-8 w-20 bg-zinc-800 rounded-lg"></div>
+                <div className="h-8 w-20 bg-zinc-800 rounded-lg"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* System Stats Summary */}
+      <div className="bg-zinc-900/30 border border-zinc-800/40 rounded-2xl p-6 flex flex-col justify-between space-y-6">
+        <div className="space-y-4">
+          <div className="h-5 w-1/2 bg-zinc-800 rounded"></div>
+          <div className="space-y-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="flex justify-between border-b border-white/5 pb-2">
+                <div className="h-3.5 w-1/3 bg-zinc-800 rounded"></div>
+                <div className="h-3.5 w-12 bg-zinc-800 rounded"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="h-10 w-full bg-zinc-800 rounded-xl"></div>
+      </div>
+    </div>
+  </div>
+);
+
+const BookingsSkeleton = () => (
+  <div className="space-y-6 animate-pulse">
+    {/* Filters Panel */}
+    <div className="flex flex-col md:flex-row gap-4 bg-zinc-900/30 border border-zinc-800/40 rounded-2xl p-4">
+      <div className="flex-1 h-11 bg-zinc-800/50 rounded-xl"></div>
+      <div className="w-full md:w-56 h-11 bg-zinc-800/50 rounded-xl"></div>
+    </div>
+
+    {/* Cards */}
+    <div className="grid grid-cols-1 gap-4">
+      {[...Array(3)].map((_, i) => (
+        <div key={i} className="bg-zinc-900/30 border border-zinc-800/40 rounded-2xl p-6 flex flex-col md:flex-row justify-between gap-6">
+          <div className="flex-1 space-y-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="h-6 w-32 bg-zinc-800 rounded"></div>
+              <div className="h-5 w-24 bg-zinc-800 rounded"></div>
+              <div className="h-5 w-16 bg-zinc-800 rounded-full"></div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 border-t border-white/5 pt-4">
+              <div className="space-y-2">
+                <div className="h-3 w-16 bg-zinc-800 rounded"></div>
+                <div className="h-4 w-28 bg-zinc-800 rounded"></div>
+                <div className="h-3.5 w-20 bg-zinc-800 rounded"></div>
+              </div>
+              <div className="space-y-2">
+                <div className="h-3 w-20 bg-zinc-800 rounded"></div>
+                <div className="h-4 w-24 bg-zinc-800 rounded"></div>
+                <div className="h-3.5 w-16 bg-zinc-800 rounded"></div>
+              </div>
+              <div className="space-y-2">
+                <div className="h-3 w-12 bg-zinc-800 rounded"></div>
+                <div className="h-6 w-20 bg-zinc-800 rounded-full"></div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row md:flex-col items-center justify-between gap-4 md:border-l md:border-white/5 md:pl-6 shrink-0 min-w-[150px]">
+            <div className="w-28 h-20 bg-zinc-800 rounded-xl"></div>
+            <div className="w-full h-8 bg-zinc-800 rounded-xl"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const UsersSkeleton = () => (
+  <div className="space-y-6 animate-pulse">
+    {/* Filters Panel */}
+    <div className="flex flex-col md:flex-row gap-4 bg-zinc-900/30 border border-zinc-800/40 rounded-2xl p-4">
+      <div className="flex-1 h-11 bg-zinc-800/50 rounded-xl"></div>
+      <div className="w-full md:w-56 h-11 bg-zinc-800/50 rounded-xl"></div>
+    </div>
+
+    {/* Table */}
+    <div className="overflow-x-auto bg-zinc-900/30 border border-zinc-800/40 rounded-2xl">
+      <table className="w-full text-left border-collapse min-w-[600px]">
+        <thead>
+          <tr className="border-b border-zinc-800 text-xs font-bold uppercase tracking-wider text-zinc-500">
+            <th className="p-4 pl-6">Foydalanuvchi</th>
+            <th className="p-4">Telefon</th>
+            <th className="p-4">Telegram</th>
+            <th className="p-4">Ro'yxatdan o'tdi</th>
+            <th className="p-4">Holat</th>
+            <th className="p-4 pr-6 text-right">Amallar</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-zinc-850">
+          {[...Array(5)].map((_, i) => (
+            <tr key={i} className="text-sm">
+              <td className="p-4 pl-6 flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-zinc-800 shrink-0"></div>
+                <div className="h-4 w-28 bg-zinc-800 rounded"></div>
+              </td>
+              <td className="p-4">
+                <div className="h-4 w-24 bg-zinc-800 rounded"></div>
+              </td>
+              <td className="p-4">
+                <div className="h-4 w-20 bg-zinc-800 rounded"></div>
+              </td>
+              <td className="p-4">
+                <div className="h-4 w-16 bg-zinc-800 rounded"></div>
+              </td>
+              <td className="p-4">
+                <div className="h-5 w-14 bg-zinc-800 rounded-full"></div>
+              </td>
+              <td className="p-4 pr-6 text-right">
+                <div className="flex justify-end gap-2">
+                  <div className="w-8 h-8 bg-zinc-800 rounded-lg"></div>
+                  <div className="w-8 h-8 bg-zinc-800 rounded-lg"></div>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
+const StatisticsSkeleton = () => (
+  <div className="space-y-8 animate-pulse">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Chart */}
+      <div className="lg:col-span-2 bg-zinc-900/30 border border-zinc-800/40 rounded-2xl p-6 space-y-6">
+        <div className="h-5 w-1/3 bg-zinc-800 rounded"></div>
+        <div className="h-64 bg-zinc-800/40 rounded-xl relative"></div>
+        <div className="flex justify-between pt-4 border-t border-white/5">
+          <div className="h-4 w-1/3 bg-zinc-800 rounded"></div>
+          <div className="h-4 w-1/4 bg-zinc-800 rounded"></div>
+        </div>
+      </div>
+
+      {/* Popular services */}
+      <div className="bg-zinc-900/30 border border-zinc-800/40 rounded-2xl p-6 flex flex-col justify-between space-y-6">
+        <div className="space-y-6">
+          <div className="h-5 w-1/2 bg-zinc-800 rounded"></div>
+          <div className="space-y-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="space-y-2">
+                <div className="flex justify-between">
+                  <div className="h-4 w-1/3 bg-zinc-800 rounded"></div>
+                  <div className="h-4 w-10 bg-zinc-800 rounded"></div>
+                </div>
+                <div className="h-2 bg-zinc-800 rounded-full"></div>
+                <div className="flex justify-between">
+                  <div className="h-3 w-16 bg-zinc-800 rounded"></div>
+                  <div className="h-3 w-12 bg-zinc-800 rounded"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="h-4 w-2/3 bg-zinc-800 rounded mx-auto"></div>
+      </div>
+    </div>
+  </div>
+);
+
+const ProfileSkeleton = () => (
+  <div className="max-w-xl mx-auto space-y-6 animate-pulse">
+    <div className="bg-zinc-900/30 border border-zinc-800/40 rounded-2xl p-6 md:p-8 flex flex-col items-center space-y-6">
+      <div className="w-28 h-28 rounded-full bg-zinc-800"></div>
+      <div className="space-y-2 text-center w-full flex flex-col items-center">
+        <div className="h-6 w-40 bg-zinc-800 rounded"></div>
+        <div className="h-4 w-32 bg-zinc-800 rounded"></div>
+      </div>
+      <div className="border-t border-b border-white/5 py-4 w-full space-y-3">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="flex justify-between">
+            <div className="h-4 w-24 bg-zinc-800 rounded"></div>
+            <div className="h-4 w-32 bg-zinc-800 rounded"></div>
+          </div>
+        ))}
+      </div>
+      <div className="h-12 w-full bg-zinc-805 rounded-xl"></div>
+    </div>
+    <div className="bg-zinc-900/20 border border-zinc-800/40 rounded-2xl p-6 space-y-3">
+      <div className="h-4 w-1/3 bg-zinc-800 rounded"></div>
+      <div className="space-y-2">
+        <div className="h-3 w-full bg-zinc-800 rounded"></div>
+        <div className="h-3 w-5/6 bg-zinc-800 rounded"></div>
+        <div className="h-3 w-4/5 bg-zinc-800 rounded"></div>
+      </div>
+    </div>
+  </div>
+);
+
 const AdminDashboard = () => {
   const {
     user,
@@ -157,6 +386,22 @@ const AdminDashboard = () => {
     return matchSearch && b.status === bookingStatusFilter;
   });
 
+  const renderSkeleton = () => {
+    switch (activeTab) {
+      case 'bookings':
+        return <BookingsSkeleton />;
+      case 'users':
+        return <UsersSkeleton />;
+      case 'statistics':
+        return <StatisticsSkeleton />;
+      case 'profile':
+        return <ProfileSkeleton />;
+      case 'dashboard':
+      default:
+        return <DashboardSkeleton />;
+    }
+  };
+
   return (
     <div className="w-full pb-16 text-white">
       {/* Title Header */}
@@ -185,9 +430,7 @@ const AdminDashboard = () => {
 
       {/* Loading Overlay inside tabs */}
       {isDataLoading && !stats ? (
-        <div className="h-64 flex items-center justify-center">
-          <div className="w-10 h-10 rounded-full border-4 border-emerald-500/10 border-t-emerald-500 animate-spin"></div>
-        </div>
+        renderSkeleton()
       ) : (
         <div>
           {/* ================= TAB: BOOKINGS ================= */}
