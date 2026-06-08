@@ -32,11 +32,11 @@ const AiChatPage = () => {
   const messagesEndRef = useRef(null);
 
   const quickSuggestions = [
-    { text: "💇‍♂️ Xizmatlar va narxlar", type: "services" },
-    { text: "🧔 Sartarosh haqida", type: "barber" },
-    { text: "📅 Qanday yozilish mumkin?", type: "booking" },
-    { text: "🎨 Soch stillari", type: "styles" },
-    { text: "📍 Manzil va ish vaqti", type: "location" }
+    { text: "💇‍♂️ Xizmatlar", type: "services" },
+    { text: "🧔 Sartarosh", type: "barber" },
+    { text: "📅 Yozilish", type: "booking" },
+    { text: "🎨 Stillar", type: "styles" },
+    { text: "📍 Manzil", type: "location" }
   ];
 
   // Sound generator using Web Audio API
@@ -450,12 +450,18 @@ const AiChatPage = () => {
         </div>
 
         {/* Suggestion Chips */}
-        <div className="px-4 py-2 bg-zinc-950/30 border-t border-white/5 flex gap-2 overflow-x-auto scrollbar-none whitespace-nowrap">
+        <div 
+          className="px-4 py-2 bg-zinc-950/40 border-t border-white/5 flex gap-1.5 overflow-x-auto scrollbar-none whitespace-nowrap scroll-smooth"
+          style={{ 
+            maskImage: 'linear-gradient(to right, black 85%, transparent 100%)', 
+            WebkitMaskImage: 'linear-gradient(to right, black 85%, transparent 100%)' 
+          }}
+        >
           {quickSuggestions.map((suggest, index) => (
             <button
               key={index}
               onClick={() => handleSendMessage(suggest.text.replace(/^[^\s]+\s/, ''))}
-              className="bg-zinc-900 hover:bg-emerald-500/10 hover:border-emerald-500/40 text-zinc-300 hover:text-emerald-400 border border-white/10 text-xs font-semibold py-1.5 px-3 rounded-full transition-all shrink-0 cursor-pointer active:scale-[0.95]"
+              className="bg-zinc-900/50 backdrop-blur-md hover:bg-emerald-500/10 text-zinc-300 hover:text-emerald-400 border border-white/10 hover:border-emerald-500/40 text-[10px] sm:text-xs font-semibold py-1 px-2.5 rounded-lg transition-all duration-300 shrink-0 cursor-pointer active:scale-[0.95] shadow-xs hover:shadow-[0_0_10px_rgba(16,185,129,0.15)]"
             >
               {suggest.text}
             </button>
