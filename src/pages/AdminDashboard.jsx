@@ -62,9 +62,26 @@ const AdminDashboard = () => {
       ]);
       
       // Sort users: newest first. Exclude current admin to prevent self-deletion
-      setUsersList(usersData.filter(u => u.id !== user?.id).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+      const cleanUsers = Array.isArray(usersData)
+        ? usersData.filter(u => u && u.id !== user?.id && u._id !== user?.id)
+        : [];
+      const sortedUsers = cleanUsers.sort((a, b) => {
+        const dateB = b && b.createdAt ? new Date(b.createdAt) : new Date(0);
+        const dateA = a && a.createdAt ? new Date(a.createdAt) : new Date(0);
+        return dateB - dateA;
+      });
+      setUsersList(sortedUsers);
+
       // Sort bookings: newest first
-      setBookingsList(bookingsData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+      const cleanBookings = Array.isArray(bookingsData)
+        ? bookingsData.filter(b => b !== null && b !== undefined)
+        : [];
+      const sortedBookings = cleanBookings.sort((a, b) => {
+        const dateB = b && b.createdAt ? new Date(b.createdAt) : new Date(0);
+        const dateA = a && a.createdAt ? new Date(a.createdAt) : new Date(0);
+        return dateB - dateA;
+      });
+      setBookingsList(sortedBookings);
       setStats(statsData);
     } catch (error) {
       console.error('Admin data loading error:', error);
@@ -123,6 +140,7 @@ const AdminDashboard = () => {
 
   // Filtering Logic
   const filteredUsers = usersList.filter(u => {
+    if (!u) return false;
     const matchSearch = (u.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
                         (u.phone || '').includes(searchTerm);
     if (userStatusFilter === 'all') return matchSearch;
@@ -130,6 +148,7 @@ const AdminDashboard = () => {
   });
 
   const filteredBookings = bookingsList.filter(b => {
+    if (!b) return false;
     const matchSearch = (b.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
                         (b.phone || '').includes(searchTerm) || 
                         (b.serviceName || '').toLowerCase().includes(searchTerm.toLowerCase());
