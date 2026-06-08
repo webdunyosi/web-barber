@@ -97,7 +97,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
         {/* Footer User Info section */}
         {isAuthenticated && (
-          <div className="p-4 border-t border-white/10 bg-zinc-950/40 shrink-0">
+          <div className="lg:hidden p-4 border-t border-white/10 bg-zinc-950/40 shrink-0">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold uppercase">

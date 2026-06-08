@@ -1,7 +1,9 @@
 // src/utils/api.js
 import axios from 'axios';
 
-const API_URL = 'https://web-barber-backend.onrender.com/api'; // 'http://localhost:5000/api' - local backend uchun
+const API_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000/api'
+  : 'https://web-barber-backend.onrender.com/api';
 const TELEGRAM_BOT_TOKEN = '8598199374:AAF2PC8uHwutdUg0VU9Q8jeypNzV3egcOXk';
 const TELEGRAM_CHAT_ID = '5414733748';
 
@@ -529,4 +531,45 @@ export const getMyBookingsApi = async (token) => {
     headers: { Authorization: `Bearer ${token}` }
   });
   return response.data;
-};
+};
+
+// Update profile details
+export const updateProfileApi = async (token, userData) => {
+  if (MOCK_MODE) {
+    const users = getMockUsers();
+    // In mock mode, the token is e.g. "mock-jwt-token-user_1"
+    const userId = token.replace('mock-jwt-token-', '');
+    const userIndex = users.findIndex(u => u.id === userId);
+    
+    if (userIndex === -1) {
+      throw new Error("Foydalanuvchi topilmadi");
+    }
+    
+    users[userIndex].name = userData.name;
+    // Strip @ from telegram if present
+    let cleanTelegram = userData.telegram || '';
+    if (cleanTelegram.startsWith('@')) {
+      cleanTelegram = cleanTelegram.substring(1);
+    }
+    users[userIndex].telegram = cleanTelegram.trim();
+    
+    saveMockUsers(users);
+    
+    return {
+      user: {
+        id: users[userIndex].id,
+        name: users[userIndex].name,
+        phone: users[userIndex].phone,
+        telegram: users[userIndex].telegram,
+        role: users[userIndex].role,
+        status: users[userIndex].status
+      }
+    };
+  }
+
+  const response = await axios.put(`${API_URL}/auth/profile`, userData, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+

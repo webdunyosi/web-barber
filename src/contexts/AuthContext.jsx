@@ -10,7 +10,8 @@ import {
   getBookingsApi,
   updateBookingStatusApi,
   getStatisticsApi,
-  getMyBookingsApi
+  getMyBookingsApi,
+  updateProfileApi
 } from '../utils/api';
 
 export const AuthProvider = ({ children }) => {
@@ -114,6 +115,21 @@ export const AuthProvider = ({ children }) => {
     return await getMyBookingsApi(token);
   };
 
+  const updateProfile = async (userData) => {
+    if (!token) throw new Error('Unauthenticated');
+    setLoading(true);
+    try {
+      const res = await updateProfileApi(token, userData);
+      const updatedUser = res.user || res;
+      setUser(updatedUser);
+      return updatedUser;
+    } catch (err) {
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = {
     user,
     token,
@@ -129,7 +145,8 @@ export const AuthProvider = ({ children }) => {
     getBookings,
     updateBookingStatus,
     getStatistics,
-    getMyBookings
+    getMyBookings,
+    updateProfile
   };
 
   return (
