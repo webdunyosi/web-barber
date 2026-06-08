@@ -160,7 +160,19 @@ const BookingPage = () => {
   };
 
   return (
-    <div className="w-full lg:w-5/6 ml-auto pb-4 lg:pb-32">
+    <div className="w-full lg:w-5/6 ml-auto pb-4 lg:pb-32 relative">
+      {/* Back button on mobile when top header is hidden */}
+      {currentStep > 1 && (
+        <button
+          onClick={handleBack}
+          className="absolute top-5 left-4 lg:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-zinc-800/80 hover:bg-zinc-700 border border-emerald-500/30 hover:border-emerald-500/60 text-white transition-all active:scale-[0.95] cursor-pointer shadow-md z-10"
+          title="Ortga"
+        >
+          <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+      )}
       
       {/* Step indicator for mobile */}
       <div className="md:hidden mb-6 flex items-center justify-center gap-2 pt-6">
