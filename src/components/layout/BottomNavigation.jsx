@@ -10,7 +10,7 @@ const BottomNavigation = () => {
       {/* Background with Notch */}
       <div className="absolute inset-0 flex items-end h-[68px] -z-10 pointer-events-none">
         <div className="flex-1 h-full bg-zinc-950/95 border-t border-white/10 rounded-tl-2xl"></div>
-        <div className="w-[90px] h-[68px] shrink-0">
+        <div className="w-[90px] h-[68px] shrink-0 -mx-px">
           <svg className="w-full h-full text-zinc-950/95" viewBox="0 0 90 68" fill="currentColor">
             <path d="M 0 0.5 C 25 0.5, 25 35, 45 35 C 65 35, 65 0.5, 90 0.5 L 90 68 L 0 68 Z" />
             <path d="M 0 0.5 C 25 0.5, 25 35, 45 35 C 65 35, 65 0.5, 90 0.5" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" fill="none" />
@@ -57,7 +57,7 @@ const BottomNavigation = () => {
           <NavLink
             to="/sartarosh"
             className={({ isActive }) =>
-              `absolute -top-5 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 shadow-[0_4px_20px_rgba(16,185,129,0.3)] border-2 ${
+              `absolute -top-2.5 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 shadow-[0_4px_20px_rgba(16,185,129,0.3)] border-2 ${
                 isActive
                   ? 'bg-emerald-500 text-white border-emerald-400 scale-110 shadow-[0_0_25px_rgba(16,185,129,0.5)]'
                   : 'bg-zinc-900 text-emerald-400 border-emerald-500/40 hover:border-emerald-400 hover:bg-zinc-850'
