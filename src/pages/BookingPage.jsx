@@ -236,6 +236,7 @@ const BookingPage = () => {
             onSelectDate={setSelectedDate}
             onSelectTime={(time) => {
               setSelectedTime(time);
+              if (!time) return; // Vaqt tozalanganda (masalan, sana o'zgarganda) keyingi bosqichga o'tmaymiz
               setTimeout(() => {
                 if (!isAuthenticated) {
                   setIsAuthModalOpen(true);
