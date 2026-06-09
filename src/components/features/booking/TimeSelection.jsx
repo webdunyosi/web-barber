@@ -116,28 +116,35 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
           <h3 className="text-lg sm:text-xl font-bold text-white">Sanani tanlang</h3>
         </div>
         
-        {/* Toggle Button */}
-        <button
-          onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-          className={`w-full md:w-96 flex items-center justify-between p-4 rounded-xl border transition-all duration-300 ${
-            isCalendarOpen || selectedDate
-              ? 'bg-zinc-800/90 border-emerald-500 shadow-lg shadow-emerald-500/20'
-              : 'bg-zinc-800/50 border-zinc-700/50 hover:bg-zinc-800 hover:border-emerald-500/50'
-          }`}
-        >
-          <span className={`font-medium ${selectedDate ? 'text-white' : 'text-gray-400'}`}>
-            {formatSelectedDate()}
-          </span>
-          <svg 
-            className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isCalendarOpen ? 'rotate-180' : ''}`} 
-            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        {/* Toggle Button or Skeleton Loader */}
+        {isLoading ? (
+          <div className="w-full md:w-96 h-[58px] rounded-xl bg-zinc-800/30 border border-zinc-700/20 animate-pulse flex items-center justify-between px-4">
+            <div className="w-32 h-5 bg-zinc-700/40 rounded"></div>
+            <div className="w-5 h-5 bg-zinc-700/40 rounded-full"></div>
+          </div>
+        ) : (
+          <button
+            onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+            className={`w-full md:w-96 flex items-center justify-between p-4 rounded-xl border transition-all duration-300 ${
+              isCalendarOpen || selectedDate
+                ? 'bg-zinc-800/90 border-emerald-500 shadow-lg shadow-emerald-500/20'
+                : 'bg-zinc-800/50 border-zinc-700/50 hover:bg-zinc-800 hover:border-emerald-500/50'
+            }`}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
+            <span className={`font-medium ${selectedDate ? 'text-white' : 'text-gray-400'}`}>
+              {formatSelectedDate()}
+            </span>
+            <svg 
+              className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isCalendarOpen ? 'rotate-180' : ''}`} 
+              fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        )}
 
         {/* Calendar Popup */}
-        {isCalendarOpen && (
+        {!isLoading && isCalendarOpen && (
           <div className="absolute top-full mt-2 w-full md:w-96 bg-zinc-900 border border-zinc-700/80 rounded-2xl shadow-2xl p-5 animate-fade-in-up backdrop-blur-xl">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
