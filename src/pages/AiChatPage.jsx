@@ -19,14 +19,28 @@ import { sendChatMessageApi } from '../utils/api';
 
 const AiChatPage = () => {
   const navigate = useNavigate();
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: 'bot',
-      text: "Salom! Men Web Barber dasturining AI yordamchisiman. Sizga qanday yordam bera olaman? Xizmatlarimiz, soch stillari yoki bo'sh vaqtlarimiz haqida so'rashingiz mumkin.",
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  const [messages, setMessages] = useState(() => {
+    const saved = localStorage.getItem('barber_chat_messages');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Error loading chat history:', e);
+      }
     }
-  ]);
+    return [
+      {
+        id: 1,
+        sender: 'bot',
+        text: "Salom! Men Web Barber dasturining AI yordamchisiman. Sizga qanday yordam bera olaman? Xizmatlarimiz, soch stillari yoki bo'sh vaqtlarimiz haqida so'rashingiz mumkin.",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      }
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('barber_chat_messages', JSON.stringify(messages));
+  }, [messages]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -171,14 +185,16 @@ const AiChatPage = () => {
 
   const clearChat = () => {
     if (window.confirm("Chat tarixini tozalashni xohlaysizmi?")) {
-      setMessages([
+      const initialMsg = [
         {
           id: Date.now(),
           sender: 'bot',
           text: "Chat tozalandi. Sizga qanday yordam bera olaman?",
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
-      ]);
+      ];
+      setMessages(initialMsg);
+      localStorage.setItem('barber_chat_messages', JSON.stringify(initialMsg));
     }
   };
 
