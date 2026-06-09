@@ -589,4 +589,24 @@ export const updateProfileApi = async (token, userData) => {
   });
   return response.data;
 };
+
+// ================= CHATBOT AI API =================
+export const sendChatMessageApi = async (message, chatHistory = []) => {
+  if (MOCK_MODE) {
+    return {
+      reply: "MOCK REJIM: Tizim hozirda o'rganish rejimida. Haqiqiy AI ga ulanish uchun `MOCK_MODE` ni `false` qiling va serverni ishga tushiring.",
+      action: "none"
+    };
+  }
+
+  const token = localStorage.getItem('barber_token');
+  const headers = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await axios.post(`${API_URL}/chat`, { message, history: chatHistory }, { headers });
+  return response.data;
+};
+
 

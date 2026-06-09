@@ -15,6 +15,7 @@ import {
 import barberData from '../data/barber.json';
 import barberProfile from '../data/barberProfile.json';
 import hairStyles from '../data/hairStyles.json';
+import { sendChatMessageApi } from '../utils/api';
 
 const AiChatPage = () => {
   const navigate = useNavigate();
@@ -92,132 +93,7 @@ const AiChatPage = () => {
   }, [messages, isTyping]);
 
   // Keyword response matching logic
-  const getBotResponse = (text) => {
-    const cleanText = text.toLowerCase().trim();
-    
-    // Services / Prices query
-    if (
-      cleanText.includes('xizmat') || 
-      cleanText.includes('narx') || 
-      cleanText.includes('qancha') || 
-      cleanText.includes('nimalar bor') || 
-      cleanText.includes('prays') ||
-      cleanText.includes('pul')
-    ) {
-      return {
-        text: "Biz quyidagi professional xizmatlarni taklif qilamiz. Sizga qulay bo'lishi uchun xizmat kartalarini taqdim etaman, ularni bosib to'g'ridan-to'g'ri buyurtma sahifasiga o'tishingiz mumkin:",
-        type: 'services',
-        data: barberData.services
-      };
-    }
-
-    // Barber info query
-    if (
-      cleanText.includes('sartarosh') || 
-      cleanText.includes('javohir') || 
-      cleanText.includes('aliyev') || 
-      cleanText.includes('ustoz') || 
-      cleanText.includes('kim') ||
-      cleanText.includes('bio') ||
-      cleanText.includes('tajriba')
-    ) {
-      return {
-        text: `Bizning bosh sartaroshimiz — **Javohir Aliyev**. U 15 yillik professional tajribaga ega bo'lib, Londondagi xalqaro kurslarni tamomlagan va O'zbekiston chempioni (2020) hisoblanadi. Mana u haqida qisqacha ma'lumot:`,
-        type: 'barber',
-        data: barberProfile
-      };
-    }
-
-    // Styles query
-    if (
-      cleanText.includes('stil') || 
-      cleanText.includes('soch turi') || 
-      cleanText.includes('turmak') || 
-      cleanText.includes('pompadour') || 
-      cleanText.includes('undercut') || 
-      cleanText.includes('crop') || 
-      cleanText.includes('fade') || 
-      cleanText.includes('soch')
-    ) {
-      return {
-        text: "Bizning salonda soch turiga qarab eng zamonaviy stillar tanlanadi. Quyida biz eng ko'p tavsiya etadigan uslublar keltirilgan. Batafsil ma'lumotni 'Stillar' sahifasida ham ko'rishingiz mumkin:",
-        type: 'styles',
-        data: hairStyles
-      };
-    }
-
-    // Booking instructions
-    if (
-      cleanText.includes('navbat') || 
-      cleanText.includes('yozilish') || 
-      cleanText.includes('bron') || 
-      cleanText.includes('buyurtma') || 
-      cleanText.includes('zakaz') || 
-      cleanText.includes('vaqt tanlash')
-    ) {
-      return {
-        text: "Sartaroshimizga navbatga yozilish juda oson! Buning uchun chap menyudagi yoki pastdagi **'Buyurtma qilish'** tugmasini bosing, xizmatni, o'zingizga qulay sana va soatni tanlab to'lov qiling. Har qanday savolda yordam berishga tayyorman!",
-        type: 'booking_link'
-      };
-    }
-
-    // Address & Working hours query
-    if (
-      cleanText.includes('manzil') || 
-      cleanText.includes('lokatsiya') || 
-      cleanText.includes('joy') || 
-      cleanText.includes('qayerda') || 
-      cleanText.includes('adres') ||
-      cleanText.includes('ish vaqt') || 
-      cleanText.includes('ish kuni') || 
-      cleanText.includes('soat') || 
-      cleanText.includes('hafta') || 
-      cleanText.includes('vaqt')
-    ) {
-      return {
-        text: "📍 **Bizning manzilimiz**: Toshkent shahri, Chilonzor tumani (metro bekatlariga yaqin)\n\n🕒 **Ish vaqti**:\n- Dushanba - Shanba: 09:00 - 18:30\n- Yakshanba: Dam olish kuni\n\nMijozlarimizga qulaylik yaratish maqsadida faqat oldindan navbatga yozilgan holda qabul qilamiz.",
-        type: 'location_info'
-      };
-    }
-
-    // Greetings
-    if (
-      cleanText.includes('salom') || 
-      cleanText.includes('assalom') || 
-      cleanText.includes('qale') || 
-      cleanText.includes('yaxshimi') || 
-      cleanText.includes('hello') || 
-      cleanText.includes('hi')
-    ) {
-      return {
-        text: "Assalomu alaykum! Web Barber AI yordamchisiga xush kelibsiz! Sizga qanday ko'mak bera olaman? Masalan, xizmatlar narxi, ish vaqtimiz yoki sartaroshimiz haqida so'rashingiz mumkin.",
-        type: 'greeting'
-      };
-    }
-
-    // Thanks
-    if (
-      cleanText.includes('rahmat') || 
-      cleanText.includes('tashakkur') || 
-      cleanText.includes('sog bo') || 
-      cleanText.includes('sog\' bo') || 
-      cleanText.includes('tushunarli') || 
-      cleanText.includes('ok')
-    ) {
-      return {
-        text: "Arziydi! Har doim sizga yordam berishdan xursandman. Sochingizga ideal ko'rinish berish uchun salonimizga kutib qolamiz! ✂️💈",
-        type: 'thanks'
-      };
-    }
-
-    // Default reply
-    return {
-      text: "Kechirasiz, ushbu savolni tushunmadim. Men Web Barber saloni haqidagi ma'lumotlarga moslashtirilganman. Iltimos, pastdagi tezkor tugmalardan foydalanib ko'ring yoki quyidagilardan biri haqida so'rang:\n\n- Xizmatlar va ularning narxi\n- Sartarosh Javohir Aliyev\n- Zamonaviy soch stillari\n- Ish vaqti va lokatsiya",
-      type: 'unknown'
-    };
-  };
-
-  const handleSendMessage = (textToSend) => {
+  const handleSendMessage = async (textToSend) => {
     const messageText = textToSend || inputText;
     if (!messageText.trim()) return;
 
@@ -229,27 +105,61 @@ const AiChatPage = () => {
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
+    // Keep current history for API call
+    const currentHistory = [...messages, newUserMessage];
+
     setMessages(prev => [...prev, newUserMessage]);
     setInputText('');
     playSound('sent');
     setIsTyping(true);
 
-    // Simulate AI typing delay
-    setTimeout(() => {
-      const response = getBotResponse(messageText);
+    try {
+      // Send chat message and history to backend API
+      const result = await sendChatMessageApi(messageText, messages);
+
+      // Determine attachmentType and attachmentData based on result.action
+      let attachmentType = 'none';
+      let attachmentData = null;
+
+      if (result.action === 'services') {
+        attachmentType = 'services';
+        attachmentData = barberData.services;
+      } else if (result.action === 'barber') {
+        attachmentType = 'barber';
+        attachmentData = barberProfile;
+      } else if (result.action === 'styles') {
+        attachmentType = 'styles';
+        attachmentData = hairStyles;
+      } else if (result.action === 'booking') {
+        attachmentType = 'booking_link';
+      }
+
       const newBotMessage = {
         id: Date.now() + 1,
         sender: 'bot',
-        text: response.text,
+        text: result.reply || result.error || 'Kechirasiz, xatolik yuz berdi.',
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        attachmentType: response.type,
-        attachmentData: response.data
+        attachmentType,
+        attachmentData
       };
-      
+
       setMessages(prev => [...prev, newBotMessage]);
-      setIsTyping(false);
       playSound('received');
-    }, 1000 + Math.random() * 800); // 1-1.8 seconds delay
+    } catch (error) {
+      console.error('Chat API error:', error);
+      const errorBotMessage = {
+        id: Date.now() + 1,
+        sender: 'bot',
+        text: "Kechirasiz, ulanishda xatolik yuz berdi. Iltimos, keyinroq qayta urinib ko'ring.",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        attachmentType: 'none',
+        attachmentData: null
+      };
+      setMessages(prev => [...prev, errorBotMessage]);
+      playSound('received');
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const handleKeyPress = (e) => {
