@@ -125,7 +125,7 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="w-full lg:w-5/6 ml-auto text-white px-4 py-6 pb-4 lg:pb-8">
+    <div className="w-full lg:w-5/6 ml-auto text-white px-4 py-6 pb-0 lg:pb-8">
       <div className="max-w-5xl mx-auto">
         
         {/* Page Title */}

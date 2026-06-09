@@ -160,7 +160,7 @@ const BookingPage = () => {
   };
 
   return (
-    <div className="w-full lg:w-5/6 ml-auto pb-4 lg:pb-32 relative">
+    <div className="w-full lg:w-5/6 ml-auto pb-0 lg:pb-32 relative">
       {/* Step indicator for mobile */}
       <div className="md:hidden mb-5 max-w-max mx-auto flex items-center justify-center gap-3 px-4 py-2 bg-zinc-900/80 border border-emerald-500/10 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-md">
         {currentStep > 1 && (

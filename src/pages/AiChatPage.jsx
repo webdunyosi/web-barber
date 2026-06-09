@@ -10,7 +10,8 @@ import {
   FaCut, 
   FaUserTie, 
   FaMapMarkerAlt, 
-  FaClock 
+  FaClock,
+  FaPalette
 } from 'react-icons/fa';
 import barberData from '../data/barber.json';
 import barberProfile from '../data/barberProfile.json';
@@ -47,11 +48,11 @@ const AiChatPage = () => {
   const messagesEndRef = useRef(null);
 
   const quickSuggestions = [
-    { text: "💇‍♂️ Xizmatlar", type: "services" },
-    { text: "🧔 Sartarosh", type: "barber" },
-    { text: "📅 Yozilish", type: "booking" },
-    { text: "🎨 Stillar", type: "styles" },
-    { text: "📍 Manzil", type: "location" }
+    { label: "Xizmatlar", type: "services", icon: <FaCut size={12} className="text-emerald-400" /> },
+    { label: "Sartarosh", type: "barber", icon: <FaUserTie size={12} className="text-emerald-400" /> },
+    { label: "Yozilish", type: "booking", icon: <FaCalendarAlt size={12} className="text-emerald-400" /> },
+    { label: "Stillar", type: "styles", icon: <FaPalette size={12} className="text-emerald-400" /> },
+    { label: "Manzil", type: "location", icon: <FaMapMarkerAlt size={12} className="text-emerald-400" /> }
   ];
 
   // Sound generator using Web Audio API
@@ -387,10 +388,11 @@ const AiChatPage = () => {
           {quickSuggestions.map((suggest, index) => (
             <button
               key={index}
-              onClick={() => handleSendMessage(suggest.text.replace(/^[^\s]+\s/, ''))}
-              className="bg-zinc-900/50 backdrop-blur-md hover:bg-emerald-500/10 text-zinc-300 hover:text-emerald-400 border border-white/10 hover:border-emerald-500/40 text-[10px] sm:text-xs font-semibold py-1 px-2.5 rounded-lg transition-all duration-300 shrink-0 cursor-pointer active:scale-[0.95] shadow-xs hover:shadow-[0_0_10px_rgba(16,185,129,0.15)]"
+              onClick={() => handleSendMessage(suggest.label)}
+              className="bg-zinc-900/50 backdrop-blur-md hover:bg-emerald-500/10 text-zinc-300 hover:text-emerald-400 border border-white/10 hover:border-emerald-500/40 text-[10px] sm:text-xs font-semibold py-1.5 px-3 rounded-lg transition-all duration-300 shrink-0 cursor-pointer active:scale-[0.95] shadow-xs hover:shadow-[0_0_10px_rgba(16,185,129,0.15)] flex items-center gap-1.5"
             >
-              {suggest.text}
+              {suggest.icon}
+              <span>{suggest.label}</span>
             </button>
           ))}
         </div>
