@@ -1,30 +1,34 @@
 [
   {
     "id": 1,
-    "title": "Klassik Pompadour",
-    "description": "Yuqori qismi hajmli va orqaga taragan zamonaviy klassik stil. Elegant va professional ko'rinish.",
+    "title": "Klassik Pompadour (Pompadour Style)",
+    "description": "Pompadour - yuqori qismidagi sochlar katta hajm berilib, yuqoriga va orqaga ko'tarib taraladigan klassik uslub. Elvis Presli davridan boshlab mashhur bo'lgan ushbu uslub sochga qo'shimcha hajm va ko'rk beradi. Sochni mahkamlash uchun pomada yoki mum (wax) kabi maxsus vositalar ishlatiladi. Elegant va ishonchli ko'rinish beradi.",
     "image": "/styles/1.png",
+    "video": "https://www.youtube.com/embed/LgCgN7P7Y9U",
     "category": "Soch Stili"
   },
   {
     "id": 2,
-    "title": "Undercut",
-    "description": "Yon taraflar juda qisqa, yuqori qismi uzun bo'lgan bold stil. Kontrast va zamonaviy.",
+    "title": "Kreativ Undercut (Undercut Styling)",
+    "description": "Undercut - yon va orqa sochlar juda qisqa olinib, tepa qismi sezilarli darajada uzun qoldiriladigan kontrastli soch turmagi. Ikki qism o'rtasida keskin chegara mavjud bo'lib, uzun sochlarni orqaga, yonga yoki to'zg'itib stil qilish imkonini beradi. O'ziga xoslikni va dadil ko'rinishni yaxshi ko'radigan yoshlar uchun ajoyib variant.",
     "image": "/styles/2.png",
+    "video": "https://www.youtube.com/embed/K84S_5hTPlA",
     "category": "Soch Stili"
   },
   {
     "id": 3,
-    "title": "Textured Crop",
-    "description": "Qisqa va tabiy ko'rinishli, oson parvarish qilinadigan zamonaviy stil.",
+    "title": "Tabiiy Textured Crop (Textured Crop)",
+    "description": "Textured Crop - sochlarning yuqori qismiga chiziqli va qatlamli (tekstura) ko'rinish berilib, old qismi to'g'ri peshona chizig'i bilan tugaydigan zamonaviy kalta turmak. Kundalik turmushda parvarish qilish va shakl berish juda oson. Yuz tuzilishini yoshroq va tabiyroq ko'rsatish xususiyatiga ega.",
     "image": "/styles/3.png",
+    "video": "https://www.youtube.com/embed/pB7zO29fF48",
     "category": "Soch Stili"
   },
   {
     "id": 4,
-    "title": "Side Part",
-    "description": "Yon tarafdan bo'lingan klassik stil. Professional va pok ko'rinish beradi.",
+    "title": "Biznes Uslubidagi Side Part (Side Part Taper)",
+    "description": "Side Part - asosan yon chiziq bo'ylab sochni farqlab ajratadigan va yonga tekis yotqiziladigan soch turmagi. Yon qismlari taper fade usulida asta-sekin qisqaradi. Ushbu turmak biznes vakillari va jiddiy tadbirkorlar orasida ommalashgan bo'lib, tartib, poklik va professionallik belgisi hisoblanadi.",
     "image": "/styles/4.png",
+    "video": "https://www.youtube.com/embed/FvW-PZ25GfM",
     "category": "Soch Stili"
   }
 ]

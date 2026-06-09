@@ -1,30 +1,34 @@
 [
   {
     "id": 1,
-    "title": "Klassik Soch Kesimi",
-    "description": "An'anaviy va professional ko'rinish uchun klassik soch kesimi. Rasmiy va kundalik hayot uchun juda mos.",
+    "title": "Klassik Yon Tarash (Classic Side Part)",
+    "description": "Ushbu turmak erkaklar modasining eng an'anaviy va o'lmas uslublaridan biridir. Sochlar aniq bir tomonga ajratilib, silliq qilib taraladi. Rasmiy uchrashuvlar, ofis muhiti va klassik kiyimlar bilan mukammal darajada uyg'unlashadi. Har qanday yoshdagi erkaklarga jiddiylik va nafislik bag'ishlaydi.",
     "image": "/barber/1.png",
+    "video": "https://www.youtube.com/embed/DrtGkfPPV1g?si=woTTfsktwNJMdlHp",
     "category": "Soch Kesimi"
   },
   {
     "id": 2,
-    "title": "Zamonaviy Fade",
-    "description": "Yon taraflari qisqa, yuqori qismi uzunroq bo'lgan zamonaviy stil. Yoshlar orasida juda mashhur.",
+    "title": "Zamonaviy Fade (Skin Fade)",
+    "description": "Fade - yoshlar va zamonaviy uslubni xush ko'ruvchilar uchun eng mashhur turmak. Unda sochlar pastdan yuqoriga qarab asta-sekin uzayib boradi (silliq o'tish effekti). Boshning yon qismlari juda kalta olinib, yuqori qismiga urg'u beriladi. Yuz tuzilishini vizual ravishda cho'zib, yanada kelbatli ko'rsatadi.",
     "image": "/barber/2.png",
+    "video": "https://www.youtube.com/embed/q4D5f_o63tI",
     "category": "Soch Kesimi"
   },
   {
     "id": 3,
-    "title": "Krem Berish va Stilizatsiya",
-    "description": "Professional soch kesimi, yuvish va krem bilan stilizatsiya. To'liq parvarish xizmati.",
+    "title": "Kalta Sportcha (Buzz Cut Fade)",
+    "description": "Buzz Cut - butunlay qulaylik va minimalistlikni istaydiganlar uchun ajoyib soch turmagi. Sochlar juda kalta qilib mashinkada tekislanadi va yon qismlari silliq fade qilinadi. Kundalik parvarish, tarash yoki stilizatsiyani talab qilmaydi. Sportchi va faol hayot tarzidagi erkaklar uchun juda mos keladi.",
     "image": "/barber/3.png",
+    "video": "https://www.youtube.com/embed/bW84l5UfHxs",
     "category": "Soch Kesimi"
   },
   {
     "id": 4,
-    "title": "Soqol Tashkil Etish",
-    "description": "Professional soqol kesish va tashkil etish. Yuz chizig'iga mos ravishda toza va aniq.",
+    "title": "Professional Soqol Shakli (Beard Shape Up)",
+    "description": "Soqolni yuz chiziqlariga mos ravishda toza, tekis va o'tkir burchaklar bilan shakllantirish xizmati. Soqol qirralari ustarada tekislanadi, kerakli qismlari qisqartirilib, yuzning geometrik tuzilishiga urg'u beriladi. Soqol parvarishi va uning vizual tozaligini ta'minlash uchun juda zarur bo'lgan uslub.",
     "image": "/barber/4.png",
+    "video": "https://www.youtube.com/embed/nLSMwM2L8vA",
     "category": "Soqol"
   }
 ]
