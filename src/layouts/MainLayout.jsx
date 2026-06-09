@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
+import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import Sidebar from '../components/layout/Sidebar';
 import BottomNavigation from '../components/layout/BottomNavigation';
@@ -10,6 +10,7 @@ const MainLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { currentStep } = useStep();
   const { isAuthenticated, isAdmin, loading } = useAuth();
+  const location = useLocation();
 
   if (!loading && isAuthenticated && isAdmin) {
     return <Navigate to="/admin" replace />;
@@ -34,7 +35,7 @@ const MainLayout = () => {
         <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
         
         {/* Page Content */}
-        <main className="flex-1 container mx-auto px-4 pt-3 md:pt-8 pb-24 lg:pb-8">
+        <main className={`flex-1 container mx-auto px-4 pt-3 md:pt-8 lg:pb-8 ${location.pathname === '/ai-chat' ? 'pb-[68px]' : 'pb-24'}`}>
           <Outlet />
         </main>
       </div>
