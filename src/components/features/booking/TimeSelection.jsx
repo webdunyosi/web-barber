@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getBookedTimes } from '../../../utils/api';
+import { FaCalendarAlt, FaClock } from 'react-icons/fa';
 
 const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, onSelectTime }) => {
   const [bookedTimes, setBookedTimes] = useState([]);
@@ -108,10 +109,12 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
       
       {/* 1. SANA TANLASH QISMI (Dropdown Calendar) */}
       <div className="mb-8 relative z-50" ref={calendarRef}>
-        <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-          <span className="text-2xl">📅</span>
-          Sanani tanlang
-        </h3>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)] shrink-0">
+            <FaCalendarAlt className="text-lg" />
+          </div>
+          <h3 className="text-lg sm:text-xl font-bold text-white">Sanani tanlang</h3>
+        </div>
         
         {/* Toggle Button */}
         <button
@@ -192,10 +195,12 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
       {/* 2. VAQT TANLASH QISMI */}
       {selectedDate && (
         <div className="animate-fade-in-up mt-8">
-          <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-            <span className="text-2xl">⏰</span>
-            Vaqtni tanlang
-          </h3>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)] shrink-0">
+              <FaClock className="text-lg" />
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold text-white">Vaqtni tanlang</h3>
+          </div>
           
           {isLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 animate-pulse">
