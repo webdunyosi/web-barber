@@ -35,7 +35,11 @@ const MainLayout = () => {
         <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
         
         {/* Page Content */}
-        <main className={`flex-1 container mx-auto px-4 pt-3 md:pt-8 lg:pb-8 ${location.pathname === '/ai-chat' ? 'pb-[68px]' : 'pb-24'}`}>
+        <main className={`flex-1 container mx-auto lg:pb-8 ${
+          location.pathname === '/ai-chat' 
+            ? 'px-0 pt-0 pb-[68px]' 
+            : 'px-4 pt-3 md:pt-8 pb-24'
+        }`}>
           <Outlet />
         </main>
       </div>

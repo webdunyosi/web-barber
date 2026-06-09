@@ -197,3 +197,36 @@
 .chat-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(16, 185, 129, 0.5);
 }
+
+/* Custom horizontal scrollbar for suggestion chips */
+.chat-scrollbar-x {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(16, 185, 129, 0.25) transparent;
+}
+
+.chat-scrollbar-x::-webkit-scrollbar {
+  height: 5px;
+}
+
+.chat-scrollbar-x::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-scrollbar-x::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.25);
+  border-radius: 9999px;
+  transition: background 0.3s ease;
+}
+
+.chat-scrollbar-x::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.55);
+}
+
+/* Utility to hide scrollbars completely if needed */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

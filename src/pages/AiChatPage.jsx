@@ -199,9 +199,9 @@ const AiChatPage = () => {
   };
 
   return (
-    <div className="w-full lg:w-5/6 ml-auto h-[calc(100vh-80px)] lg:h-[calc(100vh-136px)] flex flex-col pb-2 pt-2 px-2 sm:px-4 animate-fadeIn overflow-hidden">
+    <div className="w-full lg:w-5/6 ml-auto h-[calc(100vh-68px)] lg:h-[calc(100vh-136px)] flex flex-col p-0 lg:p-4 animate-fadeIn overflow-hidden">
       {/* Chat Container */}
-      <div className="flex-1 max-w-4xl w-full mx-auto bg-zinc-900/60 backdrop-blur-xl border border-emerald-500/20 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden">
+      <div className="flex-1 max-w-4xl w-full mx-auto bg-zinc-900/60 backdrop-blur-xl border-y border-emerald-500/10 lg:border lg:border-emerald-500/20 rounded-none lg:rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden">
         
         {/* Header */}
         <div className="px-4 py-3 bg-zinc-950/80 border-b border-emerald-500/20 flex items-center justify-between">
@@ -378,7 +378,7 @@ const AiChatPage = () => {
 
         {/* Suggestion Chips */}
         <div 
-          className="px-4 py-2 bg-zinc-950/40 border-t border-white/5 flex gap-1.5 overflow-x-auto scrollbar-none whitespace-nowrap scroll-smooth"
+          className="px-4 pt-2 pb-3.5 bg-zinc-950/40 border-t border-white/5 flex gap-1.5 overflow-x-auto chat-scrollbar-x whitespace-nowrap scroll-smooth"
           style={{ 
             maskImage: 'linear-gradient(to right, black 85%, transparent 100%)', 
             WebkitMaskImage: 'linear-gradient(to right, black 85%, transparent 100%)' 
