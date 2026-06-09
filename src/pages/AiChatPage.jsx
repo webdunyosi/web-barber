@@ -147,10 +147,11 @@ const AiChatPage = () => {
       playSound('received');
     } catch (error) {
       console.error('Chat API error:', error);
+      const errorMsg = error.response?.data?.details || error.response?.data?.error || error.message;
       const errorBotMessage = {
         id: Date.now() + 1,
         sender: 'bot',
-        text: "Kechirasiz, ulanishda xatolik yuz berdi. Iltimos, keyinroq qayta urinib ko'ring.",
+        text: `Kechirasiz, xatolik yuz berdi: ${errorMsg}`,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         attachmentType: 'none',
         attachmentData: null
