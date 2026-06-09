@@ -47,32 +47,32 @@ const Header = ({ currentStep, toggleSidebar }) => {
 
             {/* Step Indicator - Centered (Hidden on Admin page) */}
             {location.pathname !== '/admin' ? (
-              <div className="hidden md:flex items-center gap-3" role="navigation" aria-label="Booking progress">
+              <div className="hidden md:flex items-center gap-2" role="navigation" aria-label="Booking progress">
                 {[1, 2, 3].map((step) => (
                   <React.Fragment key={step}>
                     <div
                       role="status"
                       aria-current={step === currentStep ? 'step' : undefined}
                       aria-label={`Step ${step}${step < currentStep ? ' completed' : step === currentStep ? ' current' : ' upcoming'}`}
-                      className={`group relative w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-bold transition-all duration-500 backdrop-blur-xl border-2 shadow-lg ${
+                      className={`group relative w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold transition-all duration-500 backdrop-blur-xl border-2 shadow-md ${
                         step === currentStep
-                          ? 'bg-emerald-500/90 text-white border-emerald-400 shadow-emerald-500/50 scale-110 animate-pulse-glow'
+                          ? 'bg-emerald-500/90 text-white border-emerald-400 shadow-emerald-500/30 scale-105 animate-pulse-glow'
                           : step < currentStep
-                          ? 'bg-emerald-400/80 text-white border-emerald-300 shadow-emerald-400/40 hover:scale-105'
+                          ? 'bg-emerald-400/80 text-white border-emerald-300 shadow-emerald-400/20 hover:scale-105'
                           : 'bg-white/10 text-gray-300 border-white/20 hover:bg-white/20 hover:border-white/30 hover:scale-105'
                       }`}
                     >
                       <span className={`relative z-10 transition-transform duration-300 ${
-                        step === currentStep ? 'scale-110' : 'group-hover:scale-110'
+                        step === currentStep ? 'scale-105' : 'group-hover:scale-105'
                       }`} aria-hidden="true">
                         {step < currentStep ? '✓' : step}
                       </span>
                       {step === currentStep && (
-                        <span className="absolute inset-0 rounded-2xl bg-emerald-400/30 animate-ping" aria-hidden="true"></span>
+                        <span className="absolute inset-0 rounded-xl bg-emerald-400/30 animate-ping" aria-hidden="true"></span>
                       )}
                     </div>
                     {step < 3 && (
-                      <div className="relative w-12 h-1 rounded-full overflow-hidden bg-white/10 backdrop-blur-sm" aria-hidden="true">
+                      <div className="relative w-8 h-0.5 rounded-full overflow-hidden bg-white/10 backdrop-blur-sm" aria-hidden="true">
                         <div
                           className={`h-full rounded-full transition-all duration-700 ease-out ${
                             step < currentStep 

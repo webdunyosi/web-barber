@@ -175,33 +175,36 @@ const BookingPage = () => {
       )}
       
       {/* Step indicator for mobile */}
-      <div className="md:hidden mb-6 flex items-center justify-center gap-2 pt-6">
+      <div className="md:hidden mb-5 max-w-max mx-auto flex items-center justify-center gap-3.5 px-4 py-2 bg-zinc-900/80 border border-emerald-500/10 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-md">
         {[1, 2, 3].map((step) => (
           <React.Fragment key={step}>
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+              className={`relative w-8 h-8 rounded-full flex items-center justify-center text-xs font-extrabold transition-all duration-300 ${
                 step === currentStep
-                  ? 'bg-emerald-500 text-white scale-110'
+                  ? 'bg-linear-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/40 border border-emerald-400/50 scale-110'
                   : step < currentStep
-                  ? 'bg-emerald-400 text-white'
-                  : 'bg-white/10 text-gray-300'
+                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                  : 'bg-zinc-800/40 text-zinc-500 border border-white/5'
               }`}
             >
               {step < currentStep ? '✓' : step}
+              {step === currentStep && (
+                <span className="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping"></span>
+              )}
             </div>
             {step < 3 && (
-              <div className={`w-8 h-1 rounded-full ${step < currentStep ? 'bg-emerald-400' : 'bg-white/10'}`} />
+              <div className={`w-6 h-0.5 rounded-full transition-colors duration-300 ${step < currentStep ? 'bg-emerald-400' : 'bg-zinc-850'}`} />
             )}
           </React.Fragment>
         ))}
       </div>
 
       {/* Title */}
-      <div className="mb-8 px-4">
-        <h2 className="text-center text-3xl font-bold text-white mb-2">
+      <div className="mb-4 px-4">
+        <h2 className="text-center text-xl sm:text-2xl font-extrabold text-white mb-1">
           {getStepTitle()}
         </h2>
-        <p className="text-center text-white/70">
+        <p className="text-center text-xs sm:text-sm text-zinc-400">
           {currentStep === STEPS.SERVICE && 'Qaysi xizmatni tanlamoqchisiz?'}
           {currentStep === STEPS.TIME && 'Sizga qulay vaqtni tanlang'}
           {currentStep === STEPS.PAYMENT && 'To\'lov ma\'lumotlarini kiriting'}
