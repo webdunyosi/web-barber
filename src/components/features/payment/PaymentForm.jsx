@@ -268,7 +268,7 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
                 To'lov qilish bo'yicha ko'rsatma
               </h4>
             </div>
-            <ol className="text-xs space-y-1.5 text-zinc-100 list-decimal list-inside leading-relaxed pl-0.5">
+            <ol className="text-xs space-y-1.5 text-zinc-100 list-decimal pl-4 leading-relaxed">
               <li>Karta raqamini nusxalab o'z bank ilovangizga o'ting</li>
               <li>Ko'rsatilgan summani o'tkazing va chekni saqlab oling</li>
               <li>To'lov chekining rasmini quyidagi qismga yuklang</li>
@@ -362,7 +362,7 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
             </div>
             <div className="space-y-1">
               <h4 className="font-bold text-sm sm:text-base text-white">Eslatma va Ko'rsatma</h4>
-              <ol className="text-xs space-y-2 text-zinc-300 list-decimal list-inside leading-relaxed mt-2 pl-0.5">
+              <ol className="text-xs space-y-1.5 text-zinc-300 list-decimal pl-4 leading-relaxed mt-2">
                 <li>Buyurtma ma'lumotlarini yuqorida keltirilgan "Buyurtma tafsilotlari" bo'limida qayta tekshiring.</li>
                 <li>Band qilishni yakunlash uchun pastdagi <strong className="text-emerald-400">"To'lovni amalga oshirish"</strong> (Joyida to'lashni tasdiqlash) tugmasini bosing.</li>
                 <li>Siz belgilagan vaqtda (<strong className="text-zinc-100">{bookingInfo.date}</strong> kuni soat <strong className="text-zinc-100">{bookingInfo.time}</strong> da) sartaroshxonaga tashrif buyuring.</li>
