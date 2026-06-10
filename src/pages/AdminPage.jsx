@@ -328,39 +328,58 @@ const AdminPage = () => {
                           </div>
                           <div>
                             <p className="text-xs text-zinc-500 uppercase font-semibold">Holati</p>
-                            <span className={`inline-block text-xs font-extrabold uppercase px-2.5 py-1 rounded-full mt-1.5 ${
-                              booking.status === 'pending'
-                                ? 'bg-amber-400/10 text-amber-400 border border-amber-400/30'
-                                : booking.status === 'confirmed'
-                                ? 'bg-emerald-400/10 text-emerald-400 border border-emerald-400/30'
-                                : 'bg-red-500/10 text-red-400 border border-red-500/30'
-                            }`}>
-                              {booking.status === 'pending' && 'Kutilmoqda'}
-                              {booking.status === 'confirmed' && 'Tasdiqlangan'}
-                              {booking.status === 'rejected' && 'Rad etilgan'}
-                            </span>
+                            <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                              <span className={`inline-block text-xs font-extrabold uppercase px-2.5 py-1 rounded-full ${
+                                booking.status === 'pending'
+                                  ? 'bg-amber-400/10 text-amber-400 border border-amber-400/30'
+                                  : booking.status === 'confirmed'
+                                  ? 'bg-emerald-400/10 text-emerald-400 border border-emerald-400/30'
+                                  : 'bg-red-500/10 text-red-400 border border-red-500/30'
+                              }`}>
+                                {booking.status === 'pending' && 'Kutilmoqda'}
+                                {booking.status === 'confirmed' && 'Tasdiqlangan'}
+                                {booking.status === 'rejected' && 'Rad etilgan'}
+                              </span>
+
+                              {booking.paymentMethod === 'cash' ? (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-amber-500/10 border border-amber-500/25 text-amber-400 px-2 py-0.5 rounded-full select-none">
+                                  <span>💵</span> Sartaroshga
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 px-2 py-0.5 rounded-full select-none">
+                                  <span>💳</span> Karta orqali
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
-
+ 
                       {/* Right: Receipt Image & Actions */}
                       <div className="flex flex-col sm:flex-row md:flex-col items-center justify-between gap-4 md:border-l md:border-white/5 md:pl-6 shrink-0 min-w-[150px]">
-                        {/* Receipt Thumbnail */}
-                        {booking.receipt && (
-                          <div className="relative group overflow-hidden rounded-xl border border-zinc-700 w-28 h-20 shrink-0 bg-zinc-950">
-                            <img
-                              src={booking.receipt}
-                              alt="Receipt"
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                            />
-                            <button
-                              onClick={() => setZoomedReceipt(booking.receipt)}
-                              className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-1 text-xs font-bold text-white cursor-pointer"
-                            >
-                              <FaEye size={12} />
-                              <span>Chekni ko'rish</span>
-                            </button>
+                        {/* Receipt Thumbnail or Cash placeholder */}
+                        {booking.paymentMethod === 'cash' ? (
+                          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-800 w-28 h-20 shrink-0 bg-zinc-950/20 text-zinc-500 select-none">
+                            <span className="text-xl">💵</span>
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-400 mt-1">Joyida to'lov</span>
                           </div>
+                        ) : (
+                          booking.receipt && (
+                            <div className="relative group overflow-hidden rounded-xl border border-zinc-700 w-28 h-20 shrink-0 bg-zinc-950">
+                              <img
+                                src={booking.receipt}
+                                alt="Receipt"
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                              />
+                              <button
+                                onClick={() => setZoomedReceipt(booking.receipt)}
+                                className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-1 text-xs font-bold text-white cursor-pointer border-none"
+                              >
+                                <FaEye size={12} />
+                                <span>Chekni ko'rish</span>
+                              </button>
+                            </div>
+                          )
                         )}
 
                         {/* Actions */}

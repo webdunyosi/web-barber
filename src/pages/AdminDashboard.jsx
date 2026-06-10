@@ -525,7 +525,18 @@ const AdminDashboard = () => {
                                 {booking.status === 'confirmed' && 'Tasdiqlangan'}
                                 {booking.status === 'rejected' && 'Rad etilgan'}
                               </span>
-                              {booking.receipt && !booking.receipt.includes('res.cloudinary.com') && (
+
+                              {booking.paymentMethod === 'cash' ? (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-amber-500/10 border border-amber-500/25 text-amber-400 px-2 py-0.5 rounded-full select-none">
+                                  <span>💵</span> Sartaroshga
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 px-2 py-0.5 rounded-full select-none">
+                                  <span>💳</span> Karta orqali
+                                </span>
+                              )}
+
+                              {booking.paymentMethod !== 'cash' && booking.receipt && !booking.receipt.includes('res.cloudinary.com') && (
                                 <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-zinc-800 border border-zinc-700/60 text-zinc-300 px-2 py-0.5 rounded-full select-none">
                                   <span>💬</span> Chek Telegramda
                                 </span>
@@ -537,22 +548,29 @@ const AdminDashboard = () => {
 
                       {/* Right: Receipt Image & Actions */}
                       <div className="flex flex-col sm:flex-row md:flex-col items-center justify-between gap-4 md:border-l md:border-white/5 md:pl-6 shrink-0 min-w-[150px]">
-                        {/* Receipt Thumbnail */}
-                        {booking.receipt && booking.receipt.includes('res.cloudinary.com') && (
-                          <div className="relative group overflow-hidden rounded-xl border border-zinc-700 w-28 h-20 shrink-0 bg-zinc-950">
-                            <img
-                              src={booking.receipt}
-                              alt="Receipt"
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                            />
-                            <button
-                              onClick={() => setZoomedReceipt(booking.receipt)}
-                              className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-1 text-xs font-bold text-white cursor-pointer border-none"
-                            >
-                              <FaEye size={12} />
-                              <span>Chekni ko'rish</span>
-                            </button>
+                        {/* Receipt Thumbnail or Cash placeholder */}
+                        {booking.paymentMethod === 'cash' ? (
+                          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-800 w-28 h-20 shrink-0 bg-zinc-950/20 text-zinc-500 select-none">
+                            <span className="text-xl">💵</span>
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-400 mt-1">Joyida to'lov</span>
                           </div>
+                        ) : (
+                          booking.receipt && booking.receipt.includes('res.cloudinary.com') && (
+                            <div className="relative group overflow-hidden rounded-xl border border-zinc-700 w-28 h-20 shrink-0 bg-zinc-950">
+                              <img
+                                src={booking.receipt}
+                                alt="Receipt"
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                              />
+                              <button
+                                onClick={() => setZoomedReceipt(booking.receipt)}
+                                className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-1 text-xs font-bold text-white cursor-pointer border-none"
+                              >
+                                <FaEye size={12} />
+                                <span>Chekni ko'rish</span>
+                              </button>
+                            </div>
+                          )
                         )}
 
                         {/* Actions */}
@@ -937,18 +955,24 @@ const AdminDashboard = () => {
                             <div className="flex flex-wrap items-center gap-2">
                               <span className="font-bold text-white">{booking.name}</span>
                               <span className="text-xs text-zinc-550 font-mono">{booking.phone}</span>
-                              {booking.receipt && (
-                                booking.receipt.includes('res.cloudinary.com') ? (
-                                  <button
-                                    onClick={() => setZoomedReceipt(booking.receipt)}
-                                    className="text-[10px] font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full hover:bg-emerald-500/25 transition-colors cursor-pointer select-none"
-                                  >
-                                    🖼 Chekni ko'rish
-                                  </button>
-                                ) : (
-                                  <span className="text-[10px] font-semibold bg-zinc-800 border border-zinc-700/60 text-zinc-400 px-2 py-0.5 rounded-full select-none">
-                                    💬 Chek Telegramda
-                                  </span>
+                              {booking.paymentMethod === 'cash' ? (
+                                <span className="text-[10px] font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-400 px-2 py-0.5 rounded-full select-none">
+                                  💵 Joyida to'lash
+                                </span>
+                              ) : (
+                                booking.receipt && (
+                                  booking.receipt.includes('res.cloudinary.com') ? (
+                                    <button
+                                      onClick={() => setZoomedReceipt(booking.receipt)}
+                                      className="text-[10px] font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full hover:bg-emerald-500/25 transition-colors cursor-pointer select-none"
+                                    >
+                                      🖼 Chekni ko'rish
+                                    </button>
+                                  ) : (
+                                    <span className="text-[10px] font-semibold bg-zinc-800 border border-zinc-700/60 text-zinc-400 px-2 py-0.5 rounded-full select-none">
+                                      💬 Chek Telegramda
+                                    </span>
+                                  )
                                 )
                               )}
                             </div>

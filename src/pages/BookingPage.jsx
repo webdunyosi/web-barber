@@ -29,6 +29,7 @@ const BookingPage = () => {
     telegram: '',
   });
   const [paymentData, setPaymentData] = useState({
+    paymentMethod: 'card',
     receipt: null,
   });
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -60,6 +61,9 @@ const BookingPage = () => {
       case STEPS.TIME:
         return selectedDate !== null && selectedTime !== null;
       case STEPS.PAYMENT:
+        if (paymentData.paymentMethod === 'cash') {
+          return true;
+        }
         return paymentData.receipt !== null;
       default:
         return false;
@@ -142,7 +146,7 @@ const BookingPage = () => {
     setSelectedDate(null);
     setSelectedTime(null);
     setPersonalInfo({ name: '', phone: '', telegram: '' });
-    setPaymentData({ receipt: null });
+    setPaymentData({ paymentMethod: 'card', receipt: null });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

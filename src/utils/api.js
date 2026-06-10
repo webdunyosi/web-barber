@@ -126,12 +126,18 @@ export const getBookedTimes = async (date) => {
 
 // 2. Buyurtmani va rasmni backendga yuborish
 export const submitBooking = async (bookingInfo, paymentData) => {
+  const method = paymentData.paymentMethod || 'card';
+  const isCash = method === 'cash';
+
   if (MOCK_MODE) {
     const bookings = getMockBookings();
     
-    let receiptUrl = 'https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=500&auto=format&fit=crop&q=60';
-    if (paymentData.receipt && paymentData.receipt instanceof File) {
-      receiptUrl = URL.createObjectURL(paymentData.receipt);
+    let receiptUrl = '';
+    if (!isCash) {
+      receiptUrl = 'https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=500&auto=format&fit=crop&q=60';
+      if (paymentData.receipt && paymentData.receipt instanceof File) {
+        receiptUrl = URL.createObjectURL(paymentData.receipt);
+      }
     }
 
     const newBooking = {
@@ -144,6 +150,7 @@ export const submitBooking = async (bookingInfo, paymentData) => {
       date: bookingInfo.date,
       time: bookingInfo.time,
       status: 'pending',
+      paymentMethod: method,
       receipt: receiptUrl,
       createdAt: new Date().toISOString()
     };
@@ -152,19 +159,21 @@ export const submitBooking = async (bookingInfo, paymentData) => {
     saveMockBookings(bookings);
 
     // Send Telegram Notification for new booking/payment
+    const methodDisplay = isCash ? '💵 Sartaroshga (Joyida)' : '💳 Karta orqali (Online)';
     const message = `
-🧾 *Yangi To'lov & Buyurtma!*
+🧾 *Yangi Buyurtma & To'lov!*
 
 👤 *Mijoz:* ${bookingInfo.name}
 📱 *Telefon:* ${bookingInfo.phone}
 📱 *Telegram:* @${bookingInfo.telegram_user || 'mavjud emas'}
+💳 *To'lov usuli:* ${methodDisplay}
 
 💈 *Xizmat:* ${bookingInfo.service.name}
 💰 *Narx:* ${bookingInfo.service.price.toLocaleString()} so'm
 📅 *Sana:* ${bookingInfo.date}
 🕐 *Vaqt:* ${bookingInfo.time}
 
-⚠️ _To'lov chekini tasdiqlash uchun admin panelga kiring!_
+${isCash ? '✅ _Joyida to\'lash tanlandi. Tasdiqlash uchun admin panelga kiring!_' : '⚠️ _To\'lov chekini tasdiqlash uchun admin panelga kiring!_'}
     `.trim();
     
     await sendTelegramNotification(message);
@@ -180,11 +189,14 @@ export const submitBooking = async (bookingInfo, paymentData) => {
   formData.append('servicePrice', bookingInfo.service.price);
   formData.append('date', bookingInfo.date);
   formData.append('time', bookingInfo.time);
+  formData.append('paymentMethod', method);
   
-  if (paymentData.receipt) {
-    formData.append('receipt', paymentData.receipt); 
-  } else {
-    throw new Error("To'lov cheki yuklanmagan!");
+  if (!isCash) {
+    if (paymentData.receipt) {
+      formData.append('receipt', paymentData.receipt); 
+    } else {
+      throw new Error("To'lov cheki yuklanmagan!");
+    }
   }
 
   const token = localStorage.getItem('barber_token');
