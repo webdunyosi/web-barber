@@ -444,6 +444,26 @@ export const updateBookingStatusApi = async (token, bookingId, status) => {
   return response.data;
 };
 
+// Delete booking
+export const deleteBookingApi = async (token, bookingId) => {
+  if (MOCK_MODE) {
+    let bookings = getMockBookings();
+    const booking = bookings.find(b => b.id === bookingId);
+    bookings = bookings.filter(b => b.id !== bookingId);
+    saveMockBookings(bookings);
+
+    if (booking) {
+      await sendTelegramNotification(`🗑 *Buyurtma o'chirildi!*\n\n👤 *Mijoz:* ${booking.name}\n📱 *Telefon:* ${booking.phone}\n💈 *Xizmat:* ${booking.serviceName}\n📅 *Sana/Vaqt:* ${booking.date} soat ${booking.time}`);
+    }
+    return { success: true, message: 'Buyurtma o\'chirildi' };
+  }
+
+  const response = await axios.delete(`${API_URL}/admin/bookings/${bookingId}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
 // Get Statistics (Daily, Weekly, Monthly)
 // Save daily offline income (cash register)
 export const saveOfflineIncomeApi = async (token, date, amount) => {

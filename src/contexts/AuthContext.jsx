@@ -9,6 +9,7 @@ import {
   deleteUserApi,
   getBookingsApi,
   updateBookingStatusApi,
+  deleteBookingApi,
   getStatisticsApi,
   getMyBookingsApi,
   updateProfileApi,
@@ -107,6 +108,12 @@ export const AuthProvider = ({ children }) => {
     return res;
   };
 
+  const deleteBooking = async (bookingId) => {
+    if (!token) throw new Error('Unauthenticated');
+    const res = await deleteBookingApi(token, bookingId);
+    return res;
+  };
+
   const getStatistics = async () => {
     if (!token) throw new Error('Unauthenticated');
     return await getStatisticsApi(token);
@@ -156,6 +163,7 @@ export const AuthProvider = ({ children }) => {
     deleteUser,
     getBookings,
     updateBookingStatus,
+    deleteBooking,
     getStatistics,
     getMyBookings,
     updateProfile,
