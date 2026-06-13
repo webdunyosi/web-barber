@@ -445,6 +445,34 @@ export const updateBookingStatusApi = async (token, bookingId, status) => {
 };
 
 // Get Statistics (Daily, Weekly, Monthly)
+// Save daily offline income (cash register)
+export const saveOfflineIncomeApi = async (token, date, amount) => {
+  if (MOCK_MODE) {
+    const mockOfflineIncomes = JSON.parse(localStorage.getItem('barber_offline_incomes') || '{}');
+    mockOfflineIncomes[date] = Number(amount);
+    localStorage.setItem('barber_offline_incomes', JSON.stringify(mockOfflineIncomes));
+    return { success: true, message: 'Kassa muvaffaqiyatli saqlandi' };
+  }
+
+  const response = await axios.post(`${API_URL}/admin/offline-income`, { date, amount }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+// Get daily offline income
+export const getOfflineIncomeApi = async (token, date) => {
+  if (MOCK_MODE) {
+    const mockOfflineIncomes = JSON.parse(localStorage.getItem('barber_offline_incomes') || '{}');
+    return { date, amount: mockOfflineIncomes[date] || 0 };
+  }
+
+  const response = await axios.get(`${API_URL}/admin/offline-income/${date}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
 export const getStatisticsApi = async (token) => {
   if (MOCK_MODE) {
     const bookings = getMockBookings();
@@ -453,11 +481,11 @@ export const getStatisticsApi = async (token) => {
     // Helper calculations
     const now = new Date();
     
-    // Revenue categories
-    let dailyRevenue = 0;
-    let weeklyRevenue = 0;
-    let monthlyRevenue = 0;
-    let totalRevenue = 0;
+    // Online Revenue categories
+    let onlineDailyRevenue = 0;
+    let onlineWeeklyRevenue = 0;
+    let onlineMonthlyRevenue = 0;
+    let onlineTotalRevenue = 0;
 
     const oneDay = 24 * 60 * 60 * 1000;
     const oneWeek = 7 * oneDay;
@@ -468,17 +496,52 @@ export const getStatisticsApi = async (token) => {
         const bookingDate = new Date(b.createdAt || b.date);
         const diff = now - bookingDate;
         
-        totalRevenue += b.servicePrice;
+        onlineTotalRevenue += b.servicePrice;
         
         if (diff <= oneDay) {
-          dailyRevenue += b.servicePrice;
+          onlineDailyRevenue += b.servicePrice;
         }
         if (diff <= oneWeek) {
-          weeklyRevenue += b.servicePrice;
+          onlineWeeklyRevenue += b.servicePrice;
         }
         if (diff <= oneMonth) {
-          monthlyRevenue += b.servicePrice;
+          onlineMonthlyRevenue += b.servicePrice;
         }
+      }
+    });
+
+    // Offline calculations in mock mode
+    const mockOfflineIncomes = JSON.parse(localStorage.getItem('barber_offline_incomes') || '{}');
+    
+    // Helper to parse date key "DD.MM.YYYY"
+    const parseKeyDate = (keyStr) => {
+      const parts = keyStr.split('.');
+      if (parts.length === 3) {
+        return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+      }
+      return new Date(0);
+    };
+
+    let offlineDailyRevenue = 0;
+    let offlineWeeklyRevenue = 0;
+    let offlineMonthlyRevenue = 0;
+    let offlineTotalRevenue = 0;
+
+    Object.keys(mockOfflineIncomes).forEach(key => {
+      const amt = Number(mockOfflineIncomes[key]) || 0;
+      const keyDate = parseKeyDate(key);
+      const diff = now - keyDate;
+
+      offlineTotalRevenue += amt;
+
+      if (keyDate.toDateString() === now.toDateString()) {
+        offlineDailyRevenue += amt;
+      }
+      if (diff <= oneWeek) {
+        offlineWeeklyRevenue += amt;
+      }
+      if (diff <= oneMonth) {
+        offlineMonthlyRevenue += amt;
       }
     });
 
@@ -496,26 +559,44 @@ export const getStatisticsApi = async (token) => {
 
     // Dynamic data for charts (last 7 days)
     const chartData = [];
+    const dayNamesUz = ['Yak', 'Dush', 'Sesh', 'Chor', 'Pay', 'Jum', 'Shan'];
     for (let i = 6; i >= 0; i--) {
       const d = new Date(Date.now() - i * oneDay);
-      const dayName = d.toLocaleDateString('uz-UZ', { weekday: 'short' });
-      const dayDateStr = d.toLocaleDateString('uz-UZ', { day: 'numeric', month: 'numeric' });
+      const dayName = dayNamesUz[d.getDay()];
       
-      const dayRevenue = bookings
+      const dayStr = String(d.getDate()).padStart(2, '0');
+      const monthStr = String(d.getMonth() + 1).padStart(2, '0');
+      const dbDateString = `${dayStr}.${monthStr}.${d.getFullYear()}`;
+      
+      const dayLabel = `${dayName} ${dayStr}.${monthStr}`;
+      
+      const onlineValue = bookings
         .filter(b => b.status === 'confirmed' && new Date(b.createdAt || b.date).toDateString() === d.toDateString())
         .reduce((sum, b) => sum + b.servicePrice, 0);
 
+      const offlineValue = mockOfflineIncomes[dbDateString] || 0;
+
       chartData.push({
-        label: `${dayName} (${dayDateStr})`,
-        value: dayRevenue
+        label: dayLabel,
+        value: onlineValue + offlineValue,
+        onlineValue,
+        offlineValue
       });
     }
 
     return {
-      dailyRevenue,
-      weeklyRevenue,
-      monthlyRevenue,
-      totalRevenue,
+      dailyRevenue: onlineDailyRevenue + offlineDailyRevenue,
+      weeklyRevenue: onlineWeeklyRevenue + offlineWeeklyRevenue,
+      monthlyRevenue: onlineMonthlyRevenue + offlineMonthlyRevenue,
+      totalRevenue: onlineTotalRevenue + offlineTotalRevenue,
+      onlineDailyRevenue,
+      onlineWeeklyRevenue,
+      onlineMonthlyRevenue,
+      onlineTotalRevenue,
+      offlineDailyRevenue,
+      offlineWeeklyRevenue,
+      offlineMonthlyRevenue,
+      offlineTotalRevenue,
       totalUsers: users.filter(u => u.role !== 'admin').length,
       blockedUsersCount: users.filter(u => u.status === 'blocked').length,
       totalBookings: bookings.length,
@@ -535,6 +616,14 @@ export const getStatisticsApi = async (token) => {
     weeklyRevenue: data.revenues?.weekly ?? 0,
     monthlyRevenue: data.revenues?.monthly ?? 0,
     totalRevenue: data.revenues?.total ?? 0,
+    onlineDailyRevenue: data.onlineRevenues?.daily ?? 0,
+    onlineWeeklyRevenue: data.onlineRevenues?.weekly ?? 0,
+    onlineMonthlyRevenue: data.onlineRevenues?.monthly ?? 0,
+    onlineTotalRevenue: data.onlineRevenues?.total ?? 0,
+    offlineDailyRevenue: data.offlineRevenues?.daily ?? 0,
+    offlineWeeklyRevenue: data.offlineRevenues?.weekly ?? 0,
+    offlineMonthlyRevenue: data.offlineRevenues?.monthly ?? 0,
+    offlineTotalRevenue: data.offlineRevenues?.total ?? 0,
     totalUsers: data.counts?.totalUsers ?? 0,
     blockedUsersCount: data.counts?.blockedUsers ?? 0,
     totalBookings: data.counts?.totalBookings ?? 0,

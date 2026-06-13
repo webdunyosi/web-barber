@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { Link, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 import {
   FaUser,
   FaCheck,
@@ -264,7 +265,8 @@ const AdminDashboard = () => {
     deleteUser,
     getBookings,
     updateBookingStatus,
-    getStatistics
+    getStatistics,
+    saveOfflineIncome
   } = useAuth();
 
   const [searchParams] = useSearchParams();
@@ -282,6 +284,125 @@ const AdminDashboard = () => {
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null); // stores item ID currently updating
   const [successActions, setSuccessActions] = useState({}); // stores item ID and status after successful update
+
+  // Offline Kassa (Cash Register) States
+  const [kassaDate, setKassaDate] = useState(() => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  });
+  const [kassaAmount, setKassaAmount] = useState('');
+  const [kassaSaving, setKassaSaving] = useState(false);
+
+  // Custom Calendar States & Refs for Kassa Form
+  const [isKassaCalendarOpen, setIsKassaCalendarOpen] = useState(false);
+  const [kassaViewDate, setKassaViewDate] = useState(new Date());
+  const kassaCalendarRef = useRef(null);
+
+  const kassaMonths = ['Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'];
+  const kassaDaysOfWeek = ['Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh', 'Ya'];
+
+  const parseToDate = (dateStr) => {
+    if (!dateStr) return new Date();
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+    }
+    return new Date();
+  };
+
+  useEffect(() => {
+    if (kassaDate) {
+      setKassaViewDate(parseToDate(kassaDate));
+    }
+  }, [kassaDate]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (kassaCalendarRef.current && !kassaCalendarRef.current.contains(event.target)) {
+        setIsKassaCalendarOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const getKassaCalendarDays = () => {
+    const year = kassaViewDate.getFullYear();
+    const month = kassaViewDate.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    let firstDayIndex = new Date(year, month, 1).getDay() - 1;
+    if (firstDayIndex === -1) firstDayIndex = 6; // Sunday = index 6
+
+    const days = [];
+    for (let i = 0; i < firstDayIndex; i++) {
+      days.push(null);
+    }
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push(new Date(year, month, i));
+    }
+    return days;
+  };
+
+  const handleKassaPrevMonth = () => {
+    setKassaViewDate(new Date(kassaViewDate.getFullYear(), kassaViewDate.getMonth() - 1, 1));
+  };
+
+  const handleKassaNextMonth = () => {
+    setKassaViewDate(new Date(kassaViewDate.getFullYear(), kassaViewDate.getMonth() + 1, 1));
+  };
+
+  const handleKassaDateSelect = (date) => {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    setKassaDate(`${yyyy}-${mm}-${dd}`);
+    setIsKassaCalendarOpen(false);
+  };
+
+  const formatSelectedKassaDateUz = () => {
+    if (!kassaDate) return "Sanani tanlang";
+    const parts = kassaDate.split('-');
+    if (parts.length === 3) {
+      const year = parts[0];
+      const monthIndex = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      return `${day}-${kassaMonths[monthIndex]} ${year}-yil`;
+    }
+    return kassaDate;
+  };
+
+  // Helper to convert "YYYY-MM-DD" to "DD.MM.YYYY"
+  const formatToDbDate = (dateStr) => {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      return `${parts[2]}.${parts[1]}.${parts[0]}`;
+    }
+    return dateStr;
+  };
+
+
+
+  const handleSaveOfflineIncome = async (e) => {
+    e.preventDefault();
+    if (!kassaDate || kassaAmount === '') return;
+    setKassaSaving(true);
+    try {
+      const dbDate = formatToDbDate(kassaDate);
+      await saveOfflineIncome(dbDate, Number(kassaAmount));
+      toast.success("Kassa muvaffaqiyatli saqlandi! 🎉");
+      setKassaAmount('');
+      await loadData();
+    } catch (err) {
+      toast.error(err.message || 'Xatolik yuz berdi');
+    } finally {
+      setKassaSaving(false);
+    }
+  };
 
   const loadData = async () => {
     setIsDataLoading(true);
@@ -335,9 +456,10 @@ const AdminDashboard = () => {
     const newBlockedState = currentStatus !== 'blocked';
     try {
       await blockUser(targetUserId, newBlockedState);
+      toast.success(`Foydalanuvchi muvaffaqiyatli ${newBlockedState ? 'bloklandi' : 'faollashtirildi'}!`);
       await loadData();
     } catch (err) {
-      alert(err.message || 'Xatolik yuz berdi');
+      toast.error(err.message || 'Xatolik yuz berdi');
     } finally {
       setActionLoading(null);
     }
@@ -348,9 +470,10 @@ const AdminDashboard = () => {
     setActionLoading(targetUserId);
     try {
       await deleteUser(targetUserId);
+      toast.success("Foydalanuvchi o'chirildi! 🗑️");
       await loadData();
     } catch (err) {
-      alert(err.message || 'Xatolik yuz berdi');
+      toast.error(err.message || 'Xatolik yuz berdi');
     } finally {
       setActionLoading(null);
     }
@@ -361,6 +484,8 @@ const AdminDashboard = () => {
     setActionLoading(bookingId);
     try {
       await updateBookingStatus(bookingId, newStatus);
+      const statusText = newStatus === 'confirmed' ? 'tasdiqlandi' : newStatus === 'rejected' ? 'rad etildi' : 'kutilmoqda holatiga o\'tkazildi';
+      toast.success(`Buyurtma muvaffaqiyatli ${statusText}!`);
       setSuccessActions(prev => ({ ...prev, [bookingId]: newStatus }));
       
       // Delay local reloading to let the button transition finish
@@ -373,7 +498,7 @@ const AdminDashboard = () => {
         });
       }, 1000);
     } catch (err) {
-      alert(err.message || 'Xatolik yuz berdi');
+      toast.error(err.message || 'Xatolik yuz berdi');
     } finally {
       setActionLoading(null);
     }
@@ -885,36 +1010,63 @@ const AdminDashboard = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 {/* Daily income */}
                 <div className="bg-zinc-900/60 border border-emerald-500/30 rounded-2xl p-6 backdrop-blur-sm shadow-xl flex items-center justify-between">
-                  <div className="space-y-1">
-                    <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Kunlik Daromad</p>
+                  <div className="space-y-1 w-full">
+                    <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider font-bold">Kunlik Daromad</p>
                     <h3 className="text-2xl font-bold text-emerald-400">{formatPrice(stats.dailyRevenue)} so'm</h3>
-                    <p className="text-xxs text-zinc-500 font-medium">Oxirgi 24 soatlik tasdiqlanganlar</p>
+                    <div className="text-[10px] space-y-0.5 mt-2 border-t border-white/5 pt-1">
+                      <p className="text-zinc-400 flex justify-between">
+                        <span>🌐 Online:</span>
+                        <span className="text-zinc-200 font-semibold">{formatPrice(stats.onlineDailyRevenue || 0)} so'm</span>
+                      </p>
+                      <p className="text-zinc-400 flex justify-between">
+                        <span>💵 Kassa (Offline):</span>
+                        <span className="text-zinc-200 font-semibold">{formatPrice(stats.offlineDailyRevenue || 0)} so'm</span>
+                      </p>
+                    </div>
                   </div>
-                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0 ml-2">
                     <FaDollarSign size={20} />
                   </div>
                 </div>
 
                 {/* Weekly income */}
                 <div className="bg-zinc-900/60 border border-emerald-500/30 rounded-2xl p-6 backdrop-blur-sm shadow-xl flex items-center justify-between">
-                  <div className="space-y-1">
-                    <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Haftalik Daromad</p>
+                  <div className="space-y-1 w-full">
+                    <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider font-bold">Haftalik Daromad</p>
                     <h3 className="text-2xl font-bold text-white">{formatPrice(stats.weeklyRevenue)} so'm</h3>
-                    <p className="text-xxs text-emerald-400/80 font-semibold">Haftalik jami tushum</p>
+                    <div className="text-[10px] space-y-0.5 mt-2 border-t border-white/5 pt-1">
+                      <p className="text-zinc-400 flex justify-between">
+                        <span>🌐 Online:</span>
+                        <span className="text-zinc-200 font-semibold">{formatPrice(stats.onlineWeeklyRevenue || 0)} so'm</span>
+                      </p>
+                      <p className="text-zinc-400 flex justify-between">
+                        <span>💵 Kassa (Offline):</span>
+                        <span className="text-zinc-200 font-semibold">{formatPrice(stats.offlineWeeklyRevenue || 0)} so'm</span>
+                      </p>
+                    </div>
                   </div>
-                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0 ml-2">
                     <FaChartBar size={20} />
                   </div>
                 </div>
 
                 {/* Monthly income */}
                 <div className="bg-zinc-900/60 border border-emerald-500/30 rounded-2xl p-6 backdrop-blur-sm shadow-xl flex items-center justify-between">
-                  <div className="space-y-1">
-                    <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Oylik Daromad</p>
+                  <div className="space-y-1 w-full">
+                    <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider font-bold">Oylik Daromad</p>
                     <h3 className="text-2xl font-bold text-white">{formatPrice(stats.monthlyRevenue)} so'm</h3>
-                    <p className="text-xxs text-zinc-500">Oxirgi 30 kunlik tushum</p>
+                    <div className="text-[10px] space-y-0.5 mt-2 border-t border-white/5 pt-1">
+                      <p className="text-zinc-400 flex justify-between">
+                        <span>🌐 Online:</span>
+                        <span className="text-zinc-200 font-semibold">{formatPrice(stats.onlineMonthlyRevenue || 0)} so'm</span>
+                      </p>
+                      <p className="text-zinc-400 flex justify-between">
+                        <span>💵 Kassa (Offline):</span>
+                        <span className="text-zinc-200 font-semibold">{formatPrice(stats.offlineMonthlyRevenue || 0)} so'm</span>
+                      </p>
+                    </div>
                   </div>
-                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0 ml-2">
                     <FaDollarSign size={20} />
                   </div>
                 </div>
@@ -1087,41 +1239,174 @@ const AdminDashboard = () => {
                   )}
                 </div>
 
-                {/* System Stats Summary */}
-                <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm flex flex-col justify-between">
-                  <div>
-                    <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
-                      <span className="text-emerald-500">⚙️</span>
-                      Tizim Xulosasi
+                {/* Right column containing Kassa & System Stats */}
+                <div className="space-y-6">
+                  {/* Kassa (Offline Daromad) Kiritish Form */}
+                  <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm space-y-4">
+                    <h4 className="text-lg font-bold flex items-center gap-2">
+                      <span className="text-emerald-500">💵</span>
+                      Kunlik Kassa Kiritish
                     </h4>
+                    <p className="text-xs text-zinc-400">
+                      Saytdan tashqari (offline) sartaroshxonada yig'ilgan kunlik naqd pul tushumini bu yerga kiritib borishingiz mumkin.
+                    </p>
                     
-                    <div className="space-y-3 text-sm">
-                      <div className="flex justify-between border-b border-white/5 pb-2">
-                        <span className="text-zinc-400">Jami buyurtmalar:</span>
-                        <span className="font-bold text-white">{stats.totalBookings} ta</span>
+                    <form onSubmit={handleSaveOfflineIncome} className="space-y-3">
+                      <div className="relative" ref={kassaCalendarRef}>
+                        <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Sana</label>
+                        <button
+                          type="button"
+                          onClick={() => setIsKassaCalendarOpen(!isKassaCalendarOpen)}
+                          className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-300 outline-none text-left cursor-pointer ${
+                            isKassaCalendarOpen
+                              ? 'bg-zinc-800/90 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.25)]'
+                              : 'bg-zinc-800/50 border-zinc-700/50 hover:bg-zinc-800 hover:border-emerald-500/50'
+                          }`}
+                        >
+                          <span className="font-semibold text-white text-sm">
+                            {formatSelectedKassaDateUz()}
+                          </span>
+                          <svg 
+                            className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isKassaCalendarOpen ? 'rotate-180' : ''}`} 
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        
+                        {/* Calendar Popover */}
+                        {isKassaCalendarOpen && (
+                          <div className="absolute top-full left-0 right-0 mt-2 z-[60] bg-zinc-950 border border-zinc-850 rounded-2xl shadow-2xl p-4 animate-fadeIn">
+                            {/* Calendar Header */}
+                            <div className="flex items-center justify-between mb-3">
+                              <button
+                                type="button"
+                                onClick={handleKassaPrevMonth}
+                                className="p-1 hover:bg-zinc-800 rounded-lg text-gray-400 hover:text-white transition-colors border-none bg-transparent cursor-pointer"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                              </button>
+                              <h4 className="text-xs font-semibold text-white uppercase tracking-wider">
+                                {kassaMonths[kassaViewDate.getMonth()]} {kassaViewDate.getFullYear()}
+                              </h4>
+                              <button
+                                type="button"
+                                onClick={handleKassaNextMonth}
+                                className="p-1 hover:bg-zinc-800 rounded-lg text-gray-400 hover:text-white transition-colors border-none bg-transparent cursor-pointer"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                              </button>
+                            </div>
+
+                            {/* Weekdays */}
+                            <div className="grid grid-cols-7 gap-1 mb-1.5 border-b border-white/5 pb-1">
+                              {kassaDaysOfWeek.map(day => (
+                                <div key={day} className="text-center text-[10px] font-bold text-emerald-500 py-0.5 select-none">
+                                  {day}
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Days Grid */}
+                            <div className="grid grid-cols-7 gap-1">
+                              {getKassaCalendarDays().map((date, index) => {
+                                if (!date) return <div key={`empty-${index}`} className="h-8"></div>;
+
+                                const isSelected = kassaDate && date.toDateString() === parseToDate(kassaDate).toDateString();
+                                const isToday = date.toDateString() === new Date().toDateString();
+
+                                return (
+                                  <button
+                                    key={index}
+                                    type="button"
+                                    onClick={() => handleKassaDateSelect(date)}
+                                    className={`
+                                      h-8 w-full flex items-center justify-center rounded-lg text-xs font-semibold transition-all duration-200 border-none cursor-pointer
+                                      ${isSelected ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30 hover:bg-emerald-400' : 'bg-transparent text-gray-300 hover:bg-emerald-500/20 hover:text-emerald-400'}
+                                      ${isToday && !isSelected ? 'border border-emerald-500/50 text-emerald-400 font-bold' : ''}
+                                    `}
+                                  >
+                                    {date.getDate()}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex justify-between border-b border-white/5 pb-2">
-                        <span className="text-zinc-400">Kutilmoqda:</span>
-                        <span className="font-bold text-amber-400">{bookingsList.filter(b => b && b.status === 'pending').length} ta</span>
+                      
+                      <div>
+                        <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Kassa Pul Miqdori (so'm)</label>
+                        <div className="relative">
+                          <input
+                            type="number"
+                            placeholder="Masalan: 150000"
+                            value={kassaAmount}
+                            onChange={(e) => setKassaAmount(e.target.value)}
+                            className="w-full pl-3 pr-12 py-2 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-white"
+                            min="0"
+                            required
+                          />
+                          <span className="absolute right-3 inset-y-0 flex items-center text-xs text-zinc-500 font-bold">so'm</span>
+                        </div>
                       </div>
-                      <div className="flex justify-between border-b border-white/5 pb-2">
-                        <span className="text-zinc-400">Tasdiqlangan:</span>
-                        <span className="font-bold text-emerald-400">{bookingsList.filter(b => b && b.status === 'confirmed').length} ta</span>
-                      </div>
-                      <div className="flex justify-between pb-2">
-                        <span className="text-zinc-400">Rad etilgan:</span>
-                        <span className="font-bold text-red-400">{bookingsList.filter(b => b && b.status === 'rejected').length} ta</span>
+
+                      <button
+                        type="submit"
+                        disabled={kassaSaving}
+                        className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-2.5 px-4 rounded-xl text-xs hover:shadow-lg hover:shadow-emerald-500/20 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2 border-none"
+                      >
+                        {kassaSaving ? (
+                          <>
+                            <svg className="animate-spin h-3.5 w-3.5 text-white" viewBox="0 0 24 24" fill="none">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>Saqlanmoqda...</span>
+                          </>
+                        ) : (
+                          <span>Kassani Saqlash</span>
+                        )}
+                      </button>
+                    </form>
+                  </div>
+
+                  {/* System Stats Summary */}
+                  <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm flex flex-col justify-between">
+                    <div>
+                      <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
+                        <span className="text-emerald-500">⚙️</span>
+                        Tizim Xulosasi
+                      </h4>
+                      
+                      <div className="space-y-3 text-sm">
+                        <div className="flex justify-between border-b border-white/5 pb-2">
+                          <span className="text-zinc-400">Jami buyurtmalar:</span>
+                          <span className="font-bold text-white">{stats.totalBookings} ta</span>
+                        </div>
+                        <div className="flex justify-between border-b border-white/5 pb-2">
+                          <span className="text-zinc-400">Kutilmoqda:</span>
+                          <span className="font-bold text-amber-400">{bookingsList.filter(b => b && b.status === 'pending').length} ta</span>
+                        </div>
+                        <div className="flex justify-between border-b border-white/5 pb-2">
+                          <span className="text-zinc-400">Tasdiqlangan:</span>
+                          <span className="font-bold text-emerald-400">{bookingsList.filter(b => b && b.status === 'confirmed').length} ta</span>
+                        </div>
+                        <div className="flex justify-between pb-2">
+                          <span className="text-zinc-400">Rad etilgan:</span>
+                          <span className="font-bold text-red-400">{bookingsList.filter(b => b && b.status === 'rejected').length} ta</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="pt-4 border-t border-white/5">
-                    <Link
-                      to="/admin?tab=statistics"
-                      className="w-full inline-flex items-center justify-center bg-zinc-800 hover:bg-zinc-700 text-zinc-200 hover:text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all text-center"
-                    >
-                      Batafsil Moliya & Grafiklar →
-                    </Link>
+                    
+                    <div className="pt-4 border-t border-white/5">
+                      <Link
+                        to="/admin?tab=statistics"
+                        className="w-full inline-flex items-center justify-center bg-zinc-800 hover:bg-zinc-700 text-zinc-200 hover:text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all text-center"
+                      >
+                        Batafsil Moliya & Grafiklar →
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1226,7 +1511,7 @@ const AdminDashboard = () => {
                   {/* Sparkline analytics information */}
                   <div className="mt-4 border-t border-white/5 pt-4 flex justify-between items-center text-xs text-zinc-400">
                     <span>Maksimal kunlik: <strong className="text-white">{(stats.chartData && stats.chartData.length > 0 ? Math.max(...stats.chartData.map(c => c.value)) : 0).toLocaleString()} so'm</strong></span>
-                    <span>Tasdiqlangan buyurtmalar summasi ko'rsatiladi</span>
+                    <span>Tasdiqlangan online buyurtmalar va kassa (offline) tushumi ko'rsatiladi</span>
                   </div>
                 </div>
 

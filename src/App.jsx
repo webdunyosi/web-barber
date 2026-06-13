@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import MainLayout from './layouts/MainLayout';
 import AdminLayout from './layouts/AdminLayout';
 import BookingPage from './pages/BookingPage';
@@ -15,6 +16,34 @@ import { AuthProvider } from './contexts/AuthContext.jsx';
 const App = () => {
   return (
     <AuthProvider>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          style: {
+            background: '#18181b',
+            color: '#fff',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            borderRadius: '12px',
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '14px',
+          },
+          success: {
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#18181b',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#18181b',
+            },
+            style: {
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+            }
+          }
+        }}
+      />
       <StepProvider>
         <Router>
           <ScrollToTop />

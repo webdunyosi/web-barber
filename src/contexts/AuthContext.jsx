@@ -11,7 +11,9 @@ import {
   updateBookingStatusApi,
   getStatisticsApi,
   getMyBookingsApi,
-  updateProfileApi
+  updateProfileApi,
+  saveOfflineIncomeApi,
+  getOfflineIncomeApi
 } from '../utils/api';
 
 export const AuthProvider = ({ children }) => {
@@ -130,6 +132,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const saveOfflineIncome = async (date, amount) => {
+    if (!token) throw new Error('Unauthenticated');
+    return await saveOfflineIncomeApi(token, date, amount);
+  };
+
+  const getOfflineIncome = async (date) => {
+    if (!token) throw new Error('Unauthenticated');
+    return await getOfflineIncomeApi(token, date);
+  };
+
   const value = {
     user,
     token,
@@ -146,7 +158,9 @@ export const AuthProvider = ({ children }) => {
     updateBookingStatus,
     getStatistics,
     getMyBookings,
-    updateProfile
+    updateProfile,
+    saveOfflineIncome,
+    getOfflineIncome
   };
 
   return (
