@@ -12,7 +12,7 @@ const LoyaltyPage = () => {
   const remaining = 9 - stampsCount;
 
   return (
-    <div className="w-full lg:w-5/6 ml-auto text-white px-4 py-6 pb-4 lg:pb-8">
+    <div className="w-full lg:w-5/6 ml-auto text-white px-0 sm:px-4 py-6 pb-4 lg:pb-8">
       <div className="max-w-3xl mx-auto space-y-4 md:space-y-8">
         
         {/* Page Title */}
@@ -28,7 +28,7 @@ const LoyaltyPage = () => {
         {isAuthenticated ? (
           <div className="space-y-4 md:space-y-8 animate-fadeIn">
             {/* Loyalty Card component */}
-            <div className="bg-zinc-900/60 border border-white/10 rounded-3xl p-4 sm:p-6 backdrop-blur-xl shadow-xl flex flex-col items-center">
+            <div className="bg-zinc-900/60 border border-white/10 rounded-3xl px-2 py-4 sm:p-6 backdrop-blur-xl shadow-xl flex flex-col items-center">
               <h3 className="text-base sm:text-lg font-bold mb-3 md:mb-5 flex items-center gap-2 self-start">
                 <FaAward size={18} className="text-emerald-400" />
                 Sizning Sadoqat Kartangiz

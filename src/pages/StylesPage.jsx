@@ -137,7 +137,7 @@ const StylesPage = () => {
   }
 
   return (
-    <div className="min-h-screen w-full lg:w-5/6 ml-auto px-4 md:px-8 pb-12">
+    <div className="min-h-screen w-full lg:w-5/6 ml-auto px-0 md:px-8 pb-12">
       {/* Title */}
       <div className="mt-4 mb-8 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-white/5 pb-6">
         <div>

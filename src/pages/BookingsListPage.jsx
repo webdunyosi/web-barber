@@ -63,7 +63,7 @@ const BookingsListPage = () => {
   };
 
   return (
-    <div className="w-full lg:w-5/6 ml-auto text-white px-4 py-6 pb-4 lg:pb-8">
+    <div className="w-full lg:w-5/6 ml-auto text-white px-0 sm:px-4 py-6 pb-4 lg:pb-8">
       <div className="max-w-3xl mx-auto space-y-8">
         
         {/* Page Title */}
@@ -77,7 +77,7 @@ const BookingsListPage = () => {
         </div>
 
         {isAuthenticated ? (
-          <div className="bg-zinc-900/70 border border-white/10 rounded-3xl p-6 backdrop-blur-xl shadow-xl animate-fadeIn">
+          <div className="bg-zinc-900/70 border border-white/10 rounded-3xl p-4 sm:p-6 backdrop-blur-xl shadow-xl animate-fadeIn">
             <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
               <FaHistory size={18} className="text-emerald-400 animate-spin-slow" />
               Buyurtmalar Tarixi
@@ -156,7 +156,7 @@ const BookingsListPage = () => {
           </div>
         ) : (
           /* Locked Guest View */
-          <div className="max-w-md w-full bg-zinc-900/80 border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl mx-auto text-center space-y-6">
+          <div className="max-w-md w-full bg-zinc-900/80 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl mx-auto text-center space-y-6">
             <div className="w-16 h-16 rounded-full bg-zinc-800/80 border border-zinc-700/50 flex items-center justify-center mx-auto text-zinc-400">
               <FaLock size={24} />
             </div>

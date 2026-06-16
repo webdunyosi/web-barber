@@ -205,7 +205,7 @@ const BookingPage = () => {
       </div>
 
       {/* Title */}
-      <div className="mb-4 px-4">
+      <div className="mb-4 px-0">
         <h2 className="text-center text-xl sm:text-2xl font-extrabold text-white mb-1">
           {getStepTitle()}
         </h2>
@@ -217,7 +217,7 @@ const BookingPage = () => {
       </div>
 
       {/* Step Content */}
-      <div className="max-w-5xl mx-auto px-4 md:px-8">
+      <div className="max-w-5xl mx-auto px-0 md:px-8">
         {currentStep === STEPS.SERVICE && (
           <ServiceSelection
             services={barberData.services}

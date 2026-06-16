@@ -252,6 +252,12 @@
   margin: 0 auto;
 }
 
+@media (max-width: 640px) {
+  .loyalty-card-container {
+    height: 200px; /* Wider aspect ratio on mobile */
+  }
+}
+
 .loyalty-card-inner {
   position: relative;
   width: 100%;

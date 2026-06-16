@@ -55,8 +55,8 @@ const ProfilePage = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="w-full lg:w-5/6 ml-auto min-h-[70vh] flex flex-col items-center justify-center px-4 py-12 text-white text-center">
-        <div className="max-w-md w-full bg-zinc-900/80 border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl">
+      <div className="w-full lg:w-5/6 ml-auto min-h-[70vh] flex flex-col items-center justify-center px-0 sm:px-4 py-12 text-white text-center">
+        <div className="max-w-md w-full bg-zinc-900/80 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
           <img 
             src="/avatar/men.png" 
             alt="Guest" 
@@ -80,7 +80,7 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="w-full lg:w-5/6 ml-auto text-white px-4 py-6 pb-4 lg:pb-8">
+    <div className="w-full lg:w-5/6 ml-auto text-white px-0 sm:px-4 py-6 pb-4 lg:pb-8">
       <div className="max-w-md mx-auto space-y-6">
         
         {/* Page Title */}
@@ -89,7 +89,7 @@ const ProfilePage = () => {
         </h2>
 
         {/* User Info Card */}
-        <div className="bg-zinc-900/70 border border-white/10 rounded-3xl p-6 backdrop-blur-xl shadow-xl flex flex-col justify-between h-fit">
+        <div className="bg-zinc-900/70 border border-white/10 rounded-3xl p-4 sm:p-6 backdrop-blur-xl shadow-xl flex flex-col justify-between h-fit">
           <div>
             {/* Profile Avatar */}
             <div className="text-center mb-6 border-b border-white/5 pb-6">

@@ -32,7 +32,7 @@ const BarberProfilePage = () => {
   const [imageLoaded, setImageLoaded] = React.useState(false);
 
   return (
-    <div className="min-h-screen w-full lg:w-5/6 ml-auto px-3 pb-4 md:pb-8 pt-4">
+    <div className="min-h-screen w-full lg:w-5/6 ml-auto px-0 sm:px-4 pb-4 md:pb-8 pt-4">
       <div className="max-w-6xl mx-auto space-y-4 md:space-y-8">
         {/* Header Section with Image and Basic Info */}
         <div className="relative bg-gradient-to-br from-zinc-900/95 to-zinc-800/95 backdrop-blur-lg rounded-3xl overflow-hidden border border-emerald-500/30 shadow-2xl shadow-emerald-500/10">
