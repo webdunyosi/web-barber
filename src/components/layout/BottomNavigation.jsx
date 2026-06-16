@@ -10,23 +10,23 @@ const BottomNavigation = () => {
       {/* Background with Notch */}
       <div className="absolute inset-0 flex items-end h-[68px] -z-10 pointer-events-none">
         <div className="flex-1 h-full bg-zinc-950/95 border-t border-white/10 rounded-tl-2xl"></div>
-        <div className="w-[90px] h-[68px] shrink-0 -mx-px">
-          <svg className="w-full h-full text-zinc-950/95" viewBox="0 0 90 68" fill="currentColor">
-            <path d="M 0 0.5 C 25 0.5, 25 35, 45 35 C 65 35, 65 0.5, 90 0.5 L 90 68 L 0 68 Z" />
-            <path d="M 0 0.5 C 25 0.5, 25 35, 45 35 C 65 35, 65 0.5, 90 0.5" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" fill="none" />
+        <div className="w-[76px] h-[68px] shrink-0 -mx-px">
+          <svg className="w-full h-full text-zinc-950/95" viewBox="0 0 76 68" fill="currentColor">
+            <path d="M 0 0.5 C 21 0.5, 21 35, 38 35 C 55 35, 55 0.5, 76 0.5 L 76 68 L 0 68 Z" />
+            <path d="M 0 0.5 C 21 0.5, 21 35, 38 35 C 55 35, 55 0.5, 76 0.5" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" fill="none" />
           </svg>
         </div>
         <div className="flex-1 h-full bg-zinc-950/95 border-t border-white/10 rounded-tr-2xl"></div>
       </div>
 
       {/* Navigation Links */}
-      <div className="relative w-full h-full flex items-center justify-between px-2">
+      <div className="relative w-full h-full flex items-center justify-between px-1">
         {/* Left Tabs */}
-        <div className="flex-1 flex justify-around pr-2">
+        <div className="flex-1 flex justify-around pr-1">
           <NavLink
             to="/"
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all duration-300 ${
+              `flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
                 isActive && location.pathname === '/'
                   ? 'text-emerald-400 scale-105 font-semibold'
                   : 'text-gray-400 hover:text-white'
@@ -34,13 +34,13 @@ const BottomNavigation = () => {
             }
           >
             <FaCalendarAlt size={19} />
-            <span className="text-[10px] tracking-wide">Buyurtma</span>
+            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Buyurtma</span>
           </NavLink>
 
           <NavLink
             to="/stillar"
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all duration-300 ${
+              `flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
                 isActive
                   ? 'text-emerald-400 scale-105 font-semibold'
                   : 'text-gray-400 hover:text-white'
@@ -48,13 +48,13 @@ const BottomNavigation = () => {
             }
           >
             <FaCut size={19} />
-            <span className="text-[10px] tracking-wide">Stillar</span>
+            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Stillar</span>
           </NavLink>
 
           <NavLink
             to="/buyurtmalarim"
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all duration-300 ${
+              `flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
                 isActive
                   ? 'text-emerald-400 scale-105 font-semibold'
                   : 'text-gray-400 hover:text-white'
@@ -62,12 +62,12 @@ const BottomNavigation = () => {
             }
           >
             <FaCalendarCheck size={19} />
-            <span className="text-[10px] tracking-wide">Tashriflar</span>
+            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Tashriflar</span>
           </NavLink>
         </div>
 
         {/* Center notch space with Floating action button */}
-        <div className="w-[90px] shrink-0 relative h-full">
+        <div className="w-[76px] shrink-0 relative h-full">
           <NavLink
             to="/sartarosh"
             className={({ isActive }) =>
@@ -83,11 +83,11 @@ const BottomNavigation = () => {
         </div>
 
         {/* Right Tabs */}
-        <div className="flex-1 flex justify-around pl-2">
+        <div className="flex-1 flex justify-around pl-1">
           <NavLink
             to="/loyalty"
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all duration-300 ${
+              `flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
                 isActive
                   ? 'text-emerald-400 scale-105 font-semibold'
                   : 'text-gray-400 hover:text-white'
@@ -95,13 +95,13 @@ const BottomNavigation = () => {
             }
           >
             <FaGift size={19} />
-            <span className="text-[10px] tracking-wide">Karta</span>
+            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Karta</span>
           </NavLink>
 
           <NavLink
             to="/ai-chat"
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all duration-300 ${
+              `flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
                 isActive
                   ? 'text-emerald-400 scale-105 font-semibold'
                   : 'text-gray-400 hover:text-white'
@@ -109,13 +109,13 @@ const BottomNavigation = () => {
             }
           >
             <FaRobot size={19} />
-            <span className="text-[10px] tracking-wide">AI bot</span>
+            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">AI bot</span>
           </NavLink>
 
           <NavLink
             to="/profil"
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all duration-300 ${
+              `flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
                 isActive
                   ? 'text-emerald-400 scale-105 font-semibold'
                   : 'text-gray-400 hover:text-white'
@@ -129,7 +129,7 @@ const BottomNavigation = () => {
                 location.pathname === '/profil' ? 'border-emerald-400' : 'border-zinc-700'
               }`} 
             />
-            <span className="text-[10px] tracking-wide">Profil</span>
+            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Profil</span>
           </NavLink>
         </div>
       </div>
