@@ -6,6 +6,22 @@ import {
 import barberStyles from "../data/barberStyles.json"
 import hairStyles from "../data/hairStyles.json"
 
+const getYouTubeThumbnail = (url) => {
+  if (!url) return null;
+  let videoId = null;
+  if (url.includes('/embed/')) {
+    const match = url.match(/\/embed\/([^/?]+)/);
+    if (match) videoId = match[1];
+  } else if (url.includes('watch?v=')) {
+    const match = url.match(/v=([^&]+)/);
+    if (match) videoId = match[1];
+  } else if (url.includes('youtu.be/')) {
+    const match = url.match(/youtu\.be\/([^/?]+)/);
+    if (match) videoId = match[1];
+  }
+  return videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null;
+};
+
 const StylesPage = () => {
   const [activeTab, setActiveTab] = useState("soch")
   const [loadedImages, setLoadedImages] = useState({})
@@ -78,7 +94,7 @@ const StylesPage = () => {
 
               {/* Cover Image */}
               <img
-                src={style.image}
+                src={getYouTubeThumbnail(style.video) || style.image}
                 alt={style.title}
                 className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
                   loadedImages[style.id] ? "opacity-100" : "opacity-0"
