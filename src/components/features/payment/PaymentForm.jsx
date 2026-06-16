@@ -319,19 +319,17 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
       {/* Payment Instructions / Cash steps */}
       {isFree ? (
         <div className="bg-gradient-to-br from-emerald-500/5 to-teal-500/5 border border-emerald-500/20 rounded-2xl p-4 sm:p-5">
-          <div className="flex items-start gap-3">
+          <div className="flex items-center gap-2.5 mb-3">
             <div className="w-8 h-8 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center justify-center text-emerald-400 shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
               <FaInfoCircle className="text-sm" />
             </div>
-            <div className="space-y-1">
-              <h4 className="font-bold text-sm sm:text-base text-white">Eslatma va Ko'rsatma</h4>
-              <ol className="text-xs space-y-1.5 text-zinc-300 list-decimal pl-4 leading-relaxed mt-2">
-                <li>Buyurtma ma'lumotlarini yuqorida keltirilgan "Buyurtma tafsilotlari" bo'limida qayta tekshiring.</li>
-                <li>Band qilishni yakunlash uchun pastdagi <strong className="text-emerald-400">"To'lovni amalga oshirish"</strong> (yoki Bepul band qilishni tasdiqlash) tugmasini bosing.</li>
-                <li>Siz belgilagan vaqtda (<strong className="text-zinc-100">{bookingInfo.date}</strong> kuni soat <strong className="text-zinc-100">{bookingInfo.time}</strong> da) sartaroshxonaga tashrif buyuring.</li>
-              </ol>
-            </div>
+            <h4 className="font-bold text-sm sm:text-base text-white">Eslatma va Ko'rsatma</h4>
           </div>
+          <ol className="text-xs space-y-1.5 text-zinc-300 list-decimal pl-4 leading-relaxed">
+            <li>Buyurtma ma'lumotlarini yuqorida keltirilgan "Buyurtma tafsilotlari" bo'limida qayta tekshiring.</li>
+            <li>Band qilishni yakunlash uchun pastdagi <strong className="text-emerald-400">"To'lovni amalga oshirish"</strong> (yoki Bepul band qilishni tasdiqlash) tugmasini bosing.</li>
+            <li>Siz belgilagan vaqtda (<strong className="text-zinc-100">{bookingInfo.date}</strong> kuni soat <strong className="text-zinc-100">{bookingInfo.time}</strong> da) sartaroshxonaga tashrif buyuring.</li>
+          </ol>
         </div>
       ) : selectedMethod === 'card' ? (
         <>
@@ -432,20 +430,18 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
         </>
       ) : (
         <div className="bg-gradient-to-br from-emerald-500/5 to-teal-500/5 border border-emerald-500/20 rounded-2xl p-4 sm:p-5">
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center justify-center text-emerald-400 shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.15)] shrink-0">
+          <div className="flex items-center gap-2.5 mb-3">
+            <div className="w-8 h-8 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center justify-center text-emerald-400 shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
               <FaInfoCircle className="text-sm" />
             </div>
-            <div className="space-y-1">
-              <h4 className="font-bold text-sm sm:text-base text-white">Eslatma va Ko'rsatma</h4>
-              <ol className="text-xs space-y-1.5 text-zinc-300 list-decimal pl-4 leading-relaxed mt-2">
-                <li>Buyurtma ma'lumotlarini yuqorida keltirilgan "Buyurtma tafsilotlari" bo'limida qayta tekshiring.</li>
-                <li>Band qilishni yakunlash uchun pastdagi <strong className="text-emerald-400">"To'lovni amalga oshirish"</strong> (Joyida to'lashni tasdiqlash) tugmasini bosing.</li>
-                <li>Siz belgilagan vaqtda (<strong className="text-zinc-100">{bookingInfo.date}</strong> kuni soat <strong className="text-zinc-100">{bookingInfo.time}</strong> da) sartaroshxonaga tashrif buyuring.</li>
-                <li>Xizmat ko'rsatilgandan so'ng, to'lovni sartaroshga bevosita topshiring.</li>
-              </ol>
-            </div>
+            <h4 className="font-bold text-sm sm:text-base text-white">Eslatma va Ko'rsatma</h4>
           </div>
+          <ol className="text-xs space-y-1.5 text-zinc-300 list-decimal pl-4 leading-relaxed">
+            <li>Buyurtma ma'lumotlarini yuqorida keltirilgan "Buyurtma tafsilotlari" bo'limida qayta tekshiring.</li>
+            <li>Band qilishni yakunlash uchun pastdagi <strong className="text-emerald-400">"To'lovni amalga oshirish"</strong> (Joyida to'lashni tasdiqlash) tugmasini bosing.</li>
+            <li>Siz belgilagan vaqtda (<strong className="text-zinc-100">{bookingInfo.date}</strong> kuni soat <strong className="text-zinc-100">{bookingInfo.time}</strong> da) sartaroshxonaga tashrif buyuring.</li>
+            <li>Xizmat ko'rsatilgandan so'ng, to'lovni sartaroshga bevosita topshiring.</li>
+          </ol>
         </div>
       )}
     </div>
