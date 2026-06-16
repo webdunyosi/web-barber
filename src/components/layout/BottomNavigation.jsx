@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { FaCalendarAlt, FaCut, FaUserTie, FaRobot } from 'react-icons/fa';
+import { FaCalendarAlt, FaCut, FaUserTie, FaRobot, FaGift, FaCalendarCheck } from 'react-icons/fa';
 
 const BottomNavigation = () => {
   const location = useLocation();
@@ -50,6 +50,20 @@ const BottomNavigation = () => {
             <FaCut size={19} />
             <span className="text-[10px] tracking-wide">Stillar</span>
           </NavLink>
+
+          <NavLink
+            to="/buyurtmalarim"
+            className={({ isActive }) =>
+              `flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all duration-300 ${
+                isActive
+                  ? 'text-emerald-400 scale-105 font-semibold'
+                  : 'text-gray-400 hover:text-white'
+              }`
+            }
+          >
+            <FaCalendarCheck size={19} />
+            <span className="text-[10px] tracking-wide">Tashriflar</span>
+          </NavLink>
         </div>
 
         {/* Center notch space with Floating action button */}
@@ -70,6 +84,20 @@ const BottomNavigation = () => {
 
         {/* Right Tabs */}
         <div className="flex-1 flex justify-around pl-2">
+          <NavLink
+            to="/loyalty"
+            className={({ isActive }) =>
+              `flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all duration-300 ${
+                isActive
+                  ? 'text-emerald-400 scale-105 font-semibold'
+                  : 'text-gray-400 hover:text-white'
+              }`
+            }
+          >
+            <FaGift size={19} />
+            <span className="text-[10px] tracking-wide">Karta</span>
+          </NavLink>
+
           <NavLink
             to="/ai-chat"
             className={({ isActive }) =>

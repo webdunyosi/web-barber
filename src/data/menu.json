@@ -6,6 +6,11 @@
     "icon": "FaCalendarAlt"
   },
   {
+    "name": "Mening buyurtmalarim",
+    "path": "/buyurtmalarim",
+    "icon": "FaCalendarCheck"
+  },
+  {
     "name": "Soch va Soqol Stillari",
     "path": "/stillar",
     "icon": "FaCut"
@@ -19,5 +24,10 @@
     "name": "AI bot",
     "path": "/ai-chat",
     "icon": "FaRobot"
+  },
+  {
+    "name": "Sadoqat kartasi",
+    "path": "/loyalty",
+    "icon": "FaGift"
   }
 ]

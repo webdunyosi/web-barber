@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from "react"
 import { formatPrice } from "../../../utils/format"
 import { FaReceipt, FaInfoCircle, FaCloudUploadAlt, FaCheckCircle, FaExclamationCircle, FaCreditCard, FaHandshake } from "react-icons/fa"
-
+import { useAuth } from "../../../hooks/useAuth"
 const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
+  const { user } = useAuth();
+  const isFree = user && user.loyaltyStamps === 9;
+
   const [errors, setErrors] = useState({})
   const [previewUrl, setPreviewUrl] = useState(null)
   const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    if (isFree && (paymentData.paymentMethod !== 'cash' || paymentData.receipt !== null)) {
+      onUpdate({ ...paymentData, paymentMethod: 'cash', receipt: null });
+    }
+  }, [isFree]);
 
   const selectedMethod = paymentData.paymentMethod || 'card'
 
@@ -65,71 +74,93 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
 
   return (
     <div className="w-full mx-auto space-y-6">
-      {/* Payment Method Selector */}
-      <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-2xl p-5 shadow-xl backdrop-blur-sm">
-        <label className="block text-sm font-bold text-zinc-300 mb-4 text-center sm:text-left">
-          To'lov usulini tanlang
-        </label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Card Option */}
-          <div
-            onClick={() => setPaymentMethod('card')}
-            className={`cursor-pointer rounded-xl p-4 border transition-all duration-300 flex items-start gap-3.5 select-none relative overflow-hidden group hover:scale-[1.005] ${
-              selectedMethod === 'card'
-                ? 'bg-emerald-500/5 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
-                : 'bg-zinc-900/30 border-zinc-800 hover:border-zinc-700'
-            }`}
-          >
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border transition-colors duration-300 ${
-              selectedMethod === 'card'
-                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                : 'bg-zinc-800 border-zinc-750 text-zinc-400'
-            }`}>
-              <FaCreditCard className="text-lg" />
-            </div>
-            <div className="space-y-0.5">
-              <h4 className="font-bold text-xs sm:text-sm text-white flex items-center gap-1.5">
-                Karta orqali (Online)
-                {selectedMethod === 'card' && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                )}
-              </h4>
-              <p className="text-[10px] text-zinc-400 leading-normal">
-                Karta raqamiga o'tkazma qiling va to'lov chekini yuklang
-              </p>
-            </div>
+      {isFree ? (
+        <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-500/30 rounded-2xl p-6 text-center space-y-4 shadow-xl shadow-emerald-500/5 animate-fadeIn">
+          <div className="w-16 h-16 bg-emerald-500/20 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto text-3xl animate-bounce">
+            🎁
           </div>
-
-          {/* Cash Option */}
-          <div
-            onClick={() => setPaymentMethod('cash')}
-            className={`cursor-pointer rounded-xl p-4 border transition-all duration-300 flex items-start gap-3.5 select-none relative overflow-hidden group hover:scale-[1.005] ${
-              selectedMethod === 'cash'
-                ? 'bg-emerald-500/5 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
-                : 'bg-zinc-900/30 border-zinc-800 hover:border-zinc-700'
-            }`}
-          >
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border transition-colors duration-300 ${
-              selectedMethod === 'cash'
-                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                : 'bg-zinc-800 border-zinc-750 text-zinc-400'
-            }`}>
-              <FaHandshake className="text-lg" />
+          <div className="space-y-1">
+            <h3 className="text-xl font-black text-emerald-400 uppercase tracking-wide">Tashrifingiz Mutlaqo Bepul!</h3>
+            <p className="text-[10px] text-zinc-400 font-extrabold uppercase tracking-wider">
+              10-Bepul Tashrif Faollashtirildi
+            </p>
+          </div>
+          <p className="text-xs sm:text-sm text-zinc-300 max-w-md mx-auto leading-relaxed">
+            Tabriklaymiz! Sizning Loyalty Card ballaringiz 9 ga yetganligi sababli, ushbu xizmat siz uchun bepul taqdim etiladi. Hech qanday karta o'tkazmasi yoki to'lov cheki yuklash talab qilinmaydi!
+          </p>
+          <div className="border-t border-zinc-850 my-2 pt-3">
+            <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
+              ⚡️ Sartarosh ushbu buyurtmani tasdiqlashi bilan loyalty kartangiz ballari 0 ga qaytadi.
+            </span>
+          </div>
+        </div>
+      ) : (
+        /* Payment Method Selector */
+        <div className="bg-zinc-900/40 border border-zinc-800/60 rounded-2xl p-5 shadow-xl backdrop-blur-sm">
+          <label className="block text-sm font-bold text-zinc-300 mb-4 text-center sm:text-left">
+            To'lov usulini tanlang
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Card Option */}
+            <div
+              onClick={() => setPaymentMethod('card')}
+              className={`cursor-pointer rounded-xl p-4 border transition-all duration-300 flex items-start gap-3.5 select-none relative overflow-hidden group hover:scale-[1.005] ${
+                selectedMethod === 'card'
+                  ? 'bg-emerald-500/5 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
+                  : 'bg-zinc-900/30 border-zinc-800 hover:border-zinc-700'
+              }`}
+            >
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border transition-colors duration-300 ${
+                selectedMethod === 'card'
+                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                  : 'bg-zinc-800 border-zinc-750 text-zinc-400'
+              }`}>
+                <FaCreditCard className="text-lg" />
+              </div>
+              <div className="space-y-0.5">
+                <h4 className="font-bold text-xs sm:text-sm text-white flex items-center gap-1.5">
+                  Karta orqali (Online)
+                  {selectedMethod === 'card' && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  )}
+                </h4>
+                <p className="text-[10px] text-zinc-400 leading-normal">
+                  Karta raqamiga o'tkazma qiling va to'lov chekini yuklang
+                </p>
+              </div>
             </div>
-            <div className="space-y-0.5">
-              <h4 className="font-bold text-xs sm:text-sm text-white flex items-center gap-1.5">
-                Sartaroshga (Joyida)
-                {selectedMethod === 'cash' && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                )}
-              </h4>
-              <p className="text-[10px] text-zinc-400 leading-normal">
-                Tashrif yakunida sartaroshning o'ziga naqd/karta orqali to'lang
-              </p>
+
+            {/* Cash Option */}
+            <div
+              onClick={() => setPaymentMethod('cash')}
+              className={`cursor-pointer rounded-xl p-4 border transition-all duration-300 flex items-start gap-3.5 select-none relative overflow-hidden group hover:scale-[1.005] ${
+                selectedMethod === 'cash'
+                  ? 'bg-emerald-500/5 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
+                  : 'bg-zinc-900/30 border-zinc-800 hover:border-zinc-700'
+              }`}
+            >
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border transition-colors duration-300 ${
+                selectedMethod === 'cash'
+                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                  : 'bg-zinc-800 border-zinc-750 text-zinc-400'
+              }`}>
+                <FaHandshake className="text-lg" />
+              </div>
+              <div className="space-y-0.5">
+                <h4 className="font-bold text-xs sm:text-sm text-white flex items-center gap-1.5">
+                  Sartaroshga (Joyida)
+                  {selectedMethod === 'cash' && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  )}
+                </h4>
+                <p className="text-[10px] text-zinc-400 leading-normal">
+                  Tashrif yakunida sartaroshning o'ziga naqd/karta orqali to'lang
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {/* Order Summary */}
@@ -157,14 +188,43 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
             <div className="flex justify-between items-center">
               <span className="font-bold text-zinc-350">Jami to'lov:</span>
               <span className="font-extrabold text-lg sm:text-xl text-emerald-400">
-                {formatPrice(bookingInfo.service.price)} so'm
+                {isFree ? "MUTLAQO BEPUL 🎁" : `${formatPrice(bookingInfo.service.price)} so'm`}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Card Information Display vs Cash info display */}
-        {selectedMethod === 'card' ? (
+        {/* Display cash-like details or a free ticket detail if isFree */}
+        {isFree ? (
+          <div className="bg-gradient-to-br from-zinc-900 via-zinc-850 to-zinc-950 border border-zinc-700/30 rounded-2xl p-5 text-white shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[180px]">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-xl pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-emerald-500/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-xl pointer-events-none"></div>
+            <div className="relative z-10 flex flex-col justify-between h-full w-full">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-6 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-sm relative overflow-hidden shadow-inner shrink-0 flex items-center justify-center">
+                    <span className="text-[10px] font-bold text-zinc-950">🎟️</span>
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-yellow-400">
+                    Siylov Chiptasi
+                  </span>
+                </div>
+                <div className="text-right shrink-0">
+                  <span className="text-[10px] font-bold text-emerald-450 tracking-wider">SOVG'A</span>
+                </div>
+              </div>
+              <div className="mb-4">
+                <h4 className="text-sm sm:text-base font-bold text-zinc-150">Bepul Xizmat Kuponi</h4>
+                <p className="text-xs text-zinc-400 leading-relaxed mt-1">
+                  Ushbu tashrif uchun hech qanday to'lov to'lashingiz shart emas. Sartaroshxonamiz sizni bepul xizmat ko'rsatish uchun kutib qoladi!
+                </p>
+              </div>
+              <div className="mt-auto pt-2 border-t border-zinc-800/80 flex items-center gap-2 text-[10px] font-semibold text-zinc-400">
+                <span>⭐</span> Barber Shop sodiqlik dasturi a'zosi.
+              </div>
+            </div>
+          </div>
+        ) : selectedMethod === 'card' ? (
           <div className="bg-gradient-to-br from-zinc-900 via-zinc-850 to-zinc-950 border border-zinc-700/30 rounded-2xl p-5 text-white shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[180px]">
             {/* Decorative elements */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-xl pointer-events-none"></div>
@@ -257,7 +317,23 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
       </div>
 
       {/* Payment Instructions / Cash steps */}
-      {selectedMethod === 'card' ? (
+      {isFree ? (
+        <div className="bg-gradient-to-br from-emerald-500/5 to-teal-500/5 border border-emerald-500/20 rounded-2xl p-4 sm:p-5">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center justify-center text-emerald-400 shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+              <FaInfoCircle className="text-sm" />
+            </div>
+            <div className="space-y-1">
+              <h4 className="font-bold text-sm sm:text-base text-white">Eslatma va Ko'rsatma</h4>
+              <ol className="text-xs space-y-1.5 text-zinc-300 list-decimal pl-4 leading-relaxed mt-2">
+                <li>Buyurtma ma'lumotlarini yuqorida keltirilgan "Buyurtma tafsilotlari" bo'limida qayta tekshiring.</li>
+                <li>Band qilishni yakunlash uchun pastdagi <strong className="text-emerald-400">"To'lovni amalga oshirish"</strong> (yoki Bepul band qilishni tasdiqlash) tugmasini bosing.</li>
+                <li>Siz belgilagan vaqtda (<strong className="text-zinc-100">{bookingInfo.date}</strong> kuni soat <strong className="text-zinc-100">{bookingInfo.time}</strong> da) sartaroshxonaga tashrif buyuring.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      ) : selectedMethod === 'card' ? (
         <>
           <div className="bg-gradient-to-br from-blue-500/5 to-indigo-500/5 border border-blue-500/20 rounded-2xl p-4 sm:p-5">
             <div className="flex items-center gap-2.5 mb-3">
@@ -339,7 +415,7 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
               {/* Preview uploaded image */}
               {paymentData.receipt && previewUrl && (
                 <div className="mt-3 p-2 bg-zinc-900/40 rounded-xl border border-zinc-800/80 flex flex-col items-center">
-                  <p className="text-xs text-zinc-300 mb-1.5 font-medium self-start">
+                  <p className="text-xs text-zinc-350 mb-1.5 font-medium self-start">
                     Yuklangan chek:
                   </p>
                   <div className="relative w-full max-w-[140px] aspect-square overflow-hidden rounded-lg border border-zinc-700/50 shadow-inner">
@@ -357,7 +433,7 @@ const PaymentForm = ({ paymentData, onUpdate, bookingInfo }) => {
       ) : (
         <div className="bg-gradient-to-br from-emerald-500/5 to-teal-500/5 border border-emerald-500/20 rounded-2xl p-4 sm:p-5">
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center justify-center text-emerald-400 shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+            <div className="w-8 h-8 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center justify-center text-emerald-400 shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.15)] shrink-0">
               <FaInfoCircle className="text-sm" />
             </div>
             <div className="space-y-1">

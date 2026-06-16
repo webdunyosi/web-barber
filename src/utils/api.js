@@ -39,6 +39,7 @@ const initMockDb = () => {
         role: 'admin',
         status: 'active',
         password: 'admin',
+        loyaltyStamps: 0,
         createdAt: new Date().toISOString()
       },
       {
@@ -49,6 +50,7 @@ const initMockDb = () => {
         role: 'user',
         status: 'active',
         password: 'password123',
+        loyaltyStamps: 3,
         createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
       },
       {
@@ -59,6 +61,7 @@ const initMockDb = () => {
         role: 'user',
         status: 'blocked',
         password: 'password123',
+        loyaltyStamps: 0,
         createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
       }
     ];
@@ -132,8 +135,17 @@ export const submitBooking = async (bookingInfo, paymentData) => {
   if (MOCK_MODE) {
     const bookings = getMockBookings();
     
+    // Check if current user has 9 loyalty stamps for a free booking in mock mode
+    const token = localStorage.getItem('barber_token') || '';
+    const userId = token.replace('mock-jwt-token-', '');
+    const users = getMockUsers();
+    const user = users.find(u => u.id === userId);
+    const isFree = user && user.loyaltyStamps === 9;
+    const finalPrice = isFree ? 0 : bookingInfo.service.price;
+    const finalMethod = isFree ? 'cash' : method;
+
     let receiptUrl = '';
-    if (!isCash) {
+    if (!isCash && !isFree) {
       receiptUrl = 'https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=500&auto=format&fit=crop&q=60';
       if (paymentData.receipt && paymentData.receipt instanceof File) {
         receiptUrl = URL.createObjectURL(paymentData.receipt);
@@ -146,12 +158,13 @@ export const submitBooking = async (bookingInfo, paymentData) => {
       phone: bookingInfo.phone,
       telegram_user: bookingInfo.telegram_user || '',
       serviceName: bookingInfo.service.name,
-      servicePrice: bookingInfo.service.price,
+      servicePrice: finalPrice,
       date: bookingInfo.date,
       time: bookingInfo.time,
       status: 'pending',
-      paymentMethod: method,
+      paymentMethod: finalMethod,
       receipt: receiptUrl,
+      isFree: isFree,
       createdAt: new Date().toISOString()
     };
 
@@ -159,7 +172,10 @@ export const submitBooking = async (bookingInfo, paymentData) => {
     saveMockBookings(bookings);
 
     // Send Telegram Notification for new booking/payment
-    const methodDisplay = isCash ? '💵 Sartaroshga (Joyida)' : '💳 Karta orqali (Online)';
+    let methodDisplay = isCash ? '💵 Sartaroshga (Joyida)' : '💳 Karta orqali (Online)';
+    if (isFree) {
+      methodDisplay = '🎁 Bepul (Loyalty Card)';
+    }
     const message = `
 🧾 *Yangi Buyurtma & To'lov!*
 
@@ -169,11 +185,11 @@ export const submitBooking = async (bookingInfo, paymentData) => {
 💳 *To'lov usuli:* ${methodDisplay}
 
 💈 *Xizmat:* ${bookingInfo.service.name}
-💰 *Narx:* ${bookingInfo.service.price.toLocaleString()} so'm
+💰 *Narx:* ${isFree ? 'BEPUL 🎁' : finalPrice.toLocaleString() + ' so\'m'}
 📅 *Sana:* ${bookingInfo.date}
 🕐 *Vaqt:* ${bookingInfo.time}
 
-${isCash ? '✅ _Joyida to\'lash tanlandi. Tasdiqlash uchun admin panelga kiring!_' : '⚠️ _To\'lov chekini tasdiqlash uchun admin panelga kiring!_'}
+${isFree ? '✅ _Loyalty Card orqali 10-bepul xizmat! Tasdiqlash uchun admin panelga kiring!_' : (isCash ? '✅ _Joyida to\'lash tanlandi. Tasdiqlash uchun admin panelga kiring!_' : '⚠️ _To\'lov chekini tasdiqlash uchun admin panelga kiring!_')}
     `.trim();
     
     await sendTelegramNotification(message);
@@ -237,7 +253,8 @@ export const loginApi = async (phone, password) => {
         phone: user.phone,
         telegram: user.telegram,
         role: user.role,
-        status: user.status
+        status: user.status,
+        loyaltyStamps: user.loyaltyStamps || 0
       }
     };
   }
@@ -265,6 +282,7 @@ export const registerApi = async (userData) => {
       password: userData.password,
       role: 'user',
       status: 'active',
+      loyaltyStamps: 0,
       createdAt: new Date().toISOString()
     };
 
@@ -291,7 +309,8 @@ export const registerApi = async (userData) => {
         phone: newUser.phone,
         telegram: newUser.telegram,
         role: newUser.role,
-        status: newUser.status
+        status: newUser.status,
+        loyaltyStamps: newUser.loyaltyStamps
       }
     };
   }
@@ -324,7 +343,8 @@ export const getCurrentUserApi = async (token) => {
         phone: user.phone,
         telegram: user.telegram,
         role: user.role,
-        status: user.status
+        status: user.status,
+        loyaltyStamps: user.loyaltyStamps || 0
       }
     };
   }
@@ -421,6 +441,31 @@ export const updateBookingStatusApi = async (token, bookingId, status) => {
 
     const booking = bookings.find(b => b.id === bookingId);
     if (booking) {
+      // Manage mock loyalty card points
+      if (status === 'confirmed' && booking.status !== 'confirmed') {
+        const users = getMockUsers();
+        const userIndex = users.findIndex(u => u.phone === booking.phone);
+        if (userIndex !== -1) {
+          if (booking.isFree) {
+            users[userIndex].loyaltyStamps = 0;
+          } else {
+            users[userIndex].loyaltyStamps = Math.min((users[userIndex].loyaltyStamps || 0) + 1, 9);
+          }
+          saveMockUsers(users);
+        }
+      } else if (status !== 'confirmed' && booking.status === 'confirmed') {
+        const users = getMockUsers();
+        const userIndex = users.findIndex(u => u.phone === booking.phone);
+        if (userIndex !== -1) {
+          if (booking.isFree) {
+            users[userIndex].loyaltyStamps = 9;
+          } else {
+            users[userIndex].loyaltyStamps = Math.max((users[userIndex].loyaltyStamps || 0) - 1, 0);
+          }
+          saveMockUsers(users);
+        }
+      }
+
       // Notify in telegram bot
       const statusText = status === 'confirmed' ? 'TASDIQLANDI ✅' : 'RAD ETILDI ❌';
       const message = `
@@ -700,7 +745,8 @@ export const updateProfileApi = async (token, userData) => {
         phone: users[userIndex].phone,
         telegram: users[userIndex].telegram,
         role: users[userIndex].role,
-        status: users[userIndex].status
+        status: users[userIndex].status,
+        loyaltyStamps: users[userIndex].loyaltyStamps || 0
       }
     };
   }
