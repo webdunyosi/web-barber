@@ -13,7 +13,7 @@ const LoyaltyPage = () => {
 
   return (
     <div className="w-full lg:w-5/6 ml-auto text-white px-4 py-6 pb-4 lg:pb-8">
-      <div className="max-w-3xl mx-auto space-y-8">
+      <div className="max-w-3xl mx-auto space-y-4 md:space-y-8">
         
         {/* Page Title */}
         <div className="text-center space-y-2">
@@ -26,17 +26,17 @@ const LoyaltyPage = () => {
         </div>
 
         {isAuthenticated ? (
-          <div className="space-y-8 animate-fadeIn">
+          <div className="space-y-4 md:space-y-8 animate-fadeIn">
             {/* Loyalty Card component */}
-            <div className="bg-zinc-900/60 border border-white/10 rounded-3xl p-6 backdrop-blur-xl shadow-xl flex flex-col items-center">
-              <h3 className="text-lg font-bold mb-5 flex items-center gap-2 self-start">
+            <div className="bg-zinc-900/60 border border-white/10 rounded-3xl p-4 sm:p-6 backdrop-blur-xl shadow-xl flex flex-col items-center">
+              <h3 className="text-base sm:text-lg font-bold mb-3 md:mb-5 flex items-center gap-2 self-start">
                 <FaAward size={18} className="text-emerald-400" />
                 Sizning Sadoqat Kartangiz
               </h3>
               <LoyaltyCard stampsCount={stampsCount} />
               
               {/* Status Message */}
-              <div className="mt-6 text-center space-y-1">
+              <div className="mt-4 md:mt-6 text-center space-y-1">
                 {stampsCount === 9 ? (
                   <p className="text-emerald-400 font-bold text-sm sm:text-base animate-pulse">
                     Tabriklaymiz! Keyingi 10-tashrifingiz mutlaqo BEPUL! 🎁
@@ -52,7 +52,7 @@ const LoyaltyPage = () => {
             {/* Loyalty Info & Guide */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* How it works */}
-              <div className="bg-zinc-900/60 border border-white/5 rounded-2xl p-5 space-y-3">
+              <div className="bg-zinc-900/60 border border-white/5 rounded-2xl p-4 sm:p-5 space-y-2.5">
                 <h4 className="font-bold text-sm sm:text-base flex items-center gap-2 text-emerald-400">
                   <FaQuestionCircle size={16} />
                   Dastur qoidalari
@@ -66,7 +66,7 @@ const LoyaltyPage = () => {
               </div>
 
               {/* Rules and Notice */}
-              <div className="bg-zinc-900/60 border border-white/5 rounded-2xl p-5 space-y-3">
+              <div className="bg-zinc-900/60 border border-white/5 rounded-2xl p-4 sm:p-5 space-y-2.5">
                 <h4 className="font-bold text-sm sm:text-base flex items-center gap-2 text-emerald-400">
                   <FaInfoCircle size={16} />
                   Eslatmalar
