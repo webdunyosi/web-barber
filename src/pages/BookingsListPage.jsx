@@ -63,7 +63,7 @@ const BookingsListPage = () => {
   };
 
   return (
-    <div className="w-full lg:w-5/6 ml-auto text-white px-4 py-6 pb-24 lg:pb-8">
+    <div className="w-full lg:w-5/6 ml-auto text-white px-4 py-6 pb-4 lg:pb-8">
       <div className="max-w-3xl mx-auto space-y-8">
         
         {/* Page Title */}
