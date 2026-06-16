@@ -93,14 +93,20 @@ const StylesPage = () => {
               )}
 
               {/* Cover Image */}
-              <img
-                src={getYouTubeThumbnail(style.video) || style.image}
-                alt={style.title}
-                className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
-                  loadedImages[style.id] ? "opacity-100" : "opacity-0"
-                }`}
-                onLoad={() => handleImageLoad(style.id)}
-              />
+              {(getYouTubeThumbnail(style.video) || style.image) ? (
+                <img
+                  src={getYouTubeThumbnail(style.video) || style.image}
+                  alt={style.title}
+                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                    loadedImages[style.id] ? "opacity-100" : "opacity-0"
+                  }`}
+                  onLoad={() => handleImageLoad(style.id)}
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900">
+                  <FaUserAlt size={36} className="text-emerald-400/50 mb-2" />
+                </div>
+              )}
               
               <div className="absolute inset-0 bg-linear-to-t from-zinc-950 via-zinc-950/20 to-transparent opacity-60 transition-opacity group-hover:opacity-40" />
 
@@ -119,6 +125,14 @@ const StylesPage = () => {
                   {style.category}
                 </span>
               </div>
+              {/* "Coming Soon" badge for cards without video */}
+              {!style.video && (
+                <div className="absolute bottom-3 left-3 z-20">
+                  <span className="px-2.5 py-1 bg-zinc-800/90 text-zinc-400 text-[9px] font-bold rounded-full border border-white/10 backdrop-blur-sm">
+                    🎬 Video tez kunda
+                  </span>
+                </div>
+              )}
             </div>
           )}
         </div>

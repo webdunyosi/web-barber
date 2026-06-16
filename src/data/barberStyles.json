@@ -28,7 +28,55 @@
     "title": "Professional Soqol Shakli (Beard Shape Up)",
     "description": "Soqolni yuz chiziqlariga mos ravishda toza, tekis va o'tkir burchaklar bilan shakllantirish xizmati. Soqol qirralari ustarada tekislanadi, kerakli qismlari qisqartirilib, yuzning geometrik tuzilishiga urg'u beriladi. Soqol parvarishi va uning vizual tozaligini ta'minlash uchun juda zarur bo'lgan uslub.",
     "image": "/barber/4.png",
-    "video": "https://www.youtube.com/embed/nLSMwM2L8vA",
+    "video": "https://www.youtube.com/embed/paUSXWMboxM?si=b5cI-fBkADVigrqQ",
+    "category": "Soqol"
+  },
+  {
+    "id": 5,
+    "title": "To'liq Soqol (Full Beard)",
+    "description": "To'liq soqol - erkaklik va qadr-qimmatning timsolidir. Soqol to'liq o'stirilib, professional tarzda shakllantiriladi va taroq bilan tartibga solinadi. Yon qismlar va mo'ylovlar bilan uyg'un holda tutiladi. Kuchli va etuk ko'rinishni yaxshi ko'radigan erkaklar uchun ideal uslub.",
+    "image": "/barber/4.png",
+    "video": "https://www.youtube.com/embed/p2LXSywPOso?si=Gf0YVvXV-ZNuG7Ub",
+    "category": "Soqol"
+  },
+  {
+    "id": 6,
+    "title": "Qisqa Boxercha Soqol (Short Boxed Beard)",
+    "description": "Boxed beard - qisqa lekin to'g'ri shakllantirilgan soqol. Yon qismlari tekis o'stiriladi, pastki chegarasi aniq belgilanadi. Kundalik hayot uchun qulay, lekin shunga qaramay jozibali va tartibli ko'rinish beradi. Ko'pchilik erkaklar uchun eng qulay va mos keladigan soqol stili.",
+    "image": "/barber/4.png",
+    "video": "https://www.youtube.com/embed/vlMpXFONpmM?si=9i7PSjSzLlMztvIO",
+    "category": "Soqol"
+  },
+  {
+    "id": 7,
+    "title": "Chevron Mo'ylov (Chevron Moustache)",
+    "description": "Chevron mo'ylov - keng, qalin va labning yuqori qismini to'liq yopadigan klassik mo'ylov turi. Tom Selleck uslubida mashhur bo'lgan ushbu mo'ylov tabiiy o'stiriladi va pastga qarab taraladi. Kuchli va jozibali yuz ifodasi yaratib, erkaklarcha xarizmani oshiradi.",
+    "image": "/barber/4.png",
+    "video": "https://www.youtube.com/embed/9CjVhMGHb60?si=pxcrTtRzKoNzbQkb",
+    "category": "Soqol"
+  },
+  {
+    "id": 8,
+    "title": "Goatee Stili (Goatee Beard)",
+    "description": "Goatee - faqat iyakdagi soqol va mo'ylov saqlanilib, yonoqlar toza olinadigan stil. Bu uslub yuz tuzilishini vizual ravishda cho'zib, iyakni ko'proq ajratib ko'rsatadi. Yumaloq yuzli erkaklar uchun juda mos keladi, chunki yuzga cho'zinchoq va kelbatli ko'rinish beradi.",
+    "image": "/barber/4.png",
+    "video": "https://www.youtube.com/embed/iS8KcwsON4g?si=vVm5L1X5woE-ZyYy",
+    "category": "Soqol"
+  },
+  {
+    "id": 9,
+    "title": "Designer Soqol (Designer Stubble)",
+    "description": "Designer Stubble - bir necha kunlik o'stirilgan qisqa soqol turi bo'lib, ataylab tartibli va fashionista ko'rinishda saqlangan. O'rta uzunlikdagi bu soqol yuz chiziqlarini keskin ko'rsatib, yoshlik va dinamiklik bag'ishlaydi. Zamonaviy erkaklar o'rtasida eng ommalashgan soqol stillaridan biridir.",
+    "image": "/barber/4.png",
+    "video": "https://www.youtube.com/embed/Q4rVRhcz8uk?si=--OS4mRNLd8g7QP2",
+    "category": "Soqol"
+  },
+  {
+    "id": 10,
+    "title": "Viking Soqol (Viking Beard)",
+    "description": "Viking soqol - uzun va kuchli o'stirilgan soqol bo'lib, ko'pincha zig-zag yoki to'lqinsimon to'qimalar bilan bezatiladi. Erkin va kuchli ruhni ifodalaydi. Soqol yog'i va balzam yordamida parvarish qilinadi. Jasur va o'ziga xos ko'rinishni yaxshi ko'ruvchi erkaklar uchun ajoyib tanlov.",
+    "image": "/barber/4.png",
+    "video": "https://www.youtube.com/embed/mFdrUpgt-mw?si=tk3RF-ORwFDJjOK-",
     "category": "Soqol"
   }
 ]
