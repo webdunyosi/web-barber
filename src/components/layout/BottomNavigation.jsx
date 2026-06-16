@@ -10,10 +10,10 @@ const BottomNavigation = () => {
       {/* Background with Notch */}
       <div className="absolute inset-0 flex items-end h-[68px] -z-10 pointer-events-none">
         <div className="flex-1 h-full bg-zinc-950/95 border-t border-white/10 rounded-tl-2xl"></div>
-        <div className="w-[76px] h-[68px] shrink-0 -mx-px">
-          <svg className="w-full h-full text-zinc-950/95" viewBox="0 0 76 68" fill="currentColor">
-            <path d="M 0 0.5 C 21 0.5, 21 35, 38 35 C 55 35, 55 0.5, 76 0.5 L 76 68 L 0 68 Z" />
-            <path d="M 0 0.5 C 21 0.5, 21 35, 38 35 C 55 35, 55 0.5, 76 0.5" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" fill="none" />
+        <div className="w-[64px] h-[68px] shrink-0 -mx-px">
+          <svg className="w-full h-full text-zinc-950/95" viewBox="0 0 64 68" fill="currentColor">
+            <path d="M 0 0.5 C 18 0.5, 18 35, 32 35 C 46 35, 46 0.5, 64 0.5 L 64 68 L 0 68 Z" />
+            <path d="M 0 0.5 C 18 0.5, 18 35, 32 35 C 46 35, 46 0.5, 64 0.5" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" fill="none" />
           </svg>
         </div>
         <div className="flex-1 h-full bg-zinc-950/95 border-t border-white/10 rounded-tr-2xl"></div>
@@ -22,7 +22,7 @@ const BottomNavigation = () => {
       {/* Navigation Links */}
       <div className="relative w-full h-full flex items-center justify-between px-1">
         {/* Left Tabs */}
-        <div className="flex-1 flex justify-around pr-1">
+        <div className="flex-1 flex justify-around pr-0">
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -67,7 +67,7 @@ const BottomNavigation = () => {
         </div>
 
         {/* Center notch space with Floating action button */}
-        <div className="w-[76px] shrink-0 relative h-full">
+        <div className="w-[64px] shrink-0 relative h-full">
           <NavLink
             to="/sartarosh"
             className={({ isActive }) =>
@@ -83,7 +83,7 @@ const BottomNavigation = () => {
         </div>
 
         {/* Right Tabs */}
-        <div className="flex-1 flex justify-around pl-1">
+        <div className="flex-1 flex justify-around pl-0">
           <NavLink
             to="/loyalty"
             className={({ isActive }) =>
