@@ -366,4 +366,16 @@
   left: -10px;
   top: 40px;
   border-radius: 2px;
+}
+
+/* Custom browser autofill styling to match dark glass theme */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px rgba(9, 9, 11, 0.95) inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: 0 0 0 1000px rgba(9, 9, 11, 0.95) inset !important;
+  text-fill-color: #ffffff !important;
+  transition: background-color 5000s ease-in-out 0s;
 }

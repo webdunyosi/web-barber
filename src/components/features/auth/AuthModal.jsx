@@ -102,80 +102,89 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[100] p-4">
+    <div className="fixed inset-0 bg-black/75 backdrop-blur-md flex items-center justify-center z-[100] p-4 transition-all duration-300">
       {/* Background close click */}
       <div className="absolute inset-0" onClick={onClose}></div>
 
       {/* Modal Card */}
-      <div className="relative w-full max-w-md bg-zinc-900/90 border border-emerald-500/30 rounded-2xl shadow-2xl p-6 md:p-8 animate-bounce-in backdrop-blur-xl z-10 text-white">
+      <div className="relative w-full max-w-sm bg-zinc-950/70 border border-white/10 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.6),0_0_40px_rgba(16,185,129,0.15)] pt-12 pb-6 px-5 sm:pt-14 sm:pb-8 sm:px-8 animate-bounce-in z-10 text-white overflow-hidden">
+        
+        {/* Background blur decorative circles */}
+        <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] bg-emerald-500/20 rounded-full blur-[70px] pointer-events-none -z-10 animate-pulse-glow"></div>
+        <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-green-500/10 rounded-full blur-[80px] pointer-events-none -z-10"></div>
+
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10"
+          className="absolute top-4 right-4 text-white/40 hover:text-white hover:bg-white/10 hover:rotate-90 border border-white/5 hover:border-white/15 transition-all duration-300 p-2 rounded-full backdrop-blur-md z-20"
         >
-          <FaTimes size={18} />
+          <FaTimes size={15} />
         </button>
 
-        {/* Tab Buttons */}
-        <div className="flex border-b border-white/10 mb-6 pb-1">
+        {/* Tab Buttons (Sliding Glass Pill design) */}
+        <div className="relative flex p-1 bg-white/5 border border-white/10 rounded-2xl mb-6 z-10">
+          {/* Active background slider */}
+          <div 
+            className="absolute top-1 bottom-1 left-1 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 transition-all duration-300 ease-out -z-10 shadow-[0_4px_12px_rgba(16,185,129,0.3)] border border-emerald-400/20"
+            style={{
+              width: 'calc(50% - 4px)',
+              transform: activeTab === 'login' ? 'translateX(0)' : 'translateX(100%)'
+            }}
+          ></div>
           <button
+            type="button"
             onClick={() => {
               setActiveTab('login');
               setErrors({});
             }}
-            className={`flex-1 text-center py-2 text-lg font-bold transition-all relative ${
-              activeTab === 'login' ? 'text-emerald-400' : 'text-white/40 hover:text-white/70'
+            className={`flex-1 text-center py-2 text-[11px] sm:text-xs font-bold tracking-normal uppercase transition-all duration-300 rounded-xl cursor-pointer ${
+              activeTab === 'login' ? 'text-white' : 'text-white/40 hover:text-white/70'
             }`}
           >
             Kirish
-            {activeTab === 'login' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400 rounded-full animate-fadeIn"></span>
-            )}
           </button>
           <button
+            type="button"
             onClick={() => {
               setActiveTab('register');
               setErrors({});
             }}
-            className={`flex-1 text-center py-2 text-lg font-bold transition-all relative ${
-              activeTab === 'register' ? 'text-emerald-400' : 'text-white/40 hover:text-white/70'
+            className={`flex-1 text-center py-2 text-[11px] sm:text-xs font-bold tracking-normal uppercase transition-all duration-300 rounded-xl cursor-pointer ${
+              activeTab === 'register' ? 'text-white' : 'text-white/40 hover:text-white/70'
             }`}
           >
             Ro'yxatdan o'tish
-            {activeTab === 'register' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400 rounded-full animate-fadeIn"></span>
-            )}
           </button>
         </div>
 
         {/* Title/Description */}
-        <div className="text-center mb-6">
-          <h3 className="text-2xl font-bold uppercase tracking-wider text-emerald-500">
-            {activeTab === 'login' ? 'Xush kelibsiz!' : 'Yangi hisob yaratish'}
+        <div className="text-center mb-6 z-10">
+          <h3 className="text-2xl font-black uppercase tracking-wider bg-gradient-to-r from-emerald-400 via-emerald-300 to-green-400 bg-clip-text text-transparent drop-shadow-sm">
+            {activeTab === 'login' ? 'Xush kelibsiz!' : 'Yangi hisob'}
           </h3>
-          <p className="text-sm text-white/60 mt-1">
+          <p className="text-xs text-white/50 mt-1.5 uppercase tracking-wide">
             {activeTab === 'login'
               ? 'Tizimga kirib buyurtma berishda davom eting'
-              : 'Malumotlaringizni to\'ldirib ro\'yxatdan o\'ting'}
+              : 'Ma\'lumotlaringizni to\'ldirib ro\'yxatdan o\'ting'}
           </p>
         </div>
 
         {/* API Error Box */}
         {errors.api && (
-          <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 text-sm text-center font-medium animate-fadeIn">
+          <div className="mb-4 p-3.5 bg-red-500/10 border border-red-500/30 rounded-xl text-red-300 text-sm text-center font-medium animate-fadeIn">
             {errors.api}
           </div>
         )}
 
         {/* Auth Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
           {activeTab === 'register' && (
-            <div>
-              <label className="block text-left text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5 pl-1">
+            <div className="group flex flex-col animate-fadeIn">
+              <label className="block text-left text-xs font-semibold uppercase tracking-wider text-zinc-400 group-focus-within:text-emerald-400 transition-colors duration-300 mb-1.5 pl-1">
                 Ismingiz *
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-white/40">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-white/40 group-focus-within:text-emerald-400 transition-colors duration-300">
                   <FaUser size={14} />
                 </span>
                 <input
@@ -183,83 +192,86 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
                   value={formData.name}
                   onChange={(e) => handleChange('name', e.target.value)}
                   placeholder="Jasur Aliyev"
-                  className={`w-full pl-10 pr-4 py-3 bg-zinc-800 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all placeholder:text-white/20 text-sm hover:bg-zinc-800/80 ${
-                    errors.name ? 'border-red-500' : 'border-zinc-700'
+                  className={`w-full pl-11 pr-4 py-3.5 bg-white/5 border rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 placeholder:text-white/20 text-sm hover:bg-white/10 ${
+                    errors.name ? 'border-red-500/50 focus:ring-red-500/10 focus:border-red-500' : 'border-white/10'
                   }`}
                 />
               </div>
-              {errors.name && <p className="mt-1 text-xs text-red-400 pl-1">{errors.name}</p>}
+              {errors.name && <p className="mt-1.5 text-xs text-red-400 pl-1 text-left">{errors.name}</p>}
             </div>
           )}
 
-          <div>
-            <label className="block text-left text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5 pl-1">
+          <div className="group flex flex-col">
+            <label className="block text-left text-xs font-semibold uppercase tracking-wider text-zinc-400 group-focus-within:text-emerald-400 transition-colors duration-300 mb-1.5 pl-1">
               Telefon raqamingiz *
             </label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-white/40">
-                <FaPhone size={14} />
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-white/40 group-focus-within:text-emerald-400 transition-colors duration-300">
+                <FaPhone size={13} />
               </span>
               <input
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => handlePhoneChange(e.target.value)}
                 placeholder="+998 XX XXX XX XX"
-                className={`w-full pl-10 pr-4 py-3 bg-zinc-800 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all placeholder:text-white/20 text-sm hover:bg-zinc-800/80 ${
-                  errors.phone ? 'border-red-500' : 'border-zinc-700'
+                className={`w-full pl-11 pr-4 py-3.5 bg-white/5 border rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 placeholder:text-white/20 text-sm hover:bg-white/10 ${
+                  errors.phone ? 'border-red-500/50 focus:ring-red-500/10 focus:border-red-500' : 'border-white/10'
                 }`}
               />
             </div>
-            {errors.phone && <p className="mt-1 text-xs text-red-400 pl-1">{errors.phone}</p>}
+            {errors.phone && <p className="mt-1.5 text-xs text-red-400 pl-1 text-left">{errors.phone}</p>}
           </div>
 
           {activeTab === 'register' && (
-            <div>
-              <label className="block text-left text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5 pl-1">
+            <div className="group flex flex-col animate-fadeIn">
+              <label className="block text-left text-xs font-semibold uppercase tracking-wider text-zinc-400 group-focus-within:text-emerald-400 transition-colors duration-300 mb-1.5 pl-1">
                 Telegram username (ixtiyoriy)
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-white/40">
-                  <FaPaperPlane size={14} />
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-white/40 group-focus-within:text-emerald-400 transition-colors duration-300">
+                  <FaPaperPlane size={13} />
                 </span>
                 <input
                   type="text"
                   value={formData.telegram}
                   onChange={(e) => handleChange('telegram', e.target.value.replace('@', ''))}
                   placeholder="username"
-                  className="w-full pl-10 pr-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all placeholder:text-white/20 text-sm hover:bg-zinc-800/80"
+                  className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 placeholder:text-white/20 text-sm hover:bg-white/10"
                 />
               </div>
             </div>
           )}
 
-          <div>
-            <label className="block text-left text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5 pl-1">
+          <div className="group flex flex-col">
+            <label className="block text-left text-xs font-semibold uppercase tracking-wider text-zinc-400 group-focus-within:text-emerald-400 transition-colors duration-300 mb-1.5 pl-1">
               Parol *
             </label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-white/40">
-                <FaLock size={14} />
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-white/40 group-focus-within:text-emerald-400 transition-colors duration-300">
+                <FaLock size={13} />
               </span>
               <input
                 type="password"
                 value={formData.password}
                 onChange={(e) => handleChange('password', e.target.value)}
                 placeholder="••••••••"
-                className={`w-full pl-10 pr-4 py-3 bg-zinc-800 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all placeholder:text-white/20 text-sm hover:bg-zinc-800/80 ${
-                  errors.password ? 'border-red-500' : 'border-zinc-700'
+                className={`w-full pl-11 pr-4 py-3.5 bg-white/5 border rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 placeholder:text-white/20 text-sm hover:bg-white/10 ${
+                  errors.password ? 'border-red-500/50 focus:ring-red-500/10 focus:border-red-500' : 'border-white/10'
                 }`}
               />
             </div>
-            {errors.password && <p className="mt-1 text-xs text-red-400 pl-1">{errors.password}</p>}
+            {errors.password && <p className="mt-1.5 text-xs text-red-400 pl-1 text-left">{errors.password}</p>}
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full mt-2 relative overflow-hidden bg-linear-to-br from-emerald-500 via-emerald-600 to-green-600 hover:shadow-lg hover:shadow-emerald-500/30 text-white font-bold py-3.5 px-4 rounded-xl transition-all active:scale-[0.98] cursor-pointer disabled:bg-zinc-700 disabled:cursor-not-allowed flex items-center justify-center gap-2 border border-emerald-400"
+            className="w-full mt-4 group relative overflow-hidden bg-gradient-to-r from-emerald-500 to-green-600 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] text-white font-bold py-3.5 px-4 rounded-xl transition-all active:scale-[0.98] cursor-pointer disabled:bg-zinc-800 disabled:text-white/20 disabled:cursor-not-allowed flex items-center justify-center gap-2 border border-emerald-400/30"
           >
+            {/* Hover shine effect */}
+            <span className="absolute inset-0 -translate-x-full group-hover:animate-[button-shine_1.5s_ease-in-out] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 pointer-events-none"></span>
+
             {isLoading ? (
               <>
                 <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" fill="none">
@@ -269,7 +281,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
                 <span>Yuklanmoqda...</span>
               </>
             ) : (
-              <span>{activeTab === 'login' ? 'Kirish' : 'Ro\'yxatdan o\'tish'}</span>
+              <span className="tracking-wide uppercase text-sm">{activeTab === 'login' ? 'Kirish' : 'Ro\'yxatdan o\'tish'}</span>
             )}
           </button>
         </form>
@@ -277,7 +289,9 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
         {/* Admin Login helper hint */}
         {activeTab === 'login' && (
           <div className="mt-6 text-center text-xs text-white/30 border-t border-white/5 pt-4">
-            <span className="font-semibold text-emerald-500">Admin test:</span> +998 99 999 99 99, <span className="font-semibold text-emerald-500">parol:</span> admin
+            <div className="bg-white/5 border border-white/5 rounded-xl py-2.5 px-4 inline-block backdrop-blur-md">
+              <span className="font-semibold text-emerald-400">Admin test:</span> +998 99 999 99 99 <span className="mx-1.5 text-white/10">|</span> <span className="font-semibold text-emerald-400">parol:</span> admin
+            </div>
           </div>
         )}
       </div>
