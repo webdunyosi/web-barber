@@ -157,18 +157,6 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
           </button>
         </div>
 
-        {/* Title/Description */}
-        <div className="text-center mb-6 z-10">
-          <h3 className="text-2xl font-black uppercase tracking-wider bg-gradient-to-r from-emerald-400 via-emerald-300 to-green-400 bg-clip-text text-transparent drop-shadow-sm">
-            {activeTab === 'login' ? 'Xush kelibsiz!' : 'Yangi hisob'}
-          </h3>
-          <p className="text-xs text-white/50 mt-1.5 uppercase tracking-wide">
-            {activeTab === 'login'
-              ? 'Tizimga kirib buyurtma berishda davom eting'
-              : 'Ma\'lumotlaringizni to\'ldirib ro\'yxatdan o\'ting'}
-          </p>
-        </div>
-
         {/* API Error Box */}
         {errors.api && (
           <div className="mb-4 p-3.5 bg-red-500/10 border border-red-500/30 rounded-xl text-red-300 text-sm text-center font-medium animate-fadeIn">
