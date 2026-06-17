@@ -168,7 +168,7 @@ const NotificationsPage = () => {
     };
 
     return (
-      <div className="w-full lg:w-5/6 ml-auto text-white px-2 sm:px-4 pt-1 pb-4 lg:pt-2 lg:pb-8 animate-fadeIn">
+      <div className="w-full lg:w-5/6 ml-auto text-white px-0 sm:px-4 pt-1 pb-4 lg:pt-2 lg:pb-8 animate-fadeIn">
         <div className="max-w-3xl mx-auto space-y-4">
           
           {/* Detail Header Bar */}
@@ -274,7 +274,7 @@ const NotificationsPage = () => {
   }
 
   return (
-    <div className="w-full lg:w-5/6 ml-auto text-white px-2 sm:px-4 pt-1 pb-4 lg:pt-2 lg:pb-8">
+    <div className="w-full lg:w-5/6 ml-auto text-white px-0 sm:px-4 pt-1 pb-4 lg:pt-2 lg:pb-8">
       <div className="max-w-3xl mx-auto space-y-4 animate-fadeIn">
         
         {/* Main Header Card */}
