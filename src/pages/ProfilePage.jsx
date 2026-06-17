@@ -221,61 +221,13 @@ const ProfilePage = () => {
                 {/* Item 1: Mening buyurtmalarim */}
                 <button
                   onClick={() => navigate('/buyurtmalarim')}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer border-b border-white/5 text-left font-sans"
+                  className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
                 >
                   <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                     <FaCalendarCheck size={16} />
                   </div>
                   <span className="flex-1 text-sm font-semibold text-zinc-200">Mening buyurtmalarim</span>
                   <FaChevronRight size={12} className="text-zinc-500" />
-                </button>
-
-                {/* Item 2: Sadoqat kartasi */}
-                <button
-                  onClick={() => navigate('/loyalty')}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer border-b border-white/5 text-left font-sans"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                    <FaGift size={16} />
-                  </div>
-                  <span className="flex-1 text-sm font-semibold text-zinc-200">Sadoqat kartasi (Loyalty)</span>
-                  <div className="flex items-center gap-1.5">
-                    {user?.loyaltyPoints > 0 && (
-                      <span className="text-[10px] bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/25 font-bold">
-                        {user.loyaltyPoints} ball
-                      </span>
-                    )}
-                    <FaChevronRight size={12} className="text-zinc-500" />
-                  </div>
-                </button>
-
-                {/* Item 3: Soch stillari */}
-                <button
-                  onClick={() => navigate('/stillar')}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer border-b border-white/5 text-left font-sans"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                    <FaCut size={16} />
-                  </div>
-                  <span className="flex-1 text-sm font-semibold text-zinc-200">Soch va soqol stillari</span>
-                  <FaChevronRight size={12} className="text-zinc-500" />
-                </button>
-
-                {/* Item 4: AI chat bot */}
-                <button
-                  onClick={() => navigate('/ai-chat')}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                    <FaRobot size={16} />
-                  </div>
-                  <span className="flex-1 text-sm font-semibold text-zinc-200">AI Yordamchi Bot</span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[9px] bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/25 font-extrabold uppercase animate-pulse">
-                      Online
-                    </span>
-                    <FaChevronRight size={12} className="text-zinc-500" />
-                  </div>
                 </button>
               </div>
             </div>
