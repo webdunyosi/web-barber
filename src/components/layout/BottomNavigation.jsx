@@ -38,20 +38,6 @@ const BottomNavigation = () => {
           </NavLink>
 
           <NavLink
-            to="/stillar"
-            className={({ isActive }) =>
-              `flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
-                isActive
-                  ? 'text-emerald-400 scale-105 font-semibold'
-                  : 'text-gray-400 hover:text-white'
-              }`
-            }
-          >
-            <FaCut size={19} />
-            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Stillar</span>
-          </NavLink>
-
-          <NavLink
             to="/buyurtmalarim"
             className={({ isActive }) =>
               `flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
@@ -96,20 +82,6 @@ const BottomNavigation = () => {
           >
             <FaGift size={19} />
             <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Karta</span>
-          </NavLink>
-
-          <NavLink
-            to="/ai-chat"
-            className={({ isActive }) =>
-              `flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
-                isActive
-                  ? 'text-emerald-400 scale-105 font-semibold'
-                  : 'text-gray-400 hover:text-white'
-              }`
-            }
-          >
-            <FaRobot size={19} />
-            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">AI bot</span>
           </NavLink>
 
           <NavLink
