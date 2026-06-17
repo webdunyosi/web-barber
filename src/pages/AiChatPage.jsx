@@ -207,6 +207,17 @@ const AiChatPage = () => {
         {/* Header */}
         <div className="px-4 py-3 bg-zinc-950/80 border-b border-emerald-500/20 flex items-center justify-between">
           <div className="flex items-center gap-3">
+            {/* Back Button */}
+            <button 
+              onClick={() => navigate(-1)} 
+              className="p-2.5 rounded-xl border border-white/10 bg-zinc-800/50 hover:bg-zinc-850 hover:border-emerald-500/30 text-zinc-400 hover:text-white transition-all cursor-pointer flex items-center justify-center active:scale-95 shrink-0 shadow-sm"
+              title="Ortga"
+            >
+              <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
             <div className="relative">
               <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-400/50 flex items-center justify-center text-emerald-400">
                 <FaRobot size={22} className="animate-button-float" />
