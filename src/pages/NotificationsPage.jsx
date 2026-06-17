@@ -11,12 +11,14 @@ import {
   FaSpinner
 } from 'react-icons/fa';
 import { getNotificationsApi } from '../utils/api';
+import ConfirmModal from '../components/common/ConfirmModal';
 
 const NotificationsPage = () => {
   const navigate = useNavigate();
   const [dbNotifications, setDbNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedNotification, setSelectedNotification] = useState(null);
+  const [isClearAllConfirmOpen, setIsClearAllConfirmOpen] = useState(false);
 
   // Read and local deletion states tracked client-side via localStorage arrays
   const [readIds, setReadIds] = useState(() => {
@@ -79,13 +81,16 @@ const NotificationsPage = () => {
   };
 
   const clearAllLocally = () => {
-    if (window.confirm("Barcha bildirishnomalarni o'chirishni xohlaysizmi?")) {
-      const allIds = dbNotifications.map(n => n._id || n.id);
-      const updated = Array.from(new Set([...deletedIds, ...allIds]));
-      setDeletedIds(updated);
-      localStorage.setItem('barber_deleted_notif_ids', JSON.stringify(updated));
-      setSelectedNotification(null);
-    }
+    setIsClearAllConfirmOpen(true);
+  };
+
+  const handleClearAllConfirm = () => {
+    const allIds = dbNotifications.map(n => n._id || n.id);
+    const updated = Array.from(new Set([...deletedIds, ...allIds]));
+    setDeletedIds(updated);
+    localStorage.setItem('barber_deleted_notif_ids', JSON.stringify(updated));
+    setSelectedNotification(null);
+    setIsClearAllConfirmOpen(false);
   };
 
   const getNotificationIcon = (type) => {
@@ -405,6 +410,17 @@ const NotificationsPage = () => {
         </div>
 
       </div>
+
+      <ConfirmModal
+        isOpen={isClearAllConfirmOpen}
+        title="Xabarlarni o'chirish"
+        message="Barcha bildirishnomalarni o'chirishni tasdiqlaysizmi? Ushbu amaldan so'ng barcha xabarlar o'chadi."
+        confirmText="Ha, o'chirish"
+        cancelText="Yo'q, qolsin"
+        type="danger"
+        onConfirm={handleClearAllConfirm}
+        onCancel={() => setIsClearAllConfirmOpen(false)}
+      />
     </div>
   );
 };
