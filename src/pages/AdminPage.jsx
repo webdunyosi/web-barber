@@ -20,6 +20,8 @@ import {
   FaArrowLeft
 } from 'react-icons/fa';
 import { formatPrice } from '../utils/format';
+import { toast } from 'react-hot-toast';
+import ConfirmModal from '../components/common/ConfirmModal';
 
 const AdminPage = () => {
   const {
@@ -47,6 +49,31 @@ const AdminPage = () => {
   const [zoomedReceipt, setZoomedReceipt] = useState(null);
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null); // stores item ID currently updating
+
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    confirmText: '',
+    cancelText: '',
+    type: 'warning',
+    onConfirm: () => {},
+  });
+
+  const triggerConfirm = ({ title, message, confirmText, cancelText, type, onConfirm }) => {
+    setConfirmModal({
+      isOpen: true,
+      title,
+      message,
+      confirmText,
+      cancelText,
+      type,
+      onConfirm: () => {
+        onConfirm();
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+      }
+    });
+  };
 
   const loadData = async () => {
     if (!isAuthenticated || !isAdmin) return;
@@ -117,23 +144,31 @@ const AdminPage = () => {
       await blockUser(targetUserId, newBlockedState);
       await loadData();
     } catch (err) {
-      alert(err.message || 'Xatolik yuz berdi');
+      toast.error(err.message || 'Xatolik yuz berdi');
     } finally {
       setActionLoading(null);
     }
   };
 
-  const handleDeleteUser = async (targetUserId) => {
-    if (!window.confirm("Foydalanuvchini o'chirishni tasdiqlaysizmi?")) return;
-    setActionLoading(targetUserId);
-    try {
-      await deleteUser(targetUserId);
-      await loadData();
-    } catch (err) {
-      alert(err.message || 'Xatolik yuz berdi');
-    } finally {
-      setActionLoading(null);
-    }
+  const handleDeleteUser = (targetUserId) => {
+    triggerConfirm({
+      title: "Foydalanuvchini o'chirish",
+      message: "Foydalanuvchini o'chirishni tasdiqlaysizmi?",
+      confirmText: "Ha, o'chirish",
+      cancelText: "Yo'q, bekor qilish",
+      type: "danger",
+      onConfirm: async () => {
+        setActionLoading(targetUserId);
+        try {
+          await deleteUser(targetUserId);
+          await loadData();
+        } catch (err) {
+          toast.error(err.message || 'Xatolik yuz berdi');
+        } finally {
+          setActionLoading(null);
+        }
+      }
+    });
   };
 
   // Booking Actions handlers
@@ -143,7 +178,7 @@ const AdminPage = () => {
       await updateBookingStatus(bookingId, newStatus);
       await loadData();
     } catch (err) {
-      alert(err.message || 'Xatolik yuz berdi');
+      toast.error(err.message || 'Xatolik yuz berdi');
     } finally {
       setActionLoading(null);
     }
@@ -773,6 +808,17 @@ const AdminPage = () => {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        confirmText={confirmModal.confirmText}
+        cancelText={confirmModal.cancelText}
+        type={confirmModal.type}
+        onConfirm={confirmModal.onConfirm}
+        onCancel={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 };

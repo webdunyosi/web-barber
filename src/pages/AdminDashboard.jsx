@@ -21,10 +21,18 @@ import {
   FaSync,
   FaSignOutAlt,
   FaTachometerAlt,
-  FaBell
+  FaBell,
+  FaPhone,
+  FaPaperPlane,
+  FaUserShield,
+  FaEdit,
+  FaSave,
+  FaSpinner,
+  FaChevronRight
 } from 'react-icons/fa';
 import { formatPrice } from '../utils/format';
 import { getNotificationsApi, createNotificationApi, deleteNotificationApi } from '../utils/api';
+import ConfirmModal from '../components/common/ConfirmModal';
 
 // ================= SKELETON LOADERS =================
 
@@ -270,10 +278,11 @@ const AdminDashboard = () => {
     deleteBooking,
     getStatistics,
     saveOfflineIncome,
+    updateProfile,
     token
   } = useAuth();
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'dashboard';
 
   const [usersList, setUsersList] = useState([]);
@@ -313,6 +322,73 @@ const AdminDashboard = () => {
     linkUrl: '',
     imageUrl: ''
   });
+
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    confirmText: '',
+    cancelText: '',
+    type: 'warning',
+    onConfirm: () => {},
+  });
+
+  const triggerConfirm = ({ title, message, confirmText, cancelText, type, onConfirm }) => {
+    setConfirmModal({
+      isOpen: true,
+      title,
+      message,
+      confirmText,
+      cancelText,
+      type,
+      onConfirm: () => {
+        onConfirm();
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+      }
+    });
+  };
+
+  // Profile editing states
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editedName, setEditedName] = useState('');
+  const [editedTelegram, setEditedTelegram] = useState('');
+  const [isProfileUpdating, setIsProfileUpdating] = useState(false);
+  const [profileError, setProfileError] = useState('');
+  const [profileSuccess, setProfileSuccess] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      setEditedName(user.name || '');
+      setEditedTelegram(user.telegram || '');
+    }
+  }, [user, isEditingProfile]);
+
+  const handleSaveAdminProfile = async (e) => {
+    e.preventDefault();
+    if (!editedName.trim()) {
+      setProfileError('Ism kiritilishi majburiy!');
+      return;
+    }
+    
+    setIsProfileUpdating(true);
+    setProfileError('');
+    setProfileSuccess('');
+    
+    try {
+      await updateProfile({
+        name: editedName,
+        telegram: editedTelegram
+      });
+      setProfileSuccess('Profil muvaffaqiyatli yangilandi!');
+      setIsEditingProfile(false);
+      setTimeout(() => setProfileSuccess(''), 3000);
+    } catch (error) {
+      console.error('Profilni yangilashda xato:', error);
+      setProfileError(error.response?.data?.error || error.message || 'Serverda xatolik yuz berdi');
+    } finally {
+      setIsProfileUpdating(false);
+    }
+  };
 
   // Custom Calendar States & Refs for Kassa Form
   const [isKassaCalendarOpen, setIsKassaCalendarOpen] = useState(false);
@@ -461,15 +537,23 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleDeleteNotification = async (id) => {
-    if (!window.confirm("Ushbu bildirishnomani o'chirishni tasdiqlaysizmi? (Barcha foydalanuvchilar ro'yxatidan butunlay o'chadi)")) return;
-    try {
-      await deleteNotificationApi(token, id);
-      toast.success("Bildirishnoma butunlay o'chirildi! 🗑️");
-      await loadNotifications();
-    } catch (err) {
-      toast.error(err.message || "O'chirishda xatolik yuz berdi");
-    }
+  const handleDeleteNotification = (id) => {
+    triggerConfirm({
+      title: "Bildirishnomani o'chirish",
+      message: "Ushbu bildirishnomani o'chirishni tasdiqlaysizmi? (Barcha foydalanuvchilar ro'yxatidan butunlay o'chadi)",
+      confirmText: "Ha, o'chirish",
+      cancelText: "Yo'q, qolsin",
+      type: "danger",
+      onConfirm: async () => {
+        try {
+          await deleteNotificationApi(token, id);
+          toast.success("Bildirishnoma butunlay o'chirildi! 🗑️");
+          await loadNotifications();
+        } catch (err) {
+          toast.error(err.message || "O'chirishda xatolik yuz berdi");
+        }
+      }
+    });
   };
 
   const loadData = async () => {
@@ -537,18 +621,26 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleDeleteUser = async (targetUserId) => {
-    if (!window.confirm("Foydalanuvchini o'chirishni tasdiqlaysizmi?")) return;
-    setActionLoading(targetUserId);
-    try {
-      await deleteUser(targetUserId);
-      toast.success("Foydalanuvchi o'chirildi! 🗑️");
-      await loadData();
-    } catch (err) {
-      toast.error(err.message || 'Xatolik yuz berdi');
-    } finally {
-      setActionLoading(null);
-    }
+  const handleDeleteUser = (targetUserId) => {
+    triggerConfirm({
+      title: "Foydalanuvchini o'chirish",
+      message: "Foydalanuvchini o'chirishni tasdiqlaysizmi?",
+      confirmText: "Ha, o'chirish",
+      cancelText: "Yo'q, bekor qilish",
+      type: "danger",
+      onConfirm: async () => {
+        setActionLoading(targetUserId);
+        try {
+          await deleteUser(targetUserId);
+          toast.success("Foydalanuvchi o'chirildi! 🗑️");
+          await loadData();
+        } catch (err) {
+          toast.error(err.message || 'Xatolik yuz berdi');
+        } finally {
+          setActionLoading(null);
+        }
+      }
+    });
   };
 
   // Booking Actions handlers
@@ -576,18 +668,26 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleDeleteBooking = async (bookingId) => {
-    if (!window.confirm("Buyurtmani o'chirishni tasdiqlaysizmi?")) return;
-    setActionLoading(bookingId);
-    try {
-      await deleteBooking(bookingId);
-      toast.success("Buyurtma muvaffaqiyatli o'chirildi! 🗑️");
-      await loadData();
-    } catch (err) {
-      toast.error(err.message || 'Xatolik yuz berdi');
-    } finally {
-      setActionLoading(null);
-    }
+  const handleDeleteBooking = (bookingId) => {
+    triggerConfirm({
+      title: "Buyurtmani o'chirish",
+      message: "Buyurtmani o'chirishni tasdiqlaysizmi?",
+      confirmText: "Ha, o'chirish",
+      cancelText: "Yo'q, bekor qilish",
+      type: "danger",
+      onConfirm: async () => {
+        setActionLoading(bookingId);
+        try {
+          await deleteBooking(bookingId);
+          toast.success("Buyurtma muvaffaqiyatli o'chirildi! 🗑️");
+          await loadData();
+        } catch (err) {
+          toast.error(err.message || 'Xatolik yuz berdi');
+        } finally {
+          setActionLoading(null);
+        }
+      }
+    });
   };
 
   // Filtering Logic
@@ -1734,69 +1834,246 @@ const AdminDashboard = () => {
 
           {/* ================= TAB: PROFILE ================= */}
           {activeTab === 'profile' && (
-            <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 items-start animate-fadeIn">
-              {/* Profile Card */}
-              <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 md:p-8 backdrop-blur-sm shadow-xl text-center space-y-6 relative overflow-hidden">
-                {/* Glowing decorative border */}
-                <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-emerald-500 to-green-500"></div>
+            <div className="w-full text-white px-0 sm:px-4 py-2 pb-4 animate-fadeIn">
+              <div className="max-w-md mx-auto space-y-5">
+                
+                {/* Page Title */}
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-center bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+                  Shaxsiy Kabinet
+                </h2>
 
-                {/* Avatar */}
-                <div className="relative w-28 h-28 mx-auto">
-                  <div className="w-full h-full rounded-full bg-zinc-800 border-2 border-emerald-500/30 flex items-center justify-center overflow-hidden shadow-lg shadow-emerald-500/5">
-                    <img 
-                      src="/avatar/men.png" 
-                      alt="Admin Avatar" 
-                      className="w-24 h-24 rounded-full object-cover border border-emerald-500/20" 
-                    />
+                {/* Success / Error Alerts */}
+                {profileError && (
+                  <div className="p-3.5 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold animate-fade-in">
+                    {profileError}
                   </div>
-                  <span className="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-zinc-900 flex items-center justify-center text-[10px]" title="Online">
-                    ✓
-                  </span>
-                </div>
+                )}
+                {profileSuccess && (
+                  <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold animate-fade-in">
+                    {profileSuccess}
+                  </div>
+                )}
 
-                {/* Details */}
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-bold text-white">{user?.name || 'Administrator'}</h3>
-                  <p className="text-emerald-400 font-bold text-sm tracking-wider uppercase">Sartarosh (Administrator)</p>
-                </div>
+                {isEditingProfile ? (
+                  /* Editing Form Card */
+                  <div className="bg-zinc-900/70 border border-white/10 rounded-3xl p-5 backdrop-blur-xl shadow-xl space-y-4">
+                    <h3 className="text-base font-bold text-white mb-2 border-b border-white/5 pb-3">Profilni tahrirlash</h3>
+                    <form onSubmit={handleSaveAdminProfile} className="space-y-4">
+                      {/* Name Input */}
+                      <div>
+                        <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Ism</label>
+                        <input
+                          type="text"
+                          value={editedName}
+                          onChange={(e) => setEditedName(e.target.value)}
+                          disabled={isProfileUpdating}
+                          className="w-full bg-zinc-800/80 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                          placeholder="Ismingizni kiriting"
+                          required
+                        />
+                      </div>
 
-                {/* Info List */}
-                <div className="border-t border-b border-white/5 py-4 my-2 text-left space-y-3 font-medium text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-zinc-500">Telefon raqami:</span>
-                    <span className="text-zinc-200 font-mono font-semibold">{user?.phone || '+998 99 999 99 99'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-zinc-500">Telegram:</span>
-                    <span className="text-emerald-400 font-semibold">@{user?.telegram || 'kiritilmagan'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-zinc-500">Boshqaruv roli:</span>
-                    <span className="text-zinc-200 font-semibold">Bosh Admin</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-zinc-500">Holati:</span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold">Faol</span>
-                  </div>
-                </div>
+                      {/* Phone Input (Readonly) */}
+                      <div>
+                        <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Telefon raqam</label>
+                        <div className="flex items-center gap-2 bg-zinc-850/50 border border-white/5 rounded-xl px-3 py-2.5 text-zinc-500 text-sm">
+                          <FaPhone size={12} className="text-zinc-650" />
+                          <span>{user?.phone}</span>
+                        </div>
+                      </div>
 
-                {/* Logout Action */}
-                <button
-                  onClick={logout}
-                  className="w-full bg-red-500/10 border border-red-500/25 hover:bg-red-500/25 text-red-400 hover:text-red-300 font-bold py-3.5 px-4 rounded-xl transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <FaSignOutAlt size={16} />
-                  <span>Tizimdan chiqish</span>
-                </button>
-              </div>
+                      {/* Telegram Username Input */}
+                      <div>
+                        <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Telegram username</label>
+                        <div className="relative flex items-center">
+                          <span className="absolute left-3 text-zinc-500 text-sm font-semibold">@</span>
+                          <input
+                            type="text"
+                            value={editedTelegram}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setEditedTelegram(val.startsWith('@') ? val.substring(1) : val);
+                            }}
+                            disabled={isProfileUpdating}
+                            className="w-full bg-zinc-800/80 border border-white/10 rounded-xl pl-7 pr-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                            placeholder="username"
+                          />
+                        </div>
+                      </div>
 
-              {/* Server Details & Guidance */}
-              <div className="bg-zinc-900/30 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm text-xs text-zinc-500 leading-relaxed space-y-3">
-                <h4 className="font-bold text-zinc-400 text-sm">Boshqaruv Tizimi Bo'yicha Yo'riqnoma:</h4>
-                <p>1. <strong>Moliya & Statistika:</strong> Kunlik, haftalik va oylik tushumlarni hamda ommabop xizmatlar taqsimotini nazorat qilish.</p>
-                <p>2. <strong>Buyurtmalar:</strong> Mijozlar tomonidan yuklangan to'lov cheklarini tekshirish, tasdiqlash yoki rad etish.</p>
-                <p>3. <strong>Mijozlar:</strong> Ro'yxatdan o'tgan mijozlarni bloklash yoki o'chirish.</p>
-                <p className="text-emerald-500/70 font-semibold border-t border-white/5 pt-3 mt-1 text-center">Tizim holati: Real vaqt rejimi (MongoDB ulanishi faol)</p>
+                      {/* Action Buttons */}
+                      <div className="flex gap-2 pt-2">
+                        <button
+                          type="submit"
+                          disabled={isProfileUpdating}
+                          className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-2.5 px-3 rounded-xl transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer text-xs disabled:opacity-50"
+                        >
+                          {isProfileUpdating ? (
+                            <FaSpinner size={12} className="animate-spin" />
+                          ) : (
+                            <FaSave size={12} />
+                          )}
+                          <span>Saqlash</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setIsEditingProfile(false)}
+                          disabled={isProfileUpdating}
+                          className="flex-1 bg-zinc-800 border border-white/5 hover:bg-zinc-750 text-gray-300 font-semibold py-2.5 px-3 rounded-xl transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer text-xs disabled:opacity-50"
+                        >
+                          <FaTimes size={12} />
+                          <span>Bekor qilish</span>
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                ) : (
+                  /* Profile Details & Navigation lists */
+                  <>
+                    {/* User Info Header Card */}
+                    <div className="bg-zinc-900/70 border border-white/10 rounded-3xl p-4 sm:p-5 backdrop-blur-xl shadow-xl">
+                      <div className="flex items-center gap-4">
+                        <div className="relative group shrink-0">
+                          <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-300 animate-pulse"></div>
+                          <img 
+                            src="/avatar/men.png" 
+                            alt="Profile" 
+                            className="relative w-16 h-16 rounded-full object-cover border-2 border-emerald-500/30" 
+                          />
+                          <span className="absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full bg-emerald-500 border-2 border-zinc-900 flex items-center justify-center text-[8px]" title="Online">
+                            ✓
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-base sm:text-lg font-bold tracking-wide text-white truncate">{user?.name}</h3>
+                          <p className="text-xs text-zinc-400 font-medium mt-0.5">{user?.phone}</p>
+                          <div className="mt-2 flex items-center gap-2">
+                            <span className="inline-block px-2.5 py-0.5 text-[9px] font-extrabold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
+                              Sartarosh Admin
+                            </span>
+                            <span className="inline-block px-2.5 py-0.5 text-[9px] font-extrabold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">
+                              Holati: Faol
+                            </span>
+                          </div>
+                        </div>
+                        {/* Edit profile header shortcut */}
+                        <button
+                          onClick={() => {
+                            setIsEditingProfile(true);
+                            setProfileError('');
+                          }}
+                          className="w-10 h-10 rounded-xl bg-zinc-800/80 hover:bg-zinc-855 border border-white/5 hover:border-emerald-500/30 text-zinc-400 hover:text-emerald-400 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 shrink-0"
+                          title="Profilni tahrirlash"
+                        >
+                          <FaEdit size={16} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Group 1: Manage Sections */}
+                    <div className="bg-zinc-900/70 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-xl">
+                      <div className="p-1">
+                        {/* Item 1: Buyurtmalar Boshqaruvi */}
+                        <button
+                          onClick={() => setSearchParams({ tab: 'bookings' })}
+                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer border-b border-white/5 text-left font-sans"
+                        >
+                          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <FaCalendarCheck size={16} />
+                          </div>
+                          <span className="flex-1 text-sm font-semibold text-zinc-200">Buyurtmalar boshqaruvi</span>
+                          <FaChevronRight size={12} className="text-zinc-500" />
+                        </button>
+
+                        {/* Item 2: Bildirishnomalar Boshqaruvi */}
+                        <button
+                          onClick={() => setSearchParams({ tab: 'notifications' })}
+                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                        >
+                          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <FaBell size={16} />
+                          </div>
+                          <span className="flex-1 text-sm font-semibold text-zinc-200">Bildirishnomalar boshqaruvi</span>
+                          <FaChevronRight size={12} className="text-zinc-500" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Group 2: Settings and Info */}
+                    <div className="bg-zinc-900/70 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-xl">
+                      <div className="p-1">
+                        {/* Item 1: Telegram Username */}
+                        <div className="w-full flex items-center gap-3 px-4 py-3 border-b border-white/5 text-left">
+                          <div className="w-9 h-9 rounded-xl bg-zinc-800/80 border border-white/5 flex items-center justify-center text-gray-400">
+                            <FaPaperPlane size={14} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <span className="block text-[10px] text-gray-400 uppercase tracking-wider">Telegram username</span>
+                            <span className="text-sm font-semibold text-zinc-200 truncate block">
+                              {user?.telegram ? `@${user.telegram}` : 'Kiritilmagan'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Item 2: Profil Sozlamalari (Tahrirlash) */}
+                        <button
+                          onClick={() => {
+                            setIsEditingProfile(true);
+                            setProfileError('');
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                        >
+                          <div className="w-9 h-9 rounded-xl bg-zinc-800/80 border border-white/5 flex items-center justify-center text-gray-400">
+                            <FaEdit size={14} />
+                          </div>
+                          <span className="flex-1 text-sm font-semibold text-zinc-200">Profil ma'lumotlarini tahrirlash</span>
+                          <FaChevronRight size={12} className="text-zinc-500" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Group 3: Transition to Client Homepage */}
+                    <div className="bg-zinc-900/70 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-xl">
+                      <div className="p-1">
+                        <Link
+                          to="/"
+                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                        >
+                          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <FaUserShield size={16} />
+                          </div>
+                          <span className="flex-1 text-sm font-bold text-emerald-400">Mijozlar sahifasiga o'tish</span>
+                          <FaChevronRight size={12} className="text-emerald-400" />
+                        </Link>
+                      </div>
+                    </div>
+
+                    {/* Logout Button */}
+                    <div className="pt-2">
+                      <button
+                        onClick={logout}
+                        className="w-full bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 font-semibold py-3.5 px-4 rounded-2xl transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer text-sm font-sans"
+                      >
+                        <FaSignOutAlt size={16} />
+                        <span>Tizimdan chiqish</span>
+                      </button>
+                    </div>
+
+                    {/* Guidance / Instructions Box */}
+                    <div className="bg-zinc-900/30 border border-zinc-800 rounded-3xl p-5 backdrop-blur-sm text-xs text-zinc-500 leading-relaxed space-y-3 mt-4">
+                      <h4 className="font-bold text-zinc-400 text-sm">Boshqaruv Tizimi Bo'yicha Yo'riqnoma:</h4>
+                      <p>1. <strong>Moliya & Statistika:</strong> Kunlik, haftalik va oylik tushumlarni hamda ommabop xizmatlar taqsimotini nazorat qilish.</p>
+                      <p>2. <strong>Buyurtmalar:</strong> Mijozlar tomonidan yuklangan to'lov cheklarini tekshirish, tasdiqlash yoki rad etish.</p>
+                      <p>3. <strong>Mijozlar:</strong> Ro'yxatdan o'tgan mijozlarni bloklash yoki o'chirish.</p>
+                      <p className="text-emerald-500/70 font-semibold border-t border-white/5 pt-3 mt-1 text-center">Tizim holati: Real vaqt rejimi (MongoDB ulanishi faol)</p>
+                    </div>
+
+                    {/* Version info */}
+                    <p className="text-center text-[10px] text-zinc-650 font-medium tracking-wide pt-2">
+                      Ilova versiyasi 1.10.42 (Build 349)
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           )}
@@ -2065,6 +2342,17 @@ const AdminDashboard = () => {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        confirmText={confirmModal.confirmText}
+        cancelText={confirmModal.cancelText}
+        type={confirmModal.type}
+        onConfirm={confirmModal.onConfirm}
+        onCancel={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 };

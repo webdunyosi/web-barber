@@ -17,6 +17,7 @@ import barberData from '../data/barber.json';
 import barberProfile from '../data/barberProfile.json';
 import hairStyles from '../data/hairStyles.json';
 import { sendChatMessageApi } from '../utils/api';
+import ConfirmModal from '../components/common/ConfirmModal';
 
 const AiChatPage = () => {
   const navigate = useNavigate();
@@ -45,6 +46,7 @@ const AiChatPage = () => {
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const messagesEndRef = useRef(null);
 
   const quickSuggestions = [
@@ -185,18 +187,21 @@ const AiChatPage = () => {
   };
 
   const clearChat = () => {
-    if (window.confirm("Chat tarixini tozalashni xohlaysizmi?")) {
-      const initialMsg = [
-        {
-          id: Date.now(),
-          sender: 'bot',
-          text: "Chat tozalandi. Sizga qanday yordam bera olaman?",
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
-      ];
-      setMessages(initialMsg);
-      localStorage.setItem('barber_chat_messages', JSON.stringify(initialMsg));
-    }
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirmClear = () => {
+    const initialMsg = [
+      {
+        id: Date.now(),
+        sender: 'bot',
+        text: "Chat tozalandi. Sizga qanday yordam bera olaman?",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      }
+    ];
+    setMessages(initialMsg);
+    localStorage.setItem('barber_chat_messages', JSON.stringify(initialMsg));
+    setIsConfirmOpen(false);
   };
 
   return (
@@ -433,6 +438,17 @@ const AiChatPage = () => {
         </div>
 
       </div>
+
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        title="Chat tarixini tozalash"
+        message="Haqiqatan ham chat tarixini tozalashni xohlaysizmi? Ushbu amaldan so'ng barcha xabarlar o'chiriladi."
+        confirmText="Ha, tozalash"
+        cancelText="Yo'q, qolsin"
+        type="danger"
+        onConfirm={handleConfirmClear}
+        onCancel={() => setIsConfirmOpen(false)}
+      />
     </div>
   );
 };

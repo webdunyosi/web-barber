@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { FaUserShield, FaSignOutAlt, FaHome, FaChartBar, FaCalendarCheck, FaUsers, FaUser, FaTachometerAlt, FaBell } from 'react-icons/fa';
 import AdminBottomNavigation from '../components/layout/AdminBottomNavigation';
@@ -123,7 +123,11 @@ const AdminLayout = () => {
     return <LayoutSkeleton />;
   }
 
-  if (!isAuthenticated || !isAdmin) {
+  if (!isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (!isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-950 p-4">
         <div className="max-w-md w-full text-center bg-zinc-900 border border-red-500/30 rounded-2xl p-8 backdrop-blur-md shadow-2xl">

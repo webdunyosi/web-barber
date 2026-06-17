@@ -9,6 +9,7 @@ import barberData from '../data/barber.json';
 import { submitBooking } from '../utils/api'; 
 import { useStep } from '../hooks/useStep';
 import { useAuth } from '../hooks/useAuth';
+import { toast } from 'react-hot-toast';
 
 const STEPS = {
   SERVICE: 1,
@@ -86,7 +87,7 @@ const BookingPage = () => {
         handlePayment();
       }
     } else {
-      alert('Iltimos, barcha maydonlarni to\'ldiring');
+      toast.error('Iltimos, barcha maydonlarni to\'ldiring');
     }
   };
 
@@ -133,7 +134,7 @@ const BookingPage = () => {
       setShowSuccessModal(true);
     } catch (error) {
       console.error('Error processing payment:', error);
-      alert(error.message || 'Xatolik yuz berdi. Iltimos, server ulanishini tekshiring.');
+      toast.error(error.message || 'Xatolik yuz berdi. Iltimos, server ulanishini tekshiring.');
     } finally {
       setIsProcessing(false);
     }
