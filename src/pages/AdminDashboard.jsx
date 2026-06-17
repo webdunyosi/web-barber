@@ -20,9 +20,11 @@ import {
   FaEye,
   FaSync,
   FaSignOutAlt,
-  FaTachometerAlt
+  FaTachometerAlt,
+  FaBell
 } from 'react-icons/fa';
 import { formatPrice } from '../utils/format';
+import { getNotificationsApi, createNotificationApi, deleteNotificationApi } from '../utils/api';
 
 // ================= SKELETON LOADERS =================
 
@@ -267,7 +269,8 @@ const AdminDashboard = () => {
     updateBookingStatus,
     deleteBooking,
     getStatistics,
-    saveOfflineIncome
+    saveOfflineIncome,
+    token
   } = useAuth();
 
   const [searchParams] = useSearchParams();
@@ -296,6 +299,20 @@ const AdminDashboard = () => {
   });
   const [kassaAmount, setKassaAmount] = useState('');
   const [kassaSaving, setKassaSaving] = useState(false);
+
+  // Notifications States
+  const [notificationsList, setNotificationsList] = useState([]);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
+  const [notificationSubmitting, setNotificationSubmitting] = useState(false);
+  const [newNotification, setNewNotification] = useState({
+    title: '',
+    description: '',
+    content: '',
+    type: 'system',
+    linkType: 'none',
+    linkUrl: '',
+    imageUrl: ''
+  });
 
   // Custom Calendar States & Refs for Kassa Form
   const [isKassaCalendarOpen, setIsKassaCalendarOpen] = useState(false);
@@ -405,6 +422,56 @@ const AdminDashboard = () => {
     }
   };
 
+  const loadNotifications = async () => {
+    setNotificationsLoading(true);
+    try {
+      const data = await getNotificationsApi();
+      setNotificationsList(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Bildirishnomalarni yuklashda xatolik:', error);
+    } finally {
+      setNotificationsLoading(false);
+    }
+  };
+
+  const handleCreateNotification = async (e) => {
+    e.preventDefault();
+    if (!newNotification.title || !newNotification.description) {
+      toast.error("Sarlavha va Qisqa matn kiritilishi majburiy!");
+      return;
+    }
+    setNotificationSubmitting(true);
+    try {
+      await createNotificationApi(token, newNotification);
+      toast.success("Bildirishnoma muvaffaqiyatli yuborildi! 📢");
+      setNewNotification({
+        title: '',
+        description: '',
+        content: '',
+        type: 'system',
+        linkType: 'none',
+        linkUrl: '',
+        imageUrl: ''
+      });
+      await loadNotifications();
+    } catch (err) {
+      toast.error(err.message || "Xatolik yuz berdi");
+    } finally {
+      setNotificationSubmitting(false);
+    }
+  };
+
+  const handleDeleteNotification = async (id) => {
+    if (!window.confirm("Ushbu bildirishnomani o'chirishni tasdiqlaysizmi? (Barcha foydalanuvchilar ro'yxatidan butunlay o'chadi)")) return;
+    try {
+      await deleteNotificationApi(token, id);
+      toast.success("Bildirishnoma butunlay o'chirildi! 🗑️");
+      await loadNotifications();
+    } catch (err) {
+      toast.error(err.message || "O'chirishda xatolik yuz berdi");
+    }
+  };
+
   const loadData = async () => {
     setIsDataLoading(true);
     try {
@@ -436,6 +503,7 @@ const AdminDashboard = () => {
       });
       setBookingsList(sortedBookings);
       setStats(statsData);
+      await loadNotifications();
     } catch (error) {
       console.error('Admin data loading error:', error);
     } finally {
@@ -449,6 +517,9 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     setSearchTerm('');
+    if (activeTab === 'notifications') {
+      loadNotifications();
+    }
   }, [activeTab]);
 
   // User Actions handlers
@@ -1486,6 +1557,24 @@ const AdminDashboard = () => {
                       </Link>
                     </div>
                   </div>
+
+                  {/* Quick Actions (Tezkor Amallar) */}
+                  <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm space-y-4">
+                    <h4 className="text-lg font-bold flex items-center gap-2">
+                      <span className="text-emerald-500">⚡</span>
+                      Tezkor Amallar
+                    </h4>
+                    <p className="text-xs text-zinc-400">
+                      Tizim bo'yicha tezkor boshqaruv amallari va yangiliklar yuborish.
+                    </p>
+                    <Link
+                      to="/admin?tab=notifications"
+                      className="w-full inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all text-center border-none cursor-pointer"
+                    >
+                      <FaBell size={13} />
+                      <span>Yangilik / Bildirishnoma Yuborish</span>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1708,6 +1797,241 @@ const AdminDashboard = () => {
                 <p>2. <strong>Buyurtmalar:</strong> Mijozlar tomonidan yuklangan to'lov cheklarini tekshirish, tasdiqlash yoki rad etish.</p>
                 <p>3. <strong>Mijozlar:</strong> Ro'yxatdan o'tgan mijozlarni bloklash yoki o'chirish.</p>
                 <p className="text-emerald-500/70 font-semibold border-t border-white/5 pt-3 mt-1 text-center">Tizim holati: Real vaqt rejimi (MongoDB ulanishi faol)</p>
+              </div>
+            </div>
+          )}
+
+          {/* ================= TAB: NOTIFICATIONS ================= */}
+          {activeTab === 'notifications' && (
+            <div className="space-y-6 animate-fadeIn">
+              {/* Form & Sent Notifications History */}
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
+                
+                {/* 1. Dispatch Form */}
+                <div className="xl:col-span-1 bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm space-y-4">
+                  <div>
+                    <h4 className="text-lg font-bold flex items-center gap-2">
+                      <span className="text-emerald-500">📢</span>
+                      Yangi bildirishnoma yuborish
+                    </h4>
+                    <p className="text-xs text-zinc-400 mt-1">
+                      Barcha foydalanuvchilarning shaxsiy kabinetiga xabar yuborish. Qisqa va batafsil ma'lumotlar bilan boyiting.
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleCreateNotification} className="space-y-4">
+                    {/* Title */}
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Xabar sarlavhasi (Majburiy)</label>
+                      <input
+                        type="text"
+                        placeholder="Masalan: Yozgi yangi stillar qo'shildi! 💈"
+                        value={newNotification.title}
+                        onChange={(e) => setNewNotification({ ...newNotification, title: e.target.value })}
+                        className="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-white"
+                        required
+                      />
+                    </div>
+
+                    {/* Short Description */}
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Qisqa ma'lumot (Listda ko'rinadi - Majburiy)</label>
+                      <textarea
+                        placeholder="Masalan: Katalogimizga yangi zamonaviy soch stillari yuklandi..."
+                        value={newNotification.description}
+                        onChange={(e) => setNewNotification({ ...newNotification, description: e.target.value })}
+                        rows="2"
+                        className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-white resize-none"
+                        required
+                      ></textarea>
+                    </div>
+
+                    {/* Detailed Content */}
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Batafsil matn (Ichiga kirganda o'qiladi - Ixtiyoriy)</label>
+                      <textarea
+                        placeholder="Masalan: Ushbu xabarning batafsil mazmuni, o'zgarishlar va shartlar bu yerda to'liq yoziladi..."
+                        value={newNotification.content}
+                        onChange={(e) => setNewNotification({ ...newNotification, content: e.target.value })}
+                        rows="4"
+                        className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-white"
+                      ></textarea>
+                    </div>
+
+                    {/* Category Type */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Tur (Kategoriya)</label>
+                        <select
+                          value={newNotification.type}
+                          onChange={(e) => setNewNotification({ ...newNotification, type: e.target.value })}
+                          className="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-white"
+                        >
+                          <option value="system">Tizim (Yangilik)</option>
+                          <option value="welcome">Xush kelibsiz</option>
+                          <option value="loyalty">Sadoqat dasturi</option>
+                          <option value="appointment">Navbat / Tashrif</option>
+                        </select>
+                      </div>
+
+                      {/* Action Link Type */}
+                      <div>
+                        <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Harakat tugmasi</label>
+                        <select
+                          value={newNotification.linkType}
+                          onChange={(e) => setNewNotification({ ...newNotification, linkType: e.target.value })}
+                          className="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-white"
+                        >
+                          <option value="none">Tugmasiz (Harakatsiz)</option>
+                          <option value="booking">Navbat olish sahifasi</option>
+                          <option value="styles">Stillar sahifasi</option>
+                          <option value="loyalty">Loyallik kartasi</option>
+                          <option value="external">Tashqi havola</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Conditional Link URL */}
+                    {newNotification.linkType === 'external' && (
+                      <div>
+                        <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Tashqi havola manzili (URL)</label>
+                        <input
+                          type="url"
+                          placeholder="Masalan: https://t.me/barber_bot"
+                          value={newNotification.linkUrl}
+                          onChange={(e) => setNewNotification({ ...newNotification, linkUrl: e.target.value })}
+                          className="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-white"
+                          required
+                        />
+                      </div>
+                    )}
+
+                    {/* Image URL (optional) */}
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Rasm havolasi (Banner - Ixtiyoriy)</label>
+                      <input
+                        type="url"
+                        placeholder="Masalan: https://images.unsplash.com/... (yoki bo'sh qoldiring)"
+                        value={newNotification.imageUrl}
+                        onChange={(e) => setNewNotification({ ...newNotification, imageUrl: e.target.value })}
+                        className="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-white"
+                      />
+                    </div>
+
+                    {/* Submit */}
+                    <button
+                      type="submit"
+                      disabled={notificationSubmitting}
+                      className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-2.5 px-4 rounded-xl text-xs hover:shadow-lg hover:shadow-emerald-500/20 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2 border-none"
+                    >
+                      {notificationSubmitting ? (
+                        <>
+                          <svg className="animate-spin h-3.5 w-3.5 text-white" viewBox="0 0 24 24" fill="none">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <span>Yuborilmoqda...</span>
+                        </>
+                      ) : (
+                        <span>Bildirishnomani Yuborish 🚀</span>
+                      )}
+                    </button>
+                  </form>
+                </div>
+
+                {/* 2. Sent Notifications History List */}
+                <div className="xl:col-span-2 bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm space-y-4 min-h-[400px]">
+                  <div>
+                    <h4 className="text-lg font-bold flex items-center gap-2">
+                      <span className="text-emerald-500">📜</span>
+                      Yuborilgan bildirishnomalar tarixi
+                    </h4>
+                    <p className="text-xs text-zinc-400 mt-1">
+                      Tizimda yaratilgan va barcha foydalanuvchilarga jo'natilgan xabarlar ro'yxati.
+                    </p>
+                  </div>
+
+                  {notificationsLoading ? (
+                    <div className="h-64 flex items-center justify-center">
+                      <svg className="animate-spin h-8 w-8 text-emerald-500" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    </div>
+                  ) : notificationsList.length === 0 ? (
+                    <div className="text-center py-16 bg-zinc-950/20 border border-dashed border-zinc-850 rounded-xl">
+                      <FaBell className="mx-auto text-4xl text-zinc-650 mb-3" />
+                      <p className="text-zinc-550 text-sm">Hali hech qanday bildirishnomalar yuborilmagan.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4 max-h-[600px] overflow-y-auto pr-1">
+                      {notificationsList.map((notif) => (
+                        <div
+                          key={notif._id || notif.id}
+                          className="bg-zinc-950/30 border border-zinc-850 rounded-xl p-4 flex flex-col md:flex-row justify-between gap-4 hover:border-zinc-700 transition-colors"
+                        >
+                          <div className="flex-1 space-y-2">
+                            <div className="flex flex-wrap items-center gap-2">
+                              {/* Type Badge */}
+                              <span className={`inline-block text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
+                                notif.type === 'welcome'
+                                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25'
+                                  : notif.type === 'loyalty'
+                                  ? 'bg-amber-500/10 text-amber-400 border border-amber-500/25'
+                                  : notif.type === 'appointment'
+                                  ? 'bg-teal-500/10 text-teal-400 border border-teal-500/25'
+                                  : 'bg-blue-500/10 text-blue-400 border border-blue-500/25'
+                              }`}>
+                                {notif.type === 'welcome' && 'Xush kelibsiz'}
+                                {notif.type === 'loyalty' && 'Sadoqat dasturi'}
+                                {notif.type === 'appointment' && 'Navbat / Tashrif'}
+                                {notif.type === 'system' && 'Tizim'}
+                              </span>
+
+                              {/* Link action Badge */}
+                              {notif.linkType !== 'none' && (
+                                <span className="inline-flex items-center gap-1 text-[9px] font-bold bg-purple-500/10 border border-purple-500/25 text-purple-400 px-2 py-0.5 rounded-full select-none">
+                                  🔗 Tugma: {notif.linkType}
+                                </span>
+                              )}
+                              
+                              <span className="text-[10px] text-zinc-500 font-medium">
+                                {new Date(notif.createdAt || Date.now()).toLocaleString('uz-UZ')}
+                              </span>
+                            </div>
+
+                            <h5 className="font-bold text-white text-sm">{notif.title}</h5>
+                            <p className="text-xs text-zinc-400 leading-relaxed">{notif.description}</p>
+                            
+                            {notif.content && notif.content !== notif.description && (
+                              <div className="bg-zinc-900/40 p-2.5 rounded-lg border border-white/5 text-[11px] text-zinc-500 whitespace-pre-line mt-1.5 font-medium max-h-24 overflow-y-auto">
+                                <span className="text-zinc-400 font-bold block mb-1">Batafsil matni:</span>
+                                {notif.content}
+                              </div>
+                            )}
+
+                            {notif.imageUrl && (
+                              <div className="text-[10px] text-emerald-400/80 font-semibold truncate max-w-md">
+                                🖼 Banner URL: <a href={notif.imageUrl} target="_blank" rel="noreferrer" className="underline hover:text-emerald-300">{notif.imageUrl}</a>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex items-center justify-end md:border-l md:border-white/5 md:pl-4">
+                            <button
+                              onClick={() => handleDeleteNotification(notif._id || notif.id)}
+                              className="p-2.5 bg-red-500/10 border border-red-500/25 text-red-400 hover:bg-red-500/25 rounded-xl transition-all active:scale-[0.97] cursor-pointer"
+                              title="O'chirish"
+                            >
+                              <FaTrash size={12} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
               </div>
             </div>
           )}
