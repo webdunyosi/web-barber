@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { FaPhone, FaPaperPlane, FaSignOutAlt, FaUserShield, FaSignInAlt, FaEdit, FaSave, FaTimes, FaSpinner, FaCut, FaRobot, FaChevronRight, FaCalendarCheck, FaGift } from 'react-icons/fa';
+import { FaPhone, FaPaperPlane, FaSignOutAlt, FaUserShield, FaSignInAlt, FaEdit, FaSave, FaTimes, FaSpinner, FaCut, FaRobot, FaChevronRight, FaCalendarCheck, FaGift, FaBell } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import AuthModal from '../components/features/auth/AuthModal';
 
@@ -24,6 +24,23 @@ const ProfilePage = () => {
       setEditedTelegram(user.telegram || '');
     }
   }, [user, isEditing]);
+
+  // Notifications unread count
+  const [unreadCount, setUnreadCount] = useState(0);
+  useEffect(() => {
+    const saved = localStorage.getItem('barber_notifications');
+    if (saved) {
+      try {
+        const notifs = JSON.parse(saved);
+        const unread = notifs.filter(n => !n.read).length;
+        setUnreadCount(unread);
+      } catch (e) {
+        console.error('Error parsing notifications:', e);
+      }
+    } else {
+      setUnreadCount(2); // Default mock notifications unread count
+    }
+  }, []);
 
   const handleSaveProfile = async (e) => {
     e.preventDefault();
@@ -221,13 +238,32 @@ const ProfilePage = () => {
                 {/* Item 1: Mening buyurtmalarim */}
                 <button
                   onClick={() => navigate('/buyurtmalarim')}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                  className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer border-b border-white/5 text-left font-sans"
                 >
                   <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                     <FaCalendarCheck size={16} />
                   </div>
                   <span className="flex-1 text-sm font-semibold text-zinc-200">Mening buyurtmalarim</span>
                   <FaChevronRight size={12} className="text-zinc-500" />
+                </button>
+
+                {/* Item 2: Mening bildirishnomalarim */}
+                <button
+                  onClick={() => navigate('/bildirishnomalar')}
+                  className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                    <FaBell size={16} />
+                  </div>
+                  <span className="flex-1 text-sm font-semibold text-zinc-200">Mening bildirishnomalarim</span>
+                  
+                  {unreadCount > 0 && (
+                    <span className="text-[10px] bg-red-500 text-white px-2 py-0.5 rounded-full font-bold animate-pulse">
+                      {unreadCount}
+                    </span>
+                  )}
+                  
+                  <FaChevronRight size={12} className="text-zinc-500 ml-1" />
                 </button>
               </div>
             </div>

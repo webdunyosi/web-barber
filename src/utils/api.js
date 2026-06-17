@@ -776,4 +776,84 @@ export const sendChatMessageApi = async (message, chatHistory = []) => {
   return response.data;
 };
 
+// ================= NOTIFICATIONS API =================
+export const getNotificationsApi = async () => {
+  if (MOCK_MODE) {
+    const mockNotifs = JSON.parse(localStorage.getItem('barber_notifications') || '[]');
+    if (mockNotifs.length === 0) {
+      const defaultNotifs = [
+        {
+          id: 1,
+          title: "Xush kelibsiz! 🎉",
+          description: "Web Barber shaxsiy kabinetiga xush kelibsiz! Bu yerda siz soch stillarini ko'rishingiz, navbatga yozilishingiz va cashback ballaringizni kuzatib borishingiz mumkin.",
+          time: "Bugun, 10:00",
+          type: "welcome",
+          read: false
+        },
+        {
+          id: 2,
+          title: "Loyallik dasturi faol 💳",
+          description: "Har bir to'lovingiz uchun sadoqat kartangizga bonus ballar qo'shib boriladi. Bevosita sartaroshxonamizda foydalaning!",
+          time: "Bugun, 09:15",
+          type: "loyalty",
+          read: false
+        },
+        {
+          id: 3,
+          title: "Yozgi yangi stillar qo'shildi! 💈",
+          description: "Bizning soch va soqol stillari katalogimizga yangi dizaynlar yuklandi. 'Stillar' bo'limida o'zingizga mosini tanlang.",
+          time: "Kecha, 14:30",
+          type: "system",
+          read: true
+        }
+      ];
+      localStorage.setItem('barber_notifications', JSON.stringify(defaultNotifs));
+      return defaultNotifs;
+    }
+    return mockNotifs;
+  }
+
+  const response = await axios.get(`${API_URL}/notifications`);
+  return response.data;
+};
+
+export const createNotificationApi = async (token, notificationData) => {
+  if (MOCK_MODE) {
+    const mockNotifs = JSON.parse(localStorage.getItem('barber_notifications') || '[]');
+    const newNotif = {
+      id: 'notif_' + Date.now(),
+      title: notificationData.title,
+      description: notificationData.description,
+      content: notificationData.content || notificationData.description,
+      type: notificationData.type || 'system',
+      linkType: notificationData.linkType || 'none',
+      linkUrl: notificationData.linkUrl || '',
+      imageUrl: notificationData.imageUrl || '',
+      createdAt: new Date().toISOString()
+    };
+    mockNotifs.unshift(newNotif);
+    localStorage.setItem('barber_notifications', JSON.stringify(mockNotifs));
+    return { success: true, notification: newNotif };
+  }
+
+  const response = await axios.post(`${API_URL}/notifications`, notificationData, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const deleteNotificationApi = async (token, notificationId) => {
+  if (MOCK_MODE) {
+    let mockNotifs = JSON.parse(localStorage.getItem('barber_notifications') || '[]');
+    mockNotifs = mockNotifs.filter(n => n.id !== notificationId && n._id !== notificationId);
+    localStorage.setItem('barber_notifications', JSON.stringify(mockNotifs));
+    return { success: true, message: 'Bildirishnoma o\'chirildi' };
+  }
+
+  const response = await axios.delete(`${API_URL}/notifications/${notificationId}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
 
