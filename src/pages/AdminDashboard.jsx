@@ -774,8 +774,12 @@ const AdminDashboard = () => {
 
   const filteredBookings = bookingsList.filter(b => {
     if (!b) return false;
-    const matchSearch = (b.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
-                        (b.phone || '').includes(searchTerm) || 
+    const userRef = b.userId;
+    const clientName = (userRef && userRef.name) || b.name || '';
+    const clientPhone = (userRef && userRef.phone) || b.phone || '';
+    
+    const matchSearch = clientName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                        clientPhone.includes(searchTerm) || 
                         (b.serviceName || '').toLowerCase().includes(searchTerm.toLowerCase());
     if (bookingStatusFilter === 'all') return matchSearch;
     return matchSearch && b.status === bookingStatusFilter;
@@ -785,24 +789,28 @@ const AdminDashboard = () => {
     const groups = {};
     bookings.forEach(b => {
       if (!b) return;
-      const phone = b.phone;
-      if (!groups[phone]) {
-        groups[phone] = {
-          name: b.name,
-          phone: b.phone,
-          telegram_user: b.telegram_user,
-          userId: b.userId,
+      
+      const userRef = b.userId;
+      // Group by userId identifier if available, otherwise by phone number
+      const userKey = (userRef && (userRef._id || userRef.id)) || b.phone;
+      
+      if (!groups[userKey]) {
+        groups[userKey] = {
+          name: (userRef && userRef.name) || b.name,
+          phone: (userRef && userRef.phone) || b.phone,
+          telegram_user: (userRef && userRef.telegram) || b.telegram_user,
+          userId: userRef,
           appointments: []
         };
       } else {
-        if (!groups[phone].userId && b.userId) {
-          groups[phone].userId = b.userId;
-        }
-        if (!groups[phone].telegram_user && b.telegram_user) {
-          groups[phone].telegram_user = b.telegram_user;
+        if (!groups[userKey].userId && userRef) {
+          groups[userKey].userId = userRef;
+          groups[userKey].name = userRef.name || groups[userKey].name;
+          groups[userKey].phone = userRef.phone || groups[userKey].phone;
+          groups[userKey].telegram_user = userRef.telegram || groups[userKey].telegram_user;
         }
       }
-      groups[phone].appointments.push(b);
+      groups[userKey].appointments.push(b);
     });
     return Object.values(groups);
   };
