@@ -541,6 +541,17 @@ const AdminDashboard = () => {
     return dateStr;
   };
 
+  const formatBookingDate = (dateStr) => {
+    if (!dateStr) return '';
+    const parts = dateStr.split('.');
+    if (parts.length === 3) {
+      const monthsUz = ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyun', 'Iyul', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek'];
+      const monthIdx = parseInt(parts[1], 10) - 1;
+      return `${parts[0]}-${monthsUz[monthIdx]}`;
+    }
+    return dateStr;
+  };
+
 
 
   const handleSaveOfflineIncome = async (e) => {
@@ -1088,179 +1099,132 @@ const AdminDashboard = () => {
                               return (
                                 <div
                                   key={booking.id || booking._id}
-                                  className="relative bg-zinc-950/30 border border-zinc-900 rounded-xl p-4 pl-5 transition-all duration-300 overflow-hidden hover:border-zinc-800/80"
+                                  className="relative bg-zinc-950/30 border border-zinc-900/60 rounded-xl p-3.5 pl-5 transition-all duration-300 overflow-hidden hover:border-zinc-800/80 flex flex-col sm:flex-row sm:items-center gap-3.5"
                                 >
                                   {/* Glowing left accent border matching status of this appointment */}
                                   <div className={`absolute left-0 top-0 bottom-0 w-1 ${glowingAccentColor}`}></div>
                                   
-                                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-3">
-                                    <div>
-                                      <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Xizmat va Narx</p>
-                                      <div className="flex flex-wrap items-center gap-2 mt-0.5">
-                                        <span className="font-extrabold text-white text-sm">{booking.serviceName}</span>
-                                        <span className="text-xs text-emerald-400 font-extrabold px-2 py-0.5 rounded-lg bg-emerald-500/10 border border-emerald-500/25 select-none shrink-0">
-                                          {formatPrice(booking.servicePrice)} so'm
-                                        </span>
-                                      </div>
-                                    </div>
-                                    
-                                    <div>
-                                      <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Sana va vaqt</p>
-                                      <div className="flex flex-wrap items-center gap-2 mt-1">
-                                        <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-zinc-900 border border-zinc-850 text-zinc-300">
-                                          <FaCalendarAlt className="text-emerald-500 text-xs shrink-0" />
-                                          {booking.date}
-                                        </span>
-                                        <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-zinc-900 border border-zinc-850 text-zinc-300">
-                                          ⏱ {booking.time}
-                                        </span>
-                                      </div>
-                                    </div>
+                                  {/* Left: Time Badge */}
+                                  <div className="flex sm:flex-col items-center justify-between sm:justify-center bg-zinc-900 border border-zinc-800/80 rounded-xl px-3 py-1.5 sm:py-2 min-w-[75px] text-center shrink-0 gap-1.5 sm:gap-0.5 select-none">
+                                    <span className="text-sm sm:text-base font-extrabold text-white tracking-tight">{booking.time}</span>
+                                    <span className="text-[9px] sm:text-[10px] font-bold text-zinc-400">{formatBookingDate(booking.date)}</span>
+                                  </div>
 
-                                    <div>
-                                      <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Holati va To'lov</p>
-                                      <div className="flex flex-wrap items-center gap-1.5 mt-1">
-                                        <span className={`inline-flex items-center gap-1 text-[9px] font-extrabold uppercase px-2.5 py-1 rounded-xl border bg-zinc-950/40 ${
+                                  {/* Middle: Details */}
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                      <h4 className="font-bold text-zinc-100 text-sm tracking-wide truncate">{booking.serviceName}</h4>
+                                      
+                                      {/* Status Badge */}
+                                      <span className={`inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-lg border shrink-0 ${
+                                        booking.status === 'pending'
+                                          ? 'text-amber-400 border-amber-500/20 bg-amber-500/5'
+                                          : booking.status === 'confirmed'
+                                          ? 'text-emerald-400 border-emerald-500/20 bg-emerald-500/5'
+                                          : 'text-red-400 border-red-500/20 bg-red-500/5'
+                                      }`}>
+                                        <span className={`w-1.5 h-1.5 rounded-full ${
                                           booking.status === 'pending'
-                                            ? 'text-amber-400 border-amber-500/20'
+                                            ? 'bg-amber-400 animate-pulse'
                                             : booking.status === 'confirmed'
-                                            ? 'text-emerald-400 border-emerald-500/20'
-                                            : 'text-red-400 border-red-500/20'
-                                        }`}>
-                                          <span className={`w-1.5 h-1.5 rounded-full ${
-                                            booking.status === 'pending'
-                                              ? 'bg-amber-400 animate-pulse'
-                                              : booking.status === 'confirmed'
-                                              ? 'bg-emerald-400 animate-pulse'
-                                              : 'bg-red-400'
-                                          }`}></span>
-                                          {booking.status === 'pending' && 'Kutilmoqda'}
-                                          {booking.status === 'confirmed' && 'Tasdiqlandi'}
-                                          {booking.status === 'rejected' && 'Rad etilgan'}
-                                        </span>
+                                            ? 'bg-emerald-400'
+                                            : 'bg-red-400'
+                                        }`}></span>
+                                        {booking.status === 'pending' && 'Kutilmoqda'}
+                                        {booking.status === 'confirmed' && 'Tasdiqlandi'}
+                                        {booking.status === 'rejected' && 'Rad etilgan'}
+                                      </span>
+                                    </div>
 
-                                        {booking.paymentMethod === 'cash' ? (
-                                          <span className="inline-flex items-center gap-1.5 text-[9px] font-bold bg-zinc-900 border border-zinc-850 text-zinc-400 px-2.5 py-1 rounded-xl select-none">
-                                            💵 Joyida to'lash
-                                          </span>
-                                        ) : (
-                                          <span className="inline-flex items-center gap-1.5 text-[9px] font-bold bg-emerald-500/5 border border-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-xl select-none">
-                                            💳 Karta orqali
-                                          </span>
-                                        )}
-
-                                        {booking.paymentMethod !== 'cash' ? (
-                                          booking.receipt && booking.receipt.includes('res.cloudinary.com') ? (
-                                            <span className="inline-flex items-center gap-1.5 text-[9px] font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-xl select-none">
-                                              📎 Chek yuklangan
-                                            </span>
+                                    <div className="flex flex-wrap items-center gap-2 mt-1 text-[11px] text-zinc-500 font-medium">
+                                      <span className="font-bold text-emerald-400">{formatPrice(booking.servicePrice)} so'm</span>
+                                      <span className="text-zinc-800">•</span>
+                                      <span>{booking.paymentMethod === 'cash' ? '💵 Joyida' : '💳 Karta'}</span>
+                                      {booking.paymentMethod !== 'cash' && (
+                                        <>
+                                          <span className="text-zinc-800">•</span>
+                                          {booking.receipt && booking.receipt.includes('res.cloudinary.com') ? (
+                                            <button
+                                              onClick={() => setZoomedReceipt(booking.receipt)}
+                                              className="text-emerald-400 hover:text-emerald-300 font-bold hover:underline cursor-pointer bg-transparent border-none p-0 inline-flex items-center gap-0.5"
+                                            >
+                                              📎 Chekni ko'rish
+                                            </button>
                                           ) : booking.receipt ? (
-                                            <span className="inline-flex items-center gap-1.5 text-[9px] font-bold bg-blue-500/10 border border-blue-500/20 text-blue-400 px-2.5 py-1 rounded-xl select-none">
-                                              💬 Telegramda
-                                            </span>
+                                            <span className="text-sky-400 font-bold">💬 Telegramda</span>
                                           ) : (
-                                            <span className="inline-flex items-center gap-1.5 text-[9px] font-bold bg-zinc-950 border border-zinc-900/60 text-zinc-500 px-2.5 py-1 rounded-xl select-none">
-                                              💳 Cheksiz to'lov
-                                            </span>
-                                          )
-                                        ) : null}
-                                      </div>
+                                            <span className="text-zinc-600 font-bold">💳 Cheksiz</span>
+                                          )}
+                                        </>
+                                      )}
                                     </div>
                                   </div>
 
-                                  {/* Bottom bar of nested card: Receipt and Actions */}
-                                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-t border-zinc-900/60 pt-3 gap-3">
-                                    <div>
-                                      {/* Receipt Preview if any */}
-                                      {booking.paymentMethod === 'cash' ? (
-                                        <div className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-zinc-850 px-2.5 py-1 bg-zinc-950/20 text-zinc-500 select-none text-[9px] font-bold uppercase tracking-wider">
-                                          <span>💵</span> Joyida
-                                        </div>
-                                      ) : (
-                                        booking.receipt && booking.receipt.includes('res.cloudinary.com') ? (
-                                          <div className="relative group overflow-hidden rounded-xl border border-zinc-800 w-16 h-10 shrink-0 bg-zinc-950">
-                                            <img
-                                              src={booking.receipt}
-                                              alt="Receipt"
-                                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                                            />
-                                            <button
-                                              onClick={() => setZoomedReceipt(booking.receipt)}
-                                              className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center text-[9px] font-bold text-white cursor-pointer border-none"
-                                            >
-                                              <span>Ko'rish</span>
-                                            </button>
-                                          </div>
-                                        ) : (
-                                          <div className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-zinc-850 px-2.5 py-1 bg-zinc-950/20 text-zinc-500 select-none text-[9px] font-bold uppercase tracking-wider">
-                                            💳 Cheksiz to'lov
-                                          </div>
-                                        )
-                                      )}
-                                    </div>
-
-                                    {/* Actions & Revert */}
-                                    <div className="flex items-center gap-2.5 self-end sm:self-center">
-                                      {booking.status !== 'pending' && (
-                                        <button
-                                          disabled={actionLoading === (booking.id || booking._id)}
-                                          onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'pending')}
-                                          className="text-[10px] text-zinc-500 hover:text-white hover:underline transition-colors bg-transparent border-none cursor-pointer pr-1 font-semibold"
-                                        >
-                                          Kutilmoqda holatiga qaytarish
-                                        </button>
-                                      )}
-
-                                      {/* Tasdiqlash Button */}
-                                      <button
-                                        disabled={actionLoading === (booking.id || booking._id) || successActions[booking.id || booking._id]}
-                                        onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'confirmed')}
-                                        className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-[10px] transition-all duration-300 active:scale-95 cursor-pointer border ${
-                                          booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed'
-                                            ? 'bg-emerald-500 border-emerald-400 text-zinc-950 shadow-lg shadow-emerald-500/20'
-                                            : 'bg-emerald-500/5 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 hover:border-emerald-500/30'
-                                        }`}
-                                      >
-                                        {actionLoading === (booking.id || booking._id) && successActions[booking.id || booking._id] !== 'confirmed' ? (
-                                          <FaSpinner size={10} className="animate-spin text-emerald-400" />
-                                        ) : (
-                                          <>
-                                            <FaCheck size={9} className="shrink-0" />
-                                            <span>{booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed' ? 'Tasdiqlandi' : 'Tasdiqlash'}</span>
-                                          </>
-                                        )}
-                                      </button>
-
-                                      {/* Rad etish Button */}
-                                      <button
-                                        disabled={actionLoading === (booking.id || booking._id) || successActions[booking.id || booking._id]}
-                                        onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'rejected')}
-                                        className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-[10px] transition-all duration-300 active:scale-95 cursor-pointer border ${
-                                          booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected'
-                                            ? 'bg-red-500 border-red-400 text-white shadow-lg shadow-red-500/20'
-                                            : 'bg-red-500/5 border-red-500/20 text-red-400 hover:bg-red-500/20 hover:border-red-500/30'
-                                        }`}
-                                      >
-                                        {actionLoading === (booking.id || booking._id) && successActions[booking.id || booking._id] !== 'rejected' ? (
-                                          <FaSpinner size={10} className="animate-spin text-red-400" />
-                                        ) : (
-                                          <>
-                                            <FaTimes size={9} className="shrink-0" />
-                                            <span>{booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected' ? 'Rad etilgan' : 'Rad etish'}</span>
-                                          </>
-                                        )}
-                                      </button>
-
-                                      {/* O'chirish Button */}
+                                  {/* Right: Actions */}
+                                  <div className="flex items-center gap-2.5 self-end sm:self-center shrink-0">
+                                    {booking.status !== 'pending' && (
                                       <button
                                         disabled={actionLoading === (booking.id || booking._id)}
-                                        onClick={() => handleDeleteBooking(booking.id || booking._id)}
-                                        className="w-8 h-8 rounded-xl bg-zinc-800 hover:bg-red-500/10 border border-zinc-700/60 hover:border-red-500/30 text-zinc-500 hover:text-red-400 flex items-center justify-center transition-all duration-300 active:scale-90 cursor-pointer disabled:opacity-50"
-                                        title="O'chirish"
+                                        onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'pending')}
+                                        className="text-[10px] text-zinc-500 hover:text-zinc-300 hover:underline transition-colors bg-transparent border-none cursor-pointer pr-1 font-semibold"
                                       >
-                                        <FaTrash size={11} />
+                                        Qaytarish
                                       </button>
-                                    </div>
+                                    )}
+
+                                    {booking.status === 'pending' && (
+                                      <>
+                                        {/* Tasdiqlash Button */}
+                                        <button
+                                          disabled={actionLoading === (booking.id || booking._id) || successActions[booking.id || booking._id]}
+                                          onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'confirmed')}
+                                          className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-[10px] transition-all duration-300 active:scale-95 cursor-pointer border ${
+                                            booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed'
+                                              ? 'bg-emerald-500 border-emerald-400 text-zinc-950 shadow-lg shadow-emerald-500/20'
+                                              : 'bg-emerald-500/5 border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/35'
+                                          }`}
+                                        >
+                                          {actionLoading === (booking.id || booking._id) && successActions[booking.id || booking._id] !== 'confirmed' ? (
+                                            <FaSpinner size={10} className="animate-spin text-emerald-400" />
+                                          ) : (
+                                            <>
+                                              <FaCheck size={9} className="shrink-0" />
+                                              <span>Tasdiqlash</span>
+                                            </>
+                                          )}
+                                        </button>
+
+                                        {/* Rad etish Button */}
+                                        <button
+                                          disabled={actionLoading === (booking.id || booking._id) || successActions[booking.id || booking._id]}
+                                          onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'rejected')}
+                                          className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-[10px] transition-all duration-300 active:scale-95 cursor-pointer border ${
+                                            booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected'
+                                              ? 'bg-red-500 border-red-400 text-white shadow-lg shadow-red-500/20'
+                                              : 'bg-red-500/5 border-red-500/25 text-red-400 hover:bg-red-500/10 hover:border-red-500/35'
+                                          }`}
+                                        >
+                                          {actionLoading === (booking.id || booking._id) && successActions[booking.id || booking._id] !== 'rejected' ? (
+                                            <FaSpinner size={10} className="animate-spin text-red-400" />
+                                          ) : (
+                                            <>
+                                              <FaTimes size={9} className="shrink-0" />
+                                              <span>Rad etish</span>
+                                            </>
+                                          )}
+                                        </button>
+                                      </>
+                                    )}
+
+                                    {/* O'chirish Button */}
+                                    <button
+                                      disabled={actionLoading === (booking.id || booking._id)}
+                                      onClick={() => handleDeleteBooking(booking.id || booking._id)}
+                                      className="w-8 h-8 rounded-xl bg-zinc-900 hover:bg-red-500/10 border border-zinc-700/60 hover:border-red-500/30 text-zinc-500 hover:text-red-400 flex items-center justify-center transition-all duration-300 active:scale-90 cursor-pointer disabled:opacity-50"
+                                      title="O'chirish"
+                                    >
+                                      <FaTrash size={11} />
+                                    </button>
                                   </div>
                                 </div>
                               );
