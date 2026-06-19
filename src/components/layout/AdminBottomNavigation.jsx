@@ -35,49 +35,49 @@ const AdminBottomNavigation = () => {
       {/* Background with Notch */}
       <div className="absolute inset-0 flex items-end h-[68px] -z-10 pointer-events-none">
         <div className="flex-1 h-full bg-zinc-950/95 border-t border-white/10 rounded-tl-2xl"></div>
-        <div className="w-[90px] h-[68px] shrink-0">
-          <svg className="w-full h-full text-zinc-950/95" viewBox="0 0 90 68" fill="currentColor">
-            <path d="M 0 0.5 C 25 0.5, 25 35, 45 35 C 65 35, 65 0.5, 90 0.5 L 90 68 L 0 68 Z" />
-            <path d="M 0 0.5 C 25 0.5, 25 35, 45 35 C 65 35, 65 0.5, 90 0.5" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" fill="none" />
+        <div className="w-[64px] h-[68px] shrink-0 -mx-px">
+          <svg className="w-full h-full text-zinc-950/95" viewBox="0 0 64 68" fill="currentColor">
+            <path d="M 0 0.5 C 18 0.5, 18 35, 32 35 C 46 35, 46 0.5, 64 0.5 L 64 68 L 0 68 Z" />
+            <path d="M 0 0.5 C 18 0.5, 18 35, 32 35 C 46 35, 46 0.5, 64 0.5" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" fill="none" />
           </svg>
         </div>
         <div className="flex-1 h-full bg-zinc-950/95 border-t border-white/10 rounded-tr-2xl"></div>
       </div>
 
       {/* Navigation Links */}
-      <div className="relative w-full h-full flex items-center justify-between px-2">
+      <div className="relative w-full h-full flex items-center justify-between px-1">
         {/* Left Tabs */}
-        <div className="flex-1 flex justify-around pr-2">
+        <div className="flex-1 flex justify-around pr-0">
           <Link
             to="/admin?tab=dashboard"
-            className={`flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all duration-300 ${
+            className={`flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
               currentTab === 'dashboard'
                 ? 'text-emerald-400 scale-105 font-semibold'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
             <FaTachometerAlt size={19} />
-            <span className="text-[10px] tracking-wide">Boshqaruv</span>
+            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Boshqaruv</span>
           </Link>
 
           <Link
             to="/admin?tab=statistics"
-            className={`flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all duration-300 ${
+            className={`flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
               currentTab === 'statistics'
                 ? 'text-emerald-400 scale-105 font-semibold'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
             <FaChartBar size={19} />
-            <span className="text-[10px] tracking-wide">Statistika</span>
+            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Statistika</span>
           </Link>
         </div>
 
         {/* Center notch space with Floating action button (Bookings) */}
-        <div className="w-[90px] shrink-0 relative h-full">
+        <div className="w-[64px] shrink-0 relative h-full">
           <Link
             to="/admin?tab=bookings"
-            className={`absolute -top-5 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 shadow-[0_4px_20px_rgba(16,185,129,0.3)] border-2 ${
+            className={`absolute -top-2.5 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 shadow-[0_4px_20px_rgba(16,185,129,0.3)] border-2 ${
               currentTab === 'bookings'
                 ? 'bg-emerald-500 text-white border-emerald-400 scale-110 shadow-[0_0_25px_rgba(16,185,129,0.5)]'
                 : 'bg-zinc-900 text-emerald-400 border-emerald-500/40 hover:border-emerald-400 hover:bg-zinc-850'
@@ -93,29 +93,29 @@ const AdminBottomNavigation = () => {
         </div>
 
         {/* Right Tabs */}
-        <div className="flex-1 flex justify-around pl-2">
+        <div className="flex-1 flex justify-around pl-0">
           <Link
             to="/admin?tab=users"
-            className={`flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all duration-300 ${
+            className={`flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
               currentTab === 'users'
                 ? 'text-emerald-400 scale-105 font-semibold'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
             <FaUsers size={19} />
-            <span className="text-[10px] tracking-wide">Mijozlar</span>
+            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Mijozlar</span>
           </Link>
 
           <Link
             to="/admin?tab=profile"
-            className={`flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all duration-300 ${
+            className={`flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
               currentTab === 'profile'
                 ? 'text-emerald-400 scale-105 font-semibold'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
             <FaUser size={19} />
-            <span className="text-[10px] tracking-wide">Profil</span>
+            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Profil</span>
           </Link>
         </div>
       </div>
