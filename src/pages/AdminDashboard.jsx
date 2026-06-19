@@ -33,6 +33,7 @@ import {
 import { formatPrice } from '../utils/format';
 import { getNotificationsApi, createNotificationApi, deleteNotificationApi } from '../utils/api';
 import ConfirmModal from '../components/common/ConfirmModal';
+import EditUserModal from '../components/common/EditUserModal';
 
 // ================= SKELETON LOADERS =================
 
@@ -273,6 +274,7 @@ const AdminDashboard = () => {
     getUsers,
     blockUser,
     deleteUser,
+    editUser,
     getBookings,
     updateBookingStatus,
     deleteBooking,
@@ -355,6 +357,20 @@ const AdminDashboard = () => {
   const [isProfileUpdating, setIsProfileUpdating] = useState(false);
   const [profileError, setProfileError] = useState('');
   const [profileSuccess, setProfileSuccess] = useState('');
+
+  // User Editing modal states
+  const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
+  const [userToEdit, setUserToEdit] = useState(null);
+
+  const handleEditUserSave = async (userId, updatedUserData) => {
+    try {
+      await editUser(userId, updatedUserData);
+      await loadData();
+    } catch (err) {
+      toast.error(err.message || 'Xatolik yuz berdi');
+      throw err;
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -1134,6 +1150,19 @@ const AdminDashboard = () => {
                         </div>
 
                         <div className="flex items-center justify-end gap-2 border-t border-white/5 pt-3">
+                          {/* Edit button */}
+                          <button
+                            disabled={actionLoading === (client.id || client._id)}
+                            onClick={() => {
+                              setUserToEdit(client);
+                              setIsEditUserModalOpen(true);
+                            }}
+                            className="flex-1 py-2 px-3 bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25 rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
+                            title="Tahrirlash"
+                          >
+                            <FaEdit size={11} />
+                            <span>Tahrirlash</span>
+                          </button>
                           <button
                             disabled={actionLoading === (client.id || client._id)}
                             onClick={() => handleBlockUser(client.id || client._id, client.status)}
@@ -1213,6 +1242,18 @@ const AdminDashboard = () => {
                             </td>
                             <td className="p-4 pr-6 text-right whitespace-nowrap">
                               <div className="flex items-center justify-end gap-2">
+                                {/* Edit Button */}
+                                <button
+                                  disabled={actionLoading === (client.id || client._id)}
+                                  onClick={() => {
+                                    setUserToEdit(client);
+                                    setIsEditUserModalOpen(true);
+                                  }}
+                                  className="p-2 bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25 rounded-lg transition-all active:scale-95 cursor-pointer"
+                                  title="Tahrirlash"
+                                >
+                                  <FaEdit size={12} />
+                                </button>
                                 {/* Block toggle */}
                                 <button
                                   disabled={actionLoading === (client.id || client._id)}
@@ -2352,6 +2393,16 @@ const AdminDashboard = () => {
         type={confirmModal.type}
         onConfirm={confirmModal.onConfirm}
         onCancel={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+      />
+
+      <EditUserModal
+        isOpen={isEditUserModalOpen}
+        userToEdit={userToEdit}
+        onClose={() => {
+          setIsEditUserModalOpen(false);
+          setUserToEdit(null);
+        }}
+        onSave={handleEditUserSave}
       />
     </div>
   );

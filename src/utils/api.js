@@ -415,6 +415,45 @@ export const deleteUserApi = async (token, userId) => {
   return response.data;
 };
 
+// Edit user details (Update Name, Phone, Telegram, LoyaltyStamps, Role, Status)
+export const editUserApi = async (token, userId, userData) => {
+  if (MOCK_MODE) {
+    const users = getMockUsers();
+    const userIndex = users.findIndex(u => u.id === userId || u._id === userId);
+    if (userIndex === -1) {
+      throw new Error("Foydalanuvchi topilmadi");
+    }
+
+    // Check phone number uniqueness if it is changing
+    if (userData.phone && userData.phone !== users[userIndex].phone) {
+      const cleanPhone = userData.phone.replace(/\s+/g, '');
+      const exists = users.some(u => (u.id !== userId && u._id !== userId) && u.phone.replace(/\s+/g, '') === cleanPhone);
+      if (exists) {
+        throw new Error("Bu telefon raqami allaqachon ro'yxatdan o'tgan!");
+      }
+    }
+
+    let cleanTelegram = userData.telegram || '';
+    if (cleanTelegram.startsWith('@')) {
+      cleanTelegram = cleanTelegram.substring(1);
+    }
+
+    users[userIndex] = {
+      ...users[userIndex],
+      ...userData,
+      telegram: cleanTelegram
+    };
+    saveMockUsers(users);
+
+    return { success: true, message: 'Foydalanuvchi muvaffaqiyatli tahrirlandi', user: users[userIndex] };
+  }
+
+  const response = await axios.put(`${API_URL}/admin/users/${userId}`, userData, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
 // Bookings list
 export const getBookingsApi = async (token) => {
   if (MOCK_MODE) {
