@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaUser, FaPhone, FaTimes, FaCheck, FaBan, FaUserShield, FaAward } from 'react-icons/fa';
+import { FaUser, FaPhone, FaTimes, FaCheck, FaBan, FaUserShield, FaAward, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 
 const EditUserModal = ({
@@ -14,10 +14,12 @@ const EditUserModal = ({
     telegram: '',
     loyaltyStamps: 0,
     status: 'active',
-    role: 'user'
+    role: 'user',
+    password: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (userToEdit) {
@@ -27,9 +29,11 @@ const EditUserModal = ({
         telegram: userToEdit.telegram || '',
         loyaltyStamps: userToEdit.loyaltyStamps || 0,
         status: userToEdit.status || 'active',
-        role: userToEdit.role || 'user'
+        role: userToEdit.role || 'user',
+        password: ''
       });
       setErrors({});
+      setShowPassword(false);
     }
   }, [userToEdit, isOpen]);
 
@@ -182,6 +186,30 @@ const EditUserModal = ({
                 className="w-full pl-8 pr-4 py-2.5 bg-zinc-900 border border-zinc-800 focus:border-emerald-500 rounded-xl outline-none focus:ring-1 focus:ring-emerald-500 text-sm text-white transition-all"
                 placeholder="telegram_user"
               />
+            </div>
+          </div>
+
+          {/* Parol Field */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block">Parolni o'zgartirish</label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
+                <FaLock size={12} />
+              </span>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={formData.password}
+                onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                className="w-full pl-9 pr-10 py-2.5 bg-zinc-900 border border-zinc-800 focus:border-emerald-500 rounded-xl outline-none focus:ring-1 focus:ring-emerald-500 text-sm text-white transition-all"
+                placeholder="Yangi parol (bo'sh qoldirilsa, o'zgarmaydi)"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(prev => !prev)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-zinc-500 hover:text-zinc-350 transition-colors cursor-pointer bg-transparent border-none"
+              >
+                {showPassword ? <FaEyeSlash size={14} /> : <FaEye size={14} />}
+              </button>
             </div>
           </div>
 
