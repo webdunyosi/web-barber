@@ -137,12 +137,12 @@ const EditUserModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-[200] p-4 animate-fadeIn">
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[200] sm:p-4 animate-fadeIn">
       {/* Backdrop overlay click triggers close */}
       <div className="absolute inset-0 cursor-default" onClick={onClose}></div>
 
       {/* Modal Card */}
-      <div className="relative max-w-md w-full bg-zinc-950/95 border border-zinc-800/80 rounded-3xl p-6 md:p-8 space-y-6 shadow-2xl z-10 animate-bounce-in max-h-[90vh] overflow-y-auto scrollbar-none">
+      <div className="relative w-full h-full sm:h-auto sm:max-w-md bg-zinc-950 sm:border sm:border-zinc-800/80 rounded-none sm:rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl z-10 animate-bounce-in max-h-screen sm:max-h-[90vh] overflow-y-auto scrollbar-none">
         
         {/* Close Button */}
         <button 
