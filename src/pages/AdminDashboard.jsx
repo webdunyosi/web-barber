@@ -28,7 +28,11 @@ import {
   FaEdit,
   FaSave,
   FaSpinner,
-  FaChevronRight
+  FaChevronRight,
+  FaArrowLeft,
+  FaYoutube,
+  FaPlay,
+  FaBookOpen
 } from 'react-icons/fa';
 import { formatPrice } from '../utils/format';
 import { getNotificationsApi, createNotificationApi, deleteNotificationApi } from '../utils/api';
@@ -264,6 +268,30 @@ const ProfileSkeleton = () => (
   </div>
 );
 
+const tutorialsList = [
+  {
+    id: 'tut1',
+    youtubeId: 'dQw4w9WgXcQ',
+    title: "1-Dars: Statistika va Moliyaviy Tushumlar",
+    description: "Ushbu darsda kunlik/haftalik daromadlarni hisoblash, ommabop xizmatlar tahlilini ko'rish va kassa (offline) daromadlarini kiritishni o'rganasiz.",
+    duration: "02:45"
+  },
+  {
+    id: 'tut2',
+    youtubeId: 'dQw4w9WgXcQ',
+    title: "2-Dars: Buyurtmalar va To'lovlar Nazorati",
+    description: "Mijozlar tomonidan band qilingan vaqtlar va yuborilgan to'lov cheklarini tasdiqlash yoki rad etish, shuningdek buyurtmalarni o'chirish logikasini o'rganish.",
+    duration: "03:15"
+  },
+  {
+    id: 'tut3',
+    youtubeId: 'dQw4w9WgXcQ',
+    title: "3-Dars: Mijozlarni Bloklash va Tahrirlash",
+    description: "Foydalanuvchilarning shaxsiy ma'lumotlarini tahrirlash, ularning sodiqlik cashback ballarini ko'tarish/tushirish va nofaol mijozlarni bloklash jarayonlari.",
+    duration: "01:50"
+  }
+];
+
 const AdminDashboard = () => {
   const {
     user,
@@ -290,6 +318,7 @@ const AdminDashboard = () => {
   const [usersList, setUsersList] = useState([]);
   const [bookingsList, setBookingsList] = useState([]);
   const [stats, setStats] = useState(null);
+  const [playingVideoId, setPlayingVideoId] = useState(null);
 
   // Filters & UI States
   const [searchTerm, setSearchTerm] = useState('');
@@ -2029,12 +2058,24 @@ const AdminDashboard = () => {
                         {/* Item 2: Bildirishnomalar Boshqaruvi */}
                         <button
                           onClick={() => setSearchParams({ tab: 'notifications' })}
-                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer border-b border-white/5 text-left font-sans"
                         >
                           <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                             <FaBell size={16} />
                           </div>
                           <span className="flex-1 text-sm font-semibold text-zinc-200">Bildirishnomalar boshqaruvi</span>
+                          <FaChevronRight size={12} className="text-zinc-500" />
+                        </button>
+
+                        {/* Item 3: Dastur Yo'riqnomalari (Tutorials) */}
+                        <button
+                          onClick={() => setSearchParams({ tab: 'tutorials' })}
+                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                        >
+                          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <FaBookOpen size={16} />
+                          </div>
+                          <span className="flex-1 text-sm font-semibold text-zinc-200">Boshqaruv tizimi darsliklari</span>
                           <FaChevronRight size={12} className="text-zinc-500" />
                         </button>
                       </div>
@@ -2100,21 +2141,117 @@ const AdminDashboard = () => {
                       </button>
                     </div>
 
-                    {/* Guidance / Instructions Box */}
-                    <div className="bg-zinc-900/30 border border-zinc-800 rounded-3xl p-5 backdrop-blur-sm text-xs text-zinc-500 leading-relaxed space-y-3 mt-4">
-                      <h4 className="font-bold text-zinc-400 text-sm">Boshqaruv Tizimi Bo'yicha Yo'riqnoma:</h4>
-                      <p>1. <strong>Moliya & Statistika:</strong> Kunlik, haftalik va oylik tushumlarni hamda ommabop xizmatlar taqsimotini nazorat qilish.</p>
-                      <p>2. <strong>Buyurtmalar:</strong> Mijozlar tomonidan yuklangan to'lov cheklarini tekshirish, tasdiqlash yoki rad etish.</p>
-                      <p>3. <strong>Mijozlar:</strong> Ro'yxatdan o'tgan mijozlarni bloklash yoki o'chirish.</p>
-                      <p className="text-emerald-500/70 font-semibold border-t border-white/5 pt-3 mt-1 text-center">Tizim holati: Real vaqt rejimi (MongoDB ulanishi faol)</p>
-                    </div>
-
                     {/* Version info */}
                     <p className="text-center text-[10px] text-zinc-650 font-medium tracking-wide pt-2">
                       Ilova versiyasi 1.10.42 (Build 349)
                     </p>
                   </>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* ================= TAB: TUTORIALS ================= */}
+          {activeTab === 'tutorials' && (
+            <div className="space-y-6 max-w-4xl mx-auto animate-fadeIn pb-12">
+              {/* Back button */}
+              <button
+                onClick={() => {
+                  setSearchParams({ tab: 'profile' });
+                  setPlayingVideoId(null);
+                }}
+                className="flex items-center gap-2 text-zinc-400 hover:text-white transition-all duration-300 font-bold text-xs uppercase tracking-wider bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl active:scale-95 cursor-pointer hover:border-emerald-500/30 hover:text-emerald-400"
+              >
+                <FaArrowLeft size={10} />
+                <span>Ortga qaytish</span>
+              </button>
+
+              {/* Title Header */}
+              <div className="space-y-1">
+                <h3 className="text-2xl font-extrabold bg-gradient-to-r from-emerald-400 to-green-500 bg-clip-text text-transparent uppercase tracking-wider">
+                  Dasturdan foydalanish yo'riqnomalari
+                </h3>
+                <p className="text-zinc-400 text-xs">Tizim imkoniyatlaridan to'g'ri foydalanish bo'yicha video darsliklar</p>
+              </div>
+
+              {/* Summary / Text Guidance */}
+              <div className="bg-zinc-900/40 border border-zinc-800 rounded-3xl p-6 backdrop-blur-sm space-y-4">
+                <h4 className="font-bold text-white text-sm flex items-center gap-2">
+                  <FaBookOpen className="text-emerald-500" size={16} />
+                  Boshqaruv Tizimi Bo'yicha Yo'riqnoma:
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-zinc-400 leading-relaxed">
+                  <div className="bg-zinc-950/40 border border-zinc-900 p-4 rounded-2xl space-y-1">
+                    <span className="font-bold text-zinc-200 block text-xs">1. Moliya & Statistika:</span>
+                    <span>Kunlik, haftalik va oylik tushumlarni hamda ommabop xizmatlar taqsimotini nazorat qilish.</span>
+                  </div>
+                  <div className="bg-zinc-950/40 border border-zinc-900 p-4 rounded-2xl space-y-1">
+                    <span className="font-bold text-zinc-200 block text-xs">2. Buyurtmalar:</span>
+                    <span>Mijozlar tomonidan yuklangan to'lov cheklarini tekshirish, tasdiqlash yoki rad etish.</span>
+                  </div>
+                  <div className="bg-zinc-950/40 border border-zinc-900 p-4 rounded-2xl space-y-1">
+                    <span className="font-bold text-zinc-200 block text-xs">3. Mijozlar:</span>
+                    <span>Ro'yxatdan o'tgan mijozlarni qidirish, ma'lumotlarini tahrirlash, bloklash yoki o'chirish.</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Video Lessons Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {tutorialsList.map((tutorial) => (
+                  <div key={tutorial.id} className="bg-zinc-900/50 border border-zinc-800/80 rounded-3xl overflow-hidden hover:border-zinc-700 transition-all duration-300 group flex flex-col justify-between">
+                    {/* Thumbnail container */}
+                    <div className="relative aspect-video bg-zinc-950 flex items-center justify-center overflow-hidden border-b border-zinc-850">
+                      {playingVideoId === tutorial.id ? (
+                        <iframe
+                          src={`https://www.youtube.com/embed/${tutorial.youtubeId}?autoplay=1&rel=0`}
+                          title={tutorial.title}
+                          className="w-full h-full border-0 absolute inset-0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        ></iframe>
+                      ) : (
+                        <>
+                          <img 
+                            src={`https://img.youtube.com/vi/${tutorial.youtubeId}/hqdefault.jpg`} 
+                            alt={tutorial.title}
+                            className="w-full h-full object-cover opacity-60 group-hover:scale-105 group-hover:opacity-40 transition-all duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent opacity-60"></div>
+                          <button
+                            onClick={() => setPlayingVideoId(tutorial.id)}
+                            className="absolute w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 scale-95 group-hover:scale-105 transition-all duration-300 cursor-pointer animate-pulse z-10"
+                          >
+                            <FaPlay className="ml-1 text-zinc-950" size={16} />
+                          </button>
+                          <span className="absolute bottom-3 right-3 bg-zinc-950/80 border border-white/10 px-2 py-0.5 rounded-md text-[10px] font-bold font-mono">
+                            {tutorial.duration}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    {/* Body */}
+                    <div className="p-5 space-y-2 flex-1 flex flex-col justify-between">
+                      <div className="space-y-1">
+                        <h4 className="font-bold text-white text-sm group-hover:text-emerald-400 transition-colors">
+                          {tutorial.title}
+                        </h4>
+                        <p className="text-zinc-400 text-xs leading-normal">
+                          {tutorial.description}
+                        </p>
+                      </div>
+                      <a
+                        href={`https://www.youtube.com/watch?v=${tutorial.youtubeId}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center justify-center gap-1.5 w-full bg-zinc-800 hover:bg-zinc-750 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all active:scale-[0.98] border border-white/5 mt-4"
+                      >
+                        <FaYoutube className="text-red-500" size={14} />
+                        <span>YouTubeda tomosha qilish</span>
+                      </a>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
