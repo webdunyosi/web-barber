@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import { FaTimes, FaUser, FaPhone, FaPaperPlane, FaLock } from 'react-icons/fa';
 
@@ -7,12 +7,24 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
   const [activeTab, setActiveTab] = useState('login'); // 'login' | 'register'
   const [formData, setFormData] = useState({
     name: '',
-    phone: '',
+    phone: '+998 ',
     telegram: '',
     password: '',
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setFormData({
+        name: '',
+        phone: '+998 ',
+        telegram: '',
+        password: '',
+      });
+      setErrors({});
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -24,33 +36,28 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
   };
 
   const handlePhoneChange = (value) => {
-    let cleaned = value.replace(/\D/g, '');
-    
-    if (!cleaned.startsWith('998') && cleaned.length > 0) {
-      cleaned = '998' + cleaned;
+    let inputVal = value;
+    if (!inputVal.startsWith('+998 ')) {
+      inputVal = '+998 ' + inputVal.replace(/^\+?9?9?8?\s?/, '');
     }
-    
-    if (cleaned.length > 12) {
-      cleaned = cleaned.slice(0, 12);
+
+    const suffix = inputVal.substring(5).replace(/\D/g, '');
+    const cleanSuffix = suffix.slice(0, 9);
+
+    let formatted = '+998 ';
+    if (cleanSuffix.length > 0) {
+      formatted += cleanSuffix.slice(0, 2);
     }
-    
-    let formatted = '+';
-    if (cleaned.length > 0) {
-      formatted += cleaned.slice(0, 3);
+    if (cleanSuffix.length > 2) {
+      formatted += ' ' + cleanSuffix.slice(2, 5);
     }
-    if (cleaned.length > 3) {
-      formatted += ' ' + cleaned.slice(3, 5);
+    if (cleanSuffix.length > 5) {
+      formatted += ' ' + cleanSuffix.slice(5, 7);
     }
-    if (cleaned.length > 5) {
-      formatted += ' ' + cleaned.slice(5, 8);
+    if (cleanSuffix.length > 7) {
+      formatted += ' ' + cleanSuffix.slice(7, 9);
     }
-    if (cleaned.length > 8) {
-      formatted += ' ' + cleaned.slice(8, 10);
-    }
-    if (cleaned.length > 10) {
-      formatted += ' ' + cleaned.slice(10, 12);
-    }
-    
+
     handleChange('phone', formatted);
   };
 
@@ -62,7 +69,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
       if (!formData.name.trim()) newErrors.name = 'Ismingizni kiriting';
     }
     
-    if (!formData.phone.trim()) {
+    if (!formData.phone.trim() || formData.phone.trim() === '+998') {
       newErrors.phone = 'Telefon raqamni kiriting';
     } else if (cleanPhone.length !== 12) {
       newErrors.phone = "Telefon raqami noto'g'ri (12 ta raqam bo'lishi kerak)";

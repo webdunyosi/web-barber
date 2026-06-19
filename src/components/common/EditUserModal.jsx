@@ -39,15 +39,45 @@ const EditUserModal = ({
 
   if (!isOpen || !userToEdit) return null;
 
+  const handlePhoneChange = (value) => {
+    let inputVal = value;
+    if (!inputVal.startsWith('+998 ')) {
+      inputVal = '+998 ' + inputVal.replace(/^\+?9?9?8?\s?/, '');
+    }
+
+    const suffix = inputVal.substring(5).replace(/\D/g, '');
+    const cleanSuffix = suffix.slice(0, 9);
+
+    let formatted = '+998 ';
+    if (cleanSuffix.length > 0) {
+      formatted += cleanSuffix.slice(0, 2);
+    }
+    if (cleanSuffix.length > 2) {
+      formatted += ' ' + cleanSuffix.slice(2, 5);
+    }
+    if (cleanSuffix.length > 5) {
+      formatted += ' ' + cleanSuffix.slice(5, 7);
+    }
+    if (cleanSuffix.length > 7) {
+      formatted += ' ' + cleanSuffix.slice(7, 9);
+    }
+
+    setFormData(prev => ({ ...prev, phone: formatted }));
+    if (errors.phone) {
+      setErrors(prev => ({ ...prev, phone: '' }));
+    }
+  };
+
   const validateForm = () => {
     const tempErrors = {};
+    const cleanPhone = formData.phone.replace(/\D/g, '');
+
     if (!formData.name.trim()) tempErrors.name = "Ism kiritilishi shart";
-    if (!formData.phone.trim()) tempErrors.phone = "Telefon raqami kiritilishi shart";
     
-    // Check if phone matches expected format roughly
-    const phoneRegex = /^\+?[0-9\s-]{9,20}$/;
-    if (formData.phone && !phoneRegex.test(formData.phone)) {
-      tempErrors.phone = "Telefon raqami formati noto'g'ri";
+    if (!formData.phone.trim() || formData.phone.trim() === '+998') {
+      tempErrors.phone = "Telefon raqami kiritilishi shart";
+    } else if (cleanPhone.length !== 12) {
+      tempErrors.phone = "Telefon raqami noto'g'ri (12 ta raqam bo'lishi kerak)";
     }
 
     setErrors(tempErrors);
@@ -162,7 +192,7 @@ const EditUserModal = ({
               <input
                 type="text"
                 value={formData.phone}
-                onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                onChange={(e) => handlePhoneChange(e.target.value)}
                 className={`w-full pl-9 pr-4 py-2.5 bg-zinc-900 border ${
                   errors.phone ? 'border-red-500' : 'border-zinc-800 focus:border-emerald-500'
                 } rounded-xl outline-none focus:ring-1 focus:ring-emerald-500 text-sm text-white transition-all`}
