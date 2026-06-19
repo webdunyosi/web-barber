@@ -440,6 +440,10 @@ const AdminDashboard = () => {
   const [kassaViewDate, setKassaViewDate] = useState(new Date());
   const kassaCalendarRef = useRef(null);
 
+  // Custom Dropdown States & Refs for Users Filter
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+  const statusDropdownRef = useRef(null);
+
   const kassaMonths = ['Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'];
   const kassaDaysOfWeek = ['Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh', 'Ya'];
 
@@ -462,6 +466,9 @@ const AdminDashboard = () => {
     const handleClickOutside = (event) => {
       if (kassaCalendarRef.current && !kassaCalendarRef.current.contains(event.target)) {
         setIsKassaCalendarOpen(false);
+      }
+      if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target)) {
+        setIsStatusDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -1099,7 +1106,7 @@ const AdminDashboard = () => {
           {activeTab === 'users' && (
             <div className="space-y-5 animate-fadeIn">
               {/* Filters Panel */}
-              <div className="flex flex-col sm:flex-row gap-3 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-3 backdrop-blur-sm">
+              <div className="flex flex-col sm:flex-row gap-3 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-3 backdrop-blur-sm relative z-30">
                 <div className="flex-1 relative">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
                     <FaSearch size={12} />
@@ -1112,16 +1119,80 @@ const AdminDashboard = () => {
                     className="w-full pl-8 pr-4 py-2 bg-zinc-800/60 border border-zinc-700/50 rounded-xl outline-none focus:ring-1 focus:ring-emerald-500 focus:border-transparent text-xs text-white placeholder-zinc-500 transition-all duration-300"
                   />
                 </div>
-                <div className="w-full sm:w-48">
-                  <select
-                    value={userStatusFilter}
-                    onChange={(e) => setUserStatusFilter(e.target.value)}
-                    className="w-full px-3 py-2 bg-zinc-800/60 border border-zinc-700/50 rounded-xl outline-none focus:ring-1 focus:ring-emerald-500 focus:border-transparent text-xs text-white cursor-pointer transition-all duration-300"
+                <div className="w-full sm:w-48 relative" ref={statusDropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+                    className={`w-full flex items-center justify-between px-3 py-2 bg-zinc-800/60 border rounded-xl outline-none text-xs text-white cursor-pointer transition-all duration-300 ${
+                      isStatusDropdownOpen
+                        ? 'border-emerald-500 ring-1 ring-emerald-500'
+                        : 'border-zinc-700/50 hover:border-emerald-500/50 hover:bg-zinc-800/80'
+                    }`}
                   >
-                    <option value="all">Barcha foydalanuvchilar</option>
-                    <option value="active">Faollar</option>
-                    <option value="blocked">Bloklanganlar</option>
-                  </select>
+                    <span>
+                      {userStatusFilter === 'all' && 'Barcha foydalanuvchilar'}
+                      {userStatusFilter === 'active' && 'Faollar'}
+                      {userStatusFilter === 'blocked' && 'Bloklanganlar'}
+                    </span>
+                    <svg
+                      className={`w-3.5 h-3.5 text-zinc-400 transition-transform duration-300 ${isStatusDropdownOpen ? 'rotate-180 text-emerald-400' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {/* Dropdown Options Menu */}
+                  {isStatusDropdownOpen && (
+                    <div className="absolute top-full left-0 right-0 mt-1.5 z-50 bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl overflow-hidden animate-fadeIn">
+                      <div className="p-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUserStatusFilter('all');
+                            setIsStatusDropdownOpen(false);
+                          }}
+                          className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                            userStatusFilter === 'all'
+                              ? 'bg-emerald-500/10 text-emerald-400 font-bold'
+                              : 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                          }`}
+                        >
+                          Barcha foydalanuvchilar
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUserStatusFilter('active');
+                            setIsStatusDropdownOpen(false);
+                          }}
+                          className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                            userStatusFilter === 'active'
+                              ? 'bg-emerald-500/10 text-emerald-400 font-bold'
+                              : 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                          }`}
+                        >
+                          Faollar
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUserStatusFilter('blocked');
+                            setIsStatusDropdownOpen(false);
+                          }}
+                          className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                            userStatusFilter === 'blocked'
+                              ? 'bg-emerald-500/10 text-emerald-400 font-bold'
+                              : 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                          }`}
+                        >
+                          Bloklanganlar
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
