@@ -1196,118 +1196,245 @@ const AdminDashboard = () => {
                 </div>
               </div>
 
-              {/* Users Grid */}
+              {/* Users Table */}
               {filteredUsers.length === 0 ? (
                 <div className="text-center py-12 bg-zinc-900/10 border border-dashed border-zinc-800/80 rounded-2xl backdrop-blur-xs">
                   <FaUserSlash className="mx-auto text-3xl text-zinc-600 mb-2.5 animate-pulse" />
                   <p className="text-zinc-400 text-xs font-medium">Hech qanday mijoz topilmadi.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filteredUsers.map((client) => (
-                    <div 
-                      key={client.id || client._id} 
-                      className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-4 flex flex-col justify-between transition-all duration-300 backdrop-blur-xs hover:border-zinc-700/80 hover:shadow-lg hover:shadow-emerald-500/2 group"
-                    >
-                      {/* Top row: Avatar & Basic details */}
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          {/* Modern gradient initial avatar */}
-                          <div className="w-9 h-9 rounded-full bg-linear-to-tr from-emerald-500/20 to-teal-500/20 border border-emerald-500/35 flex items-center justify-center text-emerald-400 font-bold text-xs uppercase shadow-inner select-none shrink-0">
-                            {(client.name || 'M').charAt(0)}
+                <div className="space-y-4">
+                  {/* Desktop Layout - Spacious, Glassmorphic Table */}
+                  <div className="hidden md:block overflow-x-auto bg-zinc-950/40 border border-zinc-850 rounded-2xl shadow-xl backdrop-blur-md">
+                    <table className="w-full text-left border-collapse min-w-full font-sans">
+                      <thead>
+                        <tr className="border-b border-zinc-800 text-[11px] font-extrabold uppercase tracking-wider text-zinc-400 bg-zinc-950/40 select-none">
+                          <th className="px-5 py-4 pl-6">Mijoz</th>
+                          <th className="px-5 py-4">Aloqa</th>
+                          <th className="px-5 py-4">Holat</th>
+                          <th className="px-5 py-4 pr-6 text-right">Amallar</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-zinc-900">
+                        {filteredUsers.map((client) => (
+                          <tr
+                            key={client.id || client._id}
+                            className="hover:bg-white/[0.02] active:bg-white/[0.01] transition-all duration-250 border-b border-zinc-900 last:border-none group text-xs"
+                          >
+                            {/* Mijoz Profile details */}
+                            <td className="px-5 py-3.5 pl-6 flex items-center gap-3 whitespace-nowrap">
+                              {/* Gradient initials avatar */}
+                              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500/10 to-teal-500/5 border border-emerald-500/25 flex items-center justify-center text-emerald-400 font-extrabold text-sm uppercase shadow-inner group-hover:border-emerald-500/50 group-hover:text-emerald-300 transition-all duration-300 select-none shrink-0">
+                                {(client.name || 'M').charAt(0)}
+                              </div>
+                              <div className="min-w-0">
+                                <span className="font-bold text-zinc-200 group-hover:text-white text-sm tracking-wide transition-colors block truncate">{client.name}</span>
+                                <span className="text-[10px] text-zinc-500 block mt-0.5 font-medium">
+                                  A'zo bo'ldi: {new Date(client.createdAt).toLocaleDateString('uz-UZ')}
+                                </span>
+                              </div>
+                            </td>
+
+                            {/* Aloqa Buttons */}
+                            <td className="px-5 py-3.5 whitespace-nowrap">
+                              <div className="flex items-center gap-2">
+                                <a
+                                  href={`tel:${client.phone}`}
+                                  title="Qo'ng'iroq qilish"
+                                  className="w-8 h-8 rounded-xl bg-zinc-900/60 hover:bg-emerald-500/10 border border-zinc-800 hover:border-emerald-500/30 text-zinc-400 hover:text-emerald-400 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+                                >
+                                  <FaPhone size={11} />
+                                </a>
+                                {client.telegram ? (
+                                  <a
+                                    href={`https://t.me/${client.telegram}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    title="Telegram chat ochish"
+                                    className="w-8 h-8 rounded-xl bg-zinc-900/60 hover:bg-sky-500/10 border border-zinc-800 hover:border-sky-500/30 text-zinc-400 hover:text-sky-400 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+                                  >
+                                    <FaPaperPlane size={11} />
+                                  </a>
+                                ) : (
+                                  <div
+                                    title="Telegram yo'q"
+                                    className="w-8 h-8 rounded-xl bg-zinc-950/40 border border-zinc-900/50 text-zinc-700 flex items-center justify-center select-none"
+                                  >
+                                    <FaPaperPlane size={11} className="opacity-30" />
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+
+                            {/* Status Badge */}
+                            <td className="px-5 py-3.5 whitespace-nowrap">
+                              <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-xl border transition-all duration-300 ${
+                                client.status === 'active'
+                                  ? 'bg-emerald-500/5 text-emerald-400 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.05)]'
+                                  : 'bg-red-500/5 text-red-400 border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.05)]'
+                              }`}>
+                                <span className={`w-1.5 h-1.5 rounded-full ${client.status === 'active' ? 'bg-emerald-400 animate-pulse' : 'bg-red-400'}`}></span>
+                                {client.status === 'active' ? 'Faol' : 'Bloklangan'}
+                              </span>
+                            </td>
+
+                            {/* Action Icon Buttons */}
+                            <td className="px-5 py-3.5 pr-6 whitespace-nowrap text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                {/* Edit Action */}
+                                <button
+                                  disabled={actionLoading === (client.id || client._id)}
+                                  onClick={() => {
+                                    setUserToEdit(client);
+                                    setIsEditUserModalOpen(true);
+                                  }}
+                                  className="w-8 h-8 rounded-xl bg-zinc-900/60 hover:bg-emerald-500/10 border border-zinc-800 hover:border-emerald-500/30 text-zinc-400 hover:text-emerald-400 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50"
+                                  title="Tahrirlash"
+                                >
+                                  <FaEdit size={12} />
+                                </button>
+
+                                {/* Block/Activate Toggle Action */}
+                                <button
+                                  disabled={actionLoading === (client.id || client._id)}
+                                  onClick={() => handleBlockUser(client.id || client._id, client.status)}
+                                  className={`w-8 h-8 rounded-xl border flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50 ${
+                                    client.status === 'active'
+                                      ? 'bg-zinc-900/60 text-zinc-400 border-zinc-800 hover:bg-amber-500/10 hover:border-amber-500/30 hover:text-amber-400'
+                                      : 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/20'
+                                  }`}
+                                  title={client.status === 'active' ? 'Bloklash' : 'Faollashtirish'}
+                                >
+                                  <FaBan size={12} />
+                                </button>
+
+                                {/* Delete Action */}
+                                <button
+                                  disabled={actionLoading === (client.id || client._id)}
+                                  onClick={() => handleDeleteUser(client.id || client._id)}
+                                  className="w-8 h-8 rounded-xl bg-zinc-900/60 hover:bg-red-500/10 border border-zinc-800 hover:border-red-500/30 text-zinc-500 hover:text-red-400 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50"
+                                  title="O'chirish"
+                                >
+                                  <FaTrash size={12} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Mobile Layout - Modern Compact Cards */}
+                  <div className="md:hidden space-y-3">
+                    {filteredUsers.map((client) => (
+                      <div
+                        key={client.id || client._id}
+                        className="bg-zinc-900/30 border border-zinc-800/60 rounded-2xl p-4 backdrop-blur-sm relative overflow-hidden flex flex-col gap-3.5 hover:border-zinc-700/60 transition-all duration-300"
+                      >
+                        {/* Glowing left accent border matching status */}
+                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${client.status === 'active' ? 'bg-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.3)]'}`}></div>
+                        
+                        {/* Top section: User info & Status */}
+                        <div className="flex items-start justify-between pl-1">
+                          <div className="flex items-center gap-3 min-w-0">
+                            {/* Avatar */}
+                            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500/10 to-teal-500/5 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-extrabold text-sm uppercase shadow-inner shrink-0 select-none">
+                              {(client.name || 'M').charAt(0)}
+                            </div>
+                            <div className="min-w-0">
+                              <span className="font-bold text-zinc-200 text-sm tracking-wide block truncate">{client.name}</span>
+                              <span className="text-[10px] text-zinc-500 block mt-0.5 font-medium">
+                                A'zo bo'ldi: {new Date(client.createdAt).toLocaleDateString('uz-UZ')}
+                              </span>
+                            </div>
                           </div>
-                          <div className="min-w-0">
-                            <h5 className="font-bold text-zinc-100 text-sm tracking-wide truncate group-hover:text-white transition-colors">
-                              {client.name}
-                            </h5>
-                            <p className="text-[10px] text-zinc-500 flex items-center gap-1 mt-0.5">
-                              <FaCalendarAlt size={9} />
-                              {new Date(client.createdAt).toLocaleDateString('uz-UZ')} da a'zo bo'ldi
-                            </p>
-                          </div>
+
+                          {/* Status Badge */}
+                          <span className={`inline-flex items-center gap-1 text-[9px] font-extrabold px-2 py-0.5 rounded-lg border bg-zinc-950/40 ${
+                            client.status === 'active'
+                              ? 'text-emerald-400 border-emerald-500/20'
+                              : 'text-red-400 border-red-500/20'
+                          }`}>
+                            <span className={`w-1 h-1 rounded-full ${client.status === 'active' ? 'bg-emerald-400 animate-pulse' : 'bg-red-400'}`}></span>
+                            {client.status === 'active' ? 'Faol' : 'Blok'}
+                          </span>
                         </div>
 
-                        {/* Status badge */}
-                        <span className={`inline-flex items-center gap-1 text-[9px] font-extrabold px-2 py-0.5 rounded-md ${
-                          client.status === 'active'
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                            : 'bg-red-500/10 text-red-400 border border-red-500/20'
-                        }`}>
-                          <span className={`w-1 h-1 rounded-full ${client.status === 'active' ? 'bg-emerald-400 animate-pulse' : 'bg-red-400'}`}></span>
-                          {client.status === 'active' ? 'Faol' : 'Bloklangan'}
-                        </span>
+                        {/* Bottom Section: Actions & Contact buttons */}
+                        <div className="flex items-center justify-between border-t border-zinc-800/40 pt-3 pl-1">
+                          {/* Contacts */}
+                          <div className="flex gap-2">
+                            <a
+                              href={`tel:${client.phone}`}
+                              title="Qo'ng'iroq qilish"
+                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-emerald-400 font-bold text-[10px] transition-all duration-300 active:scale-95 cursor-pointer"
+                            >
+                              <FaPhone size={9} />
+                              <span>Qo'ng'iroq</span>
+                            </a>
+                            {client.telegram ? (
+                              <a
+                                href={`https://t.me/${client.telegram}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                title="Telegram chat ochish"
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/25 text-sky-400 font-bold text-[10px] transition-all duration-300 active:scale-95 cursor-pointer"
+                              >
+                                <FaPaperPlane size={9} />
+                                <span>Telegram</span>
+                              </a>
+                            ) : (
+                              <div
+                                title="Telegram yo'q"
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-950/40 border border-zinc-900/50 text-zinc-700 font-bold text-[10px] select-none opacity-40"
+                              >
+                                <FaPaperPlane size={9} />
+                                <span>Telegram</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Admin management buttons */}
+                          <div className="flex gap-2">
+                            <button
+                              disabled={actionLoading === (client.id || client._id)}
+                              onClick={() => {
+                                setUserToEdit(client);
+                                setIsEditUserModalOpen(true);
+                              }}
+                              className="w-8 h-8 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/60 text-zinc-300 hover:text-white flex items-center justify-center transition-all duration-300 active:scale-90 cursor-pointer disabled:opacity-50"
+                              title="Tahrirlash"
+                            >
+                              <FaEdit size={12} />
+                            </button>
+
+                            <button
+                              disabled={actionLoading === (client.id || client._id)}
+                              onClick={() => handleBlockUser(client.id || client._id, client.status)}
+                              className={`w-8 h-8 rounded-xl border flex items-center justify-center transition-all duration-300 active:scale-90 cursor-pointer disabled:opacity-50 ${
+                                client.status === 'active'
+                                  ? 'bg-zinc-800 text-zinc-400 border-zinc-700/60 hover:bg-amber-500/10 hover:border-amber-500/30 hover:text-amber-400'
+                                  : 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/20'
+                              }`}
+                              title={client.status === 'active' ? 'Bloklash' : 'Faollashtirish'}
+                            >
+                              <FaBan size={12} />
+                            </button>
+
+                            <button
+                              disabled={actionLoading === (client.id || client._id)}
+                              onClick={() => handleDeleteUser(client.id || client._id)}
+                              className="w-8 h-8 rounded-xl bg-zinc-800 hover:bg-red-500/10 border border-zinc-700/60 hover:border-red-500/30 text-zinc-400 hover:text-red-400 flex items-center justify-center transition-all duration-300 active:scale-90 cursor-pointer disabled:opacity-50"
+                              title="O'chirish"
+                            >
+                              <FaTrash size={12} />
+                            </button>
+                          </div>
+                        </div>
                       </div>
-
-                      {/* Middle row: Interactive Contact Info links */}
-                      <div className="flex flex-wrap items-center gap-2 text-xs border-t border-white/5 pt-2.5 mt-2.5">
-                        <a 
-                          href={`tel:${client.phone}`}
-                          title="Qo'ng'iroq qilish"
-                          className="flex items-center gap-1.5 text-zinc-300 hover:text-emerald-400 font-mono text-[11px] transition-all bg-zinc-950/30 border border-zinc-800/40 hover:border-emerald-500/35 hover:bg-emerald-500/5 px-2.5 py-1 rounded-lg cursor-pointer"
-                        >
-                          <FaPhone className="text-emerald-500" size={9} />
-                          {client.phone}
-                        </a>
-                        {client.telegram ? (
-                          <a
-                            href={`https://t.me/${client.telegram}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            title="Telegram chat ochish"
-                            className="flex items-center gap-1.5 text-zinc-300 hover:text-emerald-400 text-[11px] transition-all bg-zinc-950/30 border border-zinc-800/40 hover:border-emerald-500/35 hover:bg-emerald-500/5 px-2.5 py-1 rounded-lg cursor-pointer"
-                          >
-                            <FaPaperPlane className="text-emerald-500" size={9} />
-                            @{client.telegram}
-                          </a>
-                        ) : (
-                          <span className="flex items-center gap-1.5 text-zinc-650 text-[11px] bg-zinc-950/10 border border-zinc-900/50 px-2.5 py-1 rounded-lg select-none">
-                            <FaPaperPlane className="text-zinc-700" size={9} />
-                            Telegram yo'q
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Bottom row: Compact action buttons */}
-                      <div className="flex items-center justify-end gap-1.5 border-t border-white/5 pt-2.5 mt-2.5">
-                        {/* Edit Action */}
-                        <button
-                          disabled={actionLoading === (client.id || client._id)}
-                          onClick={() => {
-                            setUserToEdit(client);
-                            setIsEditUserModalOpen(true);
-                          }}
-                          className="flex-1 py-1.5 px-3 bg-zinc-800 hover:bg-emerald-500/10 border border-zinc-700 hover:border-emerald-500/30 text-zinc-300 hover:text-emerald-400 rounded-xl text-[10px] font-bold transition-all active:scale-[0.97] cursor-pointer flex items-center justify-center gap-1 disabled:opacity-50"
-                        >
-                          <FaEdit size={10} />
-                          <span>Tahrirlash</span>
-                        </button>
-
-                        {/* Block/Activate Toggle Action */}
-                        <button
-                          disabled={actionLoading === (client.id || client._id)}
-                          onClick={() => handleBlockUser(client.id || client._id, client.status)}
-                          className={`flex-1 py-1.5 px-3 border rounded-xl text-[10px] font-bold transition-all active:scale-[0.97] cursor-pointer flex items-center justify-center gap-1 disabled:opacity-50 ${
-                            client.status === 'active'
-                              ? 'bg-zinc-800 hover:bg-amber-500/10 border-zinc-700 hover:border-amber-500/30 text-zinc-300 hover:text-amber-400'
-                              : 'bg-emerald-500/15 border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/20'
-                          }`}
-                        >
-                          <FaBan size={10} />
-                          <span>{client.status === 'active' ? 'Bloklash' : 'Faollashtirish'}</span>
-                        </button>
-
-                        {/* Delete Action (separated on right to prevent accidental clicks) */}
-                        <button
-                          disabled={actionLoading === (client.id || client._id)}
-                          onClick={() => handleDeleteUser(client.id || client._id)}
-                          className="p-1.5 bg-zinc-850 hover:bg-red-500/10 border border-zinc-750 hover:border-red-500/30 text-zinc-500 hover:text-red-400 rounded-xl transition-all active:scale-95 cursor-pointer ml-auto disabled:opacity-50"
-                          title="O'chirish"
-                        >
-                          <FaTrash size={10} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
