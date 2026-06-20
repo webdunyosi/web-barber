@@ -2604,52 +2604,44 @@ const AdminDashboard = () => {
                       </div>
                     </div>
 
-                    {/* Group 2: Settings and Info */}
+                    {/* Group 2: Developer Contact Info */}
                     <div className="bg-zinc-900/70 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-xl">
                       <div className="p-1">
-                        {/* Item 1: Telegram Username */}
-                        <div className="w-full flex items-center gap-3 px-4 py-3 border-b border-white/5 text-left">
-                          <div className="w-9 h-9 rounded-xl bg-zinc-800/80 border border-white/5 flex items-center justify-center text-gray-400">
+                        {/* Item 1: Telegram Link */}
+                        <a
+                          href="https://t.me/AlimardonToshpulatov"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-all duration-200 border-b border-white/5 text-left font-sans cursor-pointer group"
+                        >
+                          <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 group-hover:bg-sky-500/20 group-hover:border-sky-500/30 flex items-center justify-center text-sky-400 transition-colors duration-200 shrink-0">
                             <FaPaperPlane size={14} />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <span className="block text-[10px] text-gray-400 uppercase tracking-wider">Telegram username</span>
-                            <span className="text-sm font-semibold text-zinc-200 truncate block">
-                              {user?.telegram ? `@${user.telegram}` : 'Kiritilmagan'}
+                            <span className="block text-[10px] text-gray-400 uppercase tracking-wider">Dasturchi Telegram</span>
+                            <span className="text-sm font-semibold text-zinc-200 truncate block group-hover:text-white transition-colors duration-200">
+                              @AlimardonToshpulatov
                             </span>
                           </div>
-                        </div>
+                          <FaChevronRight size={12} className="text-zinc-500 group-hover:text-zinc-300 transition-colors duration-200" />
+                        </a>
 
-                        {/* Item 2: Profil Sozlamalari (Tahrirlash) */}
-                        <button
-                          onClick={() => {
-                            setIsEditingProfile(true);
-                            setProfileError('');
-                          }}
-                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                        {/* Item 2: Phone Link */}
+                        <a
+                          href="tel:+998509509545"
+                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-all duration-200 text-left font-sans cursor-pointer group"
                         >
-                          <div className="w-9 h-9 rounded-xl bg-zinc-800/80 border border-white/5 flex items-center justify-center text-gray-400">
-                            <FaEdit size={14} />
+                          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 group-hover:bg-emerald-500/20 group-hover:border-emerald-500/30 flex items-center justify-center text-emerald-400 transition-colors duration-200 shrink-0">
+                            <FaPhone size={14} />
                           </div>
-                          <span className="flex-1 text-sm font-semibold text-zinc-200">Profil ma'lumotlarini tahrirlash</span>
-                          <FaChevronRight size={12} className="text-zinc-500" />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Group 3: Transition to Client Homepage */}
-                    <div className="bg-zinc-900/70 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-xl">
-                      <div className="p-1">
-                        <Link
-                          to="/"
-                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
-                        >
-                          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                            <FaUserShield size={16} />
+                          <div className="flex-1 min-w-0">
+                            <span className="block text-[10px] text-gray-400 uppercase tracking-wider">Dasturchi Telefon</span>
+                            <span className="text-sm font-semibold text-zinc-200 truncate block group-hover:text-white transition-colors duration-200">
+                              +998 (50) 950-95-45
+                            </span>
                           </div>
-                          <span className="flex-1 text-sm font-bold text-emerald-400">Mijozlar sahifasiga o'tish</span>
-                          <FaChevronRight size={12} className="text-emerald-400" />
-                        </Link>
+                          <FaChevronRight size={12} className="text-zinc-500 group-hover:text-zinc-300 transition-colors duration-200" />
+                        </a>
                       </div>
                     </div>
 
