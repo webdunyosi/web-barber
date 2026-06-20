@@ -413,6 +413,9 @@ const AdminDashboard = () => {
   const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
   const [userToEdit, setUserToEdit] = useState(null);
 
+  // Kassa Entry modal state
+  const [isKassaModalOpen, setIsKassaModalOpen] = useState(false);
+
   const handleEditUserSave = async (userId, updatedUserData) => {
     try {
       if (userId) {
@@ -659,6 +662,7 @@ const AdminDashboard = () => {
       await saveOfflineIncome(dbDate, Number(kassaAmount));
       toast.success("Kassa muvaffaqiyatli saqlandi! 🎉");
       setKassaAmount('');
+      setIsKassaModalOpen(false);
       await loadData();
     } catch (err) {
       toast.error(err.message || 'Xatolik yuz berdi');
@@ -983,39 +987,44 @@ const AdminDashboard = () => {
           {activeTab === 'bookings' && (
             <div className="space-y-6">
               {/* Filters Panel */}
-              <div className="flex flex-col sm:flex-row gap-3 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-3 backdrop-blur-sm relative z-30">
+              <div className="flex flex-row items-center gap-2 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-2.5 backdrop-blur-sm relative z-30">
                 {/* Search */}
-                <div className="flex-1 relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
-                    <FaSearch size={12} />
+                <div className="flex-1 min-w-0 relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-2.5 text-zinc-550">
+                    <FaSearch size={11} />
                   </span>
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Mijoz ismi, telefon raqami yoki xizmat..."
-                    className="w-full pl-8 pr-4 py-2 bg-zinc-800/60 border border-zinc-700/50 rounded-xl outline-none focus:ring-1 focus:ring-emerald-500 focus:border-transparent text-xs text-white placeholder-zinc-500 transition-all duration-300"
+                    placeholder="Qidirish..."
+                    className="w-full pl-7 pr-3 py-2 bg-zinc-800/60 border border-zinc-700/50 rounded-xl outline-none focus:ring-1 focus:ring-emerald-500 focus:border-transparent text-[11px] sm:text-xs text-white placeholder-zinc-550 transition-all duration-300"
                   />
                 </div>
                 {/* Status custom select */}
-                <div className="w-full sm:w-48 relative" ref={bookingStatusDropdownRef}>
+                <div className="w-28 sm:w-44 shrink-0 relative" ref={bookingStatusDropdownRef}>
                   <button
                     type="button"
                     onClick={() => setIsBookingStatusDropdownOpen(!isBookingStatusDropdownOpen)}
-                    className={`w-full flex items-center justify-between px-3 py-2 bg-zinc-800/60 border rounded-xl outline-none text-xs text-white cursor-pointer transition-all duration-300 ${
+                    className={`w-full flex items-center justify-between px-2.5 py-2 bg-zinc-800/60 border rounded-xl outline-none text-[11px] sm:text-xs text-white cursor-pointer transition-all duration-300 ${
                       isBookingStatusDropdownOpen
                         ? 'border-emerald-500 ring-1 ring-emerald-500'
                         : 'border-zinc-700/50 hover:border-emerald-500/50 hover:bg-zinc-800/80'
                     }`}
                   >
                     <span>
-                      {bookingStatusFilter === 'all' && 'Barcha holatlar'}
+                      {bookingStatusFilter === 'all' && (
+                        <>
+                          <span className="hidden sm:inline">Barcha holatlar</span>
+                          <span className="sm:hidden">Barchasi</span>
+                        </>
+                      )}
                       {bookingStatusFilter === 'pending' && 'Kutilmoqda'}
                       {bookingStatusFilter === 'confirmed' && 'Tasdiqlangan'}
                       {bookingStatusFilter === 'rejected' && 'Rad etilgan'}
                     </span>
                     <svg
-                      className={`w-3.5 h-3.5 text-zinc-400 transition-transform duration-300 ${isBookingStatusDropdownOpen ? 'rotate-180 text-emerald-400' : ''}`}
+                      className={`w-3.5 h-3.5 text-zinc-500 transition-transform duration-300 shrink-0 ml-1 ${isBookingStatusDropdownOpen ? 'rotate-180 text-emerald-400' : ''}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1034,13 +1043,13 @@ const AdminDashboard = () => {
                             setBookingStatusFilter('all');
                             setIsBookingStatusDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                          className={`w-full text-left px-3 py-2 text-[11px] sm:text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
                             bookingStatusFilter === 'all'
                               ? 'bg-emerald-500/10 text-emerald-400 font-bold'
                               : 'text-zinc-300 hover:bg-white/5 hover:text-white'
                           }`}
                         >
-                          Barcha holatlar
+                          Barchasi
                         </button>
                         <button
                           type="button"
@@ -1048,7 +1057,7 @@ const AdminDashboard = () => {
                             setBookingStatusFilter('pending');
                             setIsBookingStatusDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                          className={`w-full text-left px-3 py-2 text-[11px] sm:text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
                             bookingStatusFilter === 'pending'
                               ? 'bg-emerald-500/10 text-emerald-400 font-bold'
                               : 'text-zinc-300 hover:bg-white/5 hover:text-white'
@@ -1062,7 +1071,7 @@ const AdminDashboard = () => {
                             setBookingStatusFilter('confirmed');
                             setIsBookingStatusDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                          className={`w-full text-left px-3 py-2 text-[11px] sm:text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
                             bookingStatusFilter === 'confirmed'
                               ? 'bg-emerald-500/10 text-emerald-400 font-bold'
                               : 'text-zinc-300 hover:bg-white/5 hover:text-white'
@@ -1076,7 +1085,7 @@ const AdminDashboard = () => {
                             setBookingStatusFilter('rejected');
                             setIsBookingStatusDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                          className={`w-full text-left px-3 py-2 text-[11px] sm:text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
                             bookingStatusFilter === 'rejected'
                               ? 'bg-emerald-500/10 text-emerald-400 font-bold'
                               : 'text-zinc-300 hover:bg-white/5 hover:text-white'
@@ -1088,6 +1097,17 @@ const AdminDashboard = () => {
                     </div>
                   )}
                 </div>
+
+                {/* Kassa kiritish button */}
+                <button
+                  type="button"
+                  onClick={() => setIsKassaModalOpen(true)}
+                  className="flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-zinc-950 font-extrabold text-[11px] sm:text-xs rounded-xl transition-all cursor-pointer shrink-0 shadow-lg shadow-emerald-500/10 border-none"
+                >
+                  <FaWallet size={11} className="shrink-0" />
+                  <span className="hidden sm:inline">Kassa kiritish</span>
+                  <span className="sm:hidden">Kassa</span>
+                </button>
               </div>
 
               {/* Bookings Table / Cards */}
@@ -2025,136 +2045,6 @@ const AdminDashboard = () => {
 
                 {/* Right column containing Kassa & System Stats */}
                 <div className="space-y-6">
-                  {/* Kassa (Offline Daromad) Kiritish Form */}
-                  <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm space-y-4">
-                    <h4 className="text-lg font-bold flex items-center gap-2">
-                      <FaWallet size={16} className="text-emerald-500" />
-                      Kunlik Kassa Kiritish
-                    </h4>
-                    <p className="text-xs text-zinc-400">
-                      Saytdan tashqari (offline) sartaroshxonada yig'ilgan kunlik naqd pul tushumini bu yerga kiritib borishingiz mumkin.
-                    </p>
-                    
-                    <form onSubmit={handleSaveOfflineIncome} className="space-y-3">
-                      <div className="relative" ref={kassaCalendarRef}>
-                        <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Sana</label>
-                        <button
-                          type="button"
-                          onClick={() => setIsKassaCalendarOpen(!isKassaCalendarOpen)}
-                          className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-300 outline-none text-left cursor-pointer ${
-                            isKassaCalendarOpen
-                              ? 'bg-zinc-800/90 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.25)]'
-                              : 'bg-zinc-800/50 border-zinc-700/50 hover:bg-zinc-800 hover:border-emerald-500/50'
-                          }`}
-                        >
-                          <span className="font-semibold text-white text-sm">
-                            {formatSelectedKassaDateUz()}
-                          </span>
-                          <svg 
-                            className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isKassaCalendarOpen ? 'rotate-180' : ''}`} 
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
-                        
-                        {/* Calendar Popover */}
-                        {isKassaCalendarOpen && (
-                          <div className="absolute top-full left-0 right-0 mt-2 z-[60] bg-zinc-950 border border-zinc-850 rounded-2xl shadow-2xl p-4 animate-fadeIn">
-                            {/* Calendar Header */}
-                            <div className="flex items-center justify-between mb-3">
-                              <button
-                                type="button"
-                                onClick={handleKassaPrevMonth}
-                                className="p-1 hover:bg-zinc-800 rounded-lg text-gray-400 hover:text-white transition-colors border-none bg-transparent cursor-pointer"
-                              >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                              </button>
-                              <h4 className="text-xs font-semibold text-white uppercase tracking-wider">
-                                {kassaMonths[kassaViewDate.getMonth()]} {kassaViewDate.getFullYear()}
-                              </h4>
-                              <button
-                                type="button"
-                                onClick={handleKassaNextMonth}
-                                className="p-1 hover:bg-zinc-800 rounded-lg text-gray-400 hover:text-white transition-colors border-none bg-transparent cursor-pointer"
-                              >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                              </button>
-                            </div>
-
-                            {/* Weekdays */}
-                            <div className="grid grid-cols-7 gap-1 mb-1.5 border-b border-white/5 pb-1">
-                              {kassaDaysOfWeek.map(day => (
-                                <div key={day} className="text-center text-[10px] font-bold text-emerald-500 py-0.5 select-none">
-                                  {day}
-                                </div>
-                              ))}
-                            </div>
-
-                            {/* Days Grid */}
-                            <div className="grid grid-cols-7 gap-1">
-                              {getKassaCalendarDays().map((date, index) => {
-                                if (!date) return <div key={`empty-${index}`} className="h-8"></div>;
-
-                                const isSelected = kassaDate && date.toDateString() === parseToDate(kassaDate).toDateString();
-                                const isToday = date.toDateString() === new Date().toDateString();
-
-                                return (
-                                  <button
-                                    key={index}
-                                    type="button"
-                                    onClick={() => handleKassaDateSelect(date)}
-                                    className={`
-                                      h-8 w-full flex items-center justify-center rounded-lg text-xs font-semibold transition-all duration-200 border-none cursor-pointer
-                                      ${isSelected ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30 hover:bg-emerald-400' : 'bg-transparent text-gray-300 hover:bg-emerald-500/20 hover:text-emerald-400'}
-                                      ${isToday && !isSelected ? 'border border-emerald-500/50 text-emerald-400 font-bold' : ''}
-                                    `}
-                                  >
-                                    {date.getDate()}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div>
-                        <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Kassa Pul Miqdori (so'm)</label>
-                        <div className="relative">
-                          <input
-                            type="number"
-                            placeholder="Masalan: 150000"
-                            value={kassaAmount}
-                            onChange={(e) => setKassaAmount(e.target.value)}
-                            className="w-full pl-3 pr-12 py-2 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-white"
-                            min="0"
-                            required
-                          />
-                          <span className="absolute right-3 inset-y-0 flex items-center text-xs text-zinc-500 font-bold">so'm</span>
-                        </div>
-                      </div>
-
-                      <button
-                        type="submit"
-                        disabled={kassaSaving}
-                        className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-2.5 px-4 rounded-xl text-xs hover:shadow-lg hover:shadow-emerald-500/20 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2 border-none"
-                      >
-                        {kassaSaving ? (
-                          <>
-                            <svg className="animate-spin h-3.5 w-3.5 text-white" viewBox="0 0 24 24" fill="none">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            <span>Saqlanmoqda...</span>
-                          </>
-                        ) : (
-                          <span>Kassani Saqlash</span>
-                        )}
-                      </button>
-                    </form>
-                  </div>
-
                   {/* System Stats Summary */}
                   <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm flex flex-col justify-between">
                     <div>
@@ -2429,11 +2319,7 @@ const AdminDashboard = () => {
                     </div>
                   </div>
 
-                  {/* Sparkline analytics information */}
-                  <div className="mt-4 border-t border-white/5 pt-4 flex justify-between items-center text-xs text-zinc-400">
-                    <span>Maksimal kunlik: <strong className="text-white">{(stats.chartData && stats.chartData.length > 0 ? Math.max(...stats.chartData.map(c => c.value)) : 0).toLocaleString()} so'm</strong></span>
-                    <span>Tasdiqlangan online buyurtmalar va kassa (offline) tushumi ko'rsatiladi</span>
-                  </div>
+
                 </div>
 
                 {/* 2. Popular Services (1/3 width) */}
@@ -3611,6 +3497,158 @@ const AdminDashboard = () => {
         }}
         onSave={handleEditUserSave}
       />
+
+      {/* Kassa Modal */}
+      {isKassaModalOpen && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-[150] p-4 animate-fadeIn">
+          <div className="absolute inset-0 cursor-pointer" onClick={() => {
+            setIsKassaModalOpen(false);
+            setIsKassaCalendarOpen(false);
+          }}></div>
+          
+          <div className="relative max-w-md w-full bg-zinc-950/90 border border-white/10 rounded-3xl overflow-visible shadow-2xl z-10 animate-bounce-in flex flex-col text-white p-6">
+            {/* Close button */}
+            <button
+              onClick={() => {
+                setIsKassaModalOpen(false);
+                setIsKassaCalendarOpen(false);
+              }}
+              className="absolute top-4 right-4 text-white/50 hover:text-white hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-300 p-2 rounded-full backdrop-blur-md z-30 cursor-pointer"
+            >
+              <FaTimes size={15} />
+            </button>
+
+            <div className="space-y-4 text-left">
+              <h4 className="text-lg font-bold flex items-center gap-2">
+                <FaWallet size={16} className="text-emerald-500" />
+                Kunlik Kassa Kiritish
+              </h4>
+              <p className="text-xs text-zinc-400">
+                Saytdan tashqari (offline) sartaroshxonada yig'ilgan kunlik naqd pul tushumini bu yerga kiritib borishingiz mumkin.
+              </p>
+              
+              <form onSubmit={handleSaveOfflineIncome} className="space-y-4">
+                <div className="relative" ref={kassaCalendarRef}>
+                  <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Sana</label>
+                  <button
+                    type="button"
+                    onClick={() => setIsKassaCalendarOpen(!isKassaCalendarOpen)}
+                    className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-300 outline-none text-left cursor-pointer ${
+                      isKassaCalendarOpen
+                        ? 'bg-zinc-800 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.25)]'
+                        : 'bg-zinc-800/50 border-zinc-700/50 hover:bg-zinc-800 hover:border-emerald-500/50'
+                    }`}
+                  >
+                    <span className="font-semibold text-white text-sm">
+                      {formatSelectedKassaDateUz()}
+                    </span>
+                    <svg 
+                      className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isKassaCalendarOpen ? 'rotate-180' : ''}`} 
+                      fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  {/* Calendar Popover */}
+                  {isKassaCalendarOpen && (
+                    <div className="absolute top-full left-0 right-0 mt-2 z-[160] bg-zinc-950 border border-zinc-850 rounded-2xl shadow-2xl p-4 animate-fadeIn">
+                      {/* Calendar Header */}
+                      <div className="flex items-center justify-between mb-3">
+                        <button
+                          type="button"
+                          onClick={handleKassaPrevMonth}
+                          className="p-1 hover:bg-zinc-800 rounded-lg text-gray-400 hover:text-white transition-colors border-none bg-transparent cursor-pointer"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                        </button>
+                        <h4 className="text-xs font-semibold text-white uppercase tracking-wider">
+                          {kassaMonths[kassaViewDate.getMonth()]} {kassaViewDate.getFullYear()}
+                        </h4>
+                        <button
+                          type="button"
+                          onClick={handleKassaNextMonth}
+                          className="p-1 hover:bg-zinc-800 rounded-lg text-gray-400 hover:text-white transition-colors border-none bg-transparent cursor-pointer"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                        </button>
+                      </div>
+
+                      {/* Weekdays */}
+                      <div className="grid grid-cols-7 gap-1 mb-1.5 border-b border-white/5 pb-1">
+                        {kassaDaysOfWeek.map(day => (
+                          <div key={day} className="text-center text-[10px] font-bold text-emerald-500 py-0.5 select-none">
+                            {day}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Days Grid */}
+                      <div className="grid grid-cols-7 gap-1">
+                        {getKassaCalendarDays().map((date, index) => {
+                          if (!date) return <div key={`empty-${index}`} className="h-8"></div>;
+
+                          const isSelected = kassaDate && date.toDateString() === parseToDate(kassaDate).toDateString();
+                          const isToday = date.toDateString() === new Date().toDateString();
+
+                          return (
+                            <button
+                              key={index}
+                              type="button"
+                              onClick={() => handleKassaDateSelect(date)}
+                              className={`
+                                h-8 w-full flex items-center justify-center rounded-lg text-xs font-semibold transition-all duration-200 border-none cursor-pointer
+                                ${isSelected ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30 hover:bg-emerald-400' : 'bg-transparent text-gray-300 hover:bg-emerald-500/20 hover:text-emerald-400'}
+                                ${isToday && !isSelected ? 'border border-emerald-500/50 text-emerald-400 font-bold' : ''}
+                              `}
+                            >
+                              {date.getDate()}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Kassa Pul Miqdori (so'm)</label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      placeholder="Masalan: 150000"
+                      value={kassaAmount}
+                      onChange={(e) => setKassaAmount(e.target.value)}
+                      className="w-full pl-3 pr-12 py-2.5 bg-zinc-800/60 border border-zinc-700/50 rounded-xl outline-none focus:ring-1 focus:ring-emerald-500 focus:border-transparent text-sm text-white"
+                      min="0"
+                      required
+                    />
+                    <span className="absolute right-3 inset-y-0 flex items-center text-xs text-zinc-550 font-bold">so'm</span>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={kassaSaving}
+                  className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-3 px-4 rounded-xl text-xs hover:shadow-lg hover:shadow-emerald-500/20 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2 border-none"
+                >
+                  {kassaSaving ? (
+                    <>
+                      <svg className="animate-spin h-3.5 w-3.5 text-white" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Saqlanmoqda...</span>
+                    </>
+                  ) : (
+                    <span>Kassani Saqlash</span>
+                  )}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
