@@ -343,6 +343,7 @@ const AdminDashboard = () => {
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null); // stores item ID currently updating
   const [successActions, setSuccessActions] = useState({}); // stores item ID and status after successful update
+  const [servicesTimeframe, setServicesTimeframe] = useState('all'); // 'day' | 'week' | 'month' | 'all'
 
   // Offline Kassa (Cash Register) States
   const [kassaDate, setKassaDate] = useState(() => {
@@ -416,6 +417,57 @@ const AdminDashboard = () => {
     }
   };
 
+  const parseBookingDate = (dateStr) => {
+    if (!dateStr) return new Date(0);
+    const parts = dateStr.split('.');
+    if (parts.length === 3) {
+      const day = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1; // 0-based month
+      const year = parseInt(parts[2], 10);
+      return new Date(year, month, day);
+    }
+    return new Date(0);
+  };
+
+  const getFilteredServicesStats = () => {
+    if (!bookingsList || bookingsList.length === 0) return [];
+
+    const now = new Date();
+    const oneDayMs = 24 * 60 * 60 * 1000;
+
+    const filteredBookings = bookingsList.filter(b => {
+      if (!b) return false;
+      const bDate = b.createdAt ? new Date(b.createdAt) : parseBookingDate(b.date);
+      const diffMs = now - bDate;
+
+      if (servicesTimeframe === 'day') {
+        // Today only (calendar day)
+        return bDate.toDateString() === now.toDateString();
+      } else if (servicesTimeframe === 'week') {
+        // Last 7 days
+        return diffMs <= 7 * oneDayMs && diffMs >= 0;
+      } else if (servicesTimeframe === 'month') {
+        // Last 30 days
+        return diffMs <= 30 * oneDayMs && diffMs >= 0;
+      }
+      return true; // 'all'
+    });
+
+    const serviceCounts = {};
+    filteredBookings.forEach(b => {
+      if (!b.serviceName) return;
+      if (!serviceCounts[b.serviceName]) {
+        serviceCounts[b.serviceName] = { name: b.serviceName, count: 0, revenue: 0, price: b.servicePrice || 0 };
+      }
+      serviceCounts[b.serviceName].count += 1;
+      if (b.status === 'confirmed') {
+        serviceCounts[b.serviceName].revenue += (b.servicePrice || 0);
+      }
+    });
+
+    return Object.values(serviceCounts).sort((a, b) => b.count - a.count);
+  };
+
   useEffect(() => {
     if (user) {
       setEditedName(user.name || '');
@@ -463,6 +515,10 @@ const AdminDashboard = () => {
   const [isBookingStatusDropdownOpen, setIsBookingStatusDropdownOpen] = useState(false);
   const bookingStatusDropdownRef = useRef(null);
 
+  // Custom Dropdown States & Refs for Timeframe Filter
+  const [isTimeframeDropdownOpen, setIsTimeframeDropdownOpen] = useState(false);
+  const timeframeDropdownRef = useRef(null);
+
   // Accordion state for client bookings expansion
   const [expandedClients, setExpandedClients] = useState({});
 
@@ -494,6 +550,9 @@ const AdminDashboard = () => {
       }
       if (bookingStatusDropdownRef.current && !bookingStatusDropdownRef.current.contains(event.target)) {
         setIsBookingStatusDropdownOpen(false);
+      }
+      if (timeframeDropdownRef.current && !timeframeDropdownRef.current.contains(event.target)) {
+        setIsTimeframeDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -2161,47 +2220,109 @@ const AdminDashboard = () => {
                 {/* 2. Popular Services (1/3 width) */}
                 <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm flex flex-col justify-between">
                   <div>
-                    <h4 className="text-lg font-bold mb-6 flex items-center gap-2">
-                      <FaCut size={18} className="text-emerald-500" />
-                      Eng Ommabop Xizmatlar
-                    </h4>
+                    <div className="flex justify-between items-center gap-2 mb-6">
+                      <h4 className="text-lg font-bold flex items-center gap-2">
+                        <FaCut size={18} className="text-emerald-500" />
+                        Xizmatlar ko'rsatkichlari
+                      </h4>
+                      <div className="relative" ref={timeframeDropdownRef}>
+                        <button
+                          type="button"
+                          onClick={() => setIsTimeframeDropdownOpen(!isTimeframeDropdownOpen)}
+                          className="flex items-center gap-2 px-3 py-2 bg-zinc-950/60 border border-white/10 hover:border-emerald-500/50 rounded-xl outline-none text-xs font-bold text-zinc-300 hover:text-white transition-all duration-300 cursor-pointer select-none"
+                        >
+                          <FaClock size={11} className="text-emerald-500" />
+                          <span>
+                            {servicesTimeframe === 'day' && 'Bugun'}
+                            {servicesTimeframe === 'week' && 'Hafta'}
+                            {servicesTimeframe === 'month' && 'Oy'}
+                            {servicesTimeframe === 'all' && 'Hammasi'}
+                          </span>
+                          <FaChevronDown size={10} className={`text-zinc-400 transition-transform duration-300 ${isTimeframeDropdownOpen ? 'rotate-180 text-emerald-400' : ''}`} />
+                        </button>
+
+                        {/* Dropdown Options Menu */}
+                        {isTimeframeDropdownOpen && (
+                          <div className="absolute right-0 top-full mt-2 z-[40] w-32 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden animate-fadeIn p-1">
+                            {[
+                              { id: 'day', label: 'Bugun' },
+                              { id: 'week', label: 'Hafta' },
+                              { id: 'month', label: 'Oy' },
+                              { id: 'all', label: 'Hammasi' }
+                            ].map((opt) => (
+                              <button
+                                key={opt.id}
+                                type="button"
+                                onClick={() => {
+                                  setServicesTimeframe(opt.id);
+                                  setIsTimeframeDropdownOpen(false);
+                                }}
+                                className={`w-full text-left px-3 py-2 text-xs font-bold rounded-lg transition-colors cursor-pointer border-none ${
+                                  servicesTimeframe === opt.id
+                                    ? 'bg-emerald-500/10 text-emerald-400 font-extrabold'
+                                    : 'bg-transparent text-zinc-450 hover:bg-white/5 hover:text-white'
+                                }`}
+                              >
+                                {opt.label}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
 
                     {/* Popular Services List */}
                     <div className="space-y-4">
-                      {stats.popularServices && stats.popularServices.map((service, index) => {
-                        // Calculate percentage of total bookings
-                        const totalCounts = stats.popularServices.reduce((sum, s) => sum + s.count, 0) || 1;
-                        const pct = Math.round((service.count / totalCounts) * 100);
+                      {(() => {
+                        const filteredServices = getFilteredServicesStats();
+                        if (filteredServices.length === 0) {
+                          return (
+                            <div className="text-center py-10 bg-zinc-950/20 border border-dashed border-zinc-850 rounded-2xl animate-fadeIn">
+                              <p className="text-zinc-500 text-xs font-medium">Ushbu vaqt oralig'ida buyurtmalar mavjud emas.</p>
+                            </div>
+                          );
+                        }
 
-                        return (
-                          <div key={service.name} className="space-y-1.5">
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="font-semibold text-zinc-300 truncate max-w-[150px]">
-                                {index + 1}. {service.name}
-                              </span>
-                              <span className="font-bold text-white">{service.count} ta</span>
+                        const totalCounts = filteredServices.reduce((sum, s) => sum + s.count, 0) || 1;
+
+                        return filteredServices.map((service, index) => {
+                          const pct = Math.round((service.count / totalCounts) * 100);
+
+                          return (
+                            <div key={service.name} className="space-y-1.5 animate-fadeIn">
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="font-semibold text-zinc-300 truncate max-w-[240px] flex items-center gap-1.5">
+                                  <span>{index + 1}. {service.name}</span>
+                                  <span className="text-[10px] font-normal text-zinc-550 shrink-0">
+                                    ({formatPrice(service.price)} so'm)
+                                  </span>
+                                </span>
+                                <span className="font-bold text-white">{service.count} ta</span>
+                              </div>
+                              
+                              {/* Glassmorphic progress bar */}
+                              <div className="w-full bg-zinc-800 rounded-full h-2 overflow-hidden border border-white/5">
+                                <div
+                                  style={{ width: `${pct}%` }}
+                                  className="bg-linear-to-r from-emerald-500 to-green-400 h-full rounded-full transition-all duration-1000"
+                                ></div>
+                              </div>
+                              
+                              <div className="flex justify-between text-xxs text-zinc-500">
+                                <span>Tegishli ulush: {pct}%</span>
+                                <span className="text-emerald-400/80 font-bold">Jami tushum: {(service.revenue || 0).toLocaleString()} so'm</span>
+                              </div>
                             </div>
-                            
-                            {/* Glassmorphic progress bar */}
-                            <div className="w-full bg-zinc-800 rounded-full h-2 overflow-hidden border border-white/5">
-                              <div
-                                style={{ width: `${pct}%` }}
-                                className="bg-linear-to-r from-emerald-500 to-green-400 h-full rounded-full transition-all duration-1000"
-                              ></div>
-                            </div>
-                            
-                            <div className="flex justify-between text-xxs text-zinc-500">
-                              <span>Tegishli ulush: {pct}%</span>
-                              <span className="text-emerald-400/80 font-bold">{(service.revenue || 0).toLocaleString()} so'm</span>
-                            </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        });
+                      })()}
                     </div>
                   </div>
 
                   <div className="border-t border-zinc-800/80 pt-4 mt-6 text-center text-xs text-zinc-500">
-                    Jami ko'rsatilgan xizmatlar: <strong className="text-white">{stats.totalBookings} ta</strong>
+                    Tanlangan davrdagi jami xizmatlar: <strong className="text-white">
+                      {getFilteredServicesStats().reduce((sum, s) => sum + s.count, 0)} ta
+                    </strong>
                   </div>
                 </div>
               </div>
