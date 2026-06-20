@@ -2634,9 +2634,6 @@ const AdminDashboard = () => {
                             <span className="inline-block px-2.5 py-0.5 text-[9px] font-extrabold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
                               Sartarosh Admin
                             </span>
-                            <span className="inline-block px-2.5 py-0.5 text-[9px] font-extrabold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">
-                              Holati: Faol
-                            </span>
                           </div>
                         </div>
                         {/* Edit profile header shortcut */}

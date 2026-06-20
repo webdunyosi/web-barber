@@ -207,6 +207,7 @@ const EditUserModal = ({
                   errors.name ? 'border-red-500/40 focus:ring-red-500/10 focus:border-red-500/80' : 'border-white/[0.08]'
                 }`}
                 placeholder="Masalan: Said Aliyev"
+                autoComplete="off"
               />
             </div>
             {errors.name && <p className="mt-1.5 text-xs text-red-400 pl-1 text-left">{errors.name}</p>}
@@ -229,6 +230,7 @@ const EditUserModal = ({
                   errors.phone ? 'border-red-500/40 focus:ring-red-500/10 focus:border-red-500/80' : 'border-white/[0.08]'
                 }`}
                 placeholder="Masalan: +998 90 123 45 67"
+                autoComplete="off"
               />
             </div>
             {errors.phone && <p className="mt-1.5 text-xs text-red-400 pl-1 text-left">{errors.phone}</p>}
@@ -249,6 +251,7 @@ const EditUserModal = ({
                 onChange={(e) => setFormData(prev => ({ ...prev, telegram: e.target.value }))}
                 className="w-full pl-8 pr-4 py-3.5 bg-white/[0.03] border border-white/[0.08] rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400/80 focus:bg-zinc-950/45 transition-all duration-300 placeholder:text-white/20 text-xs hover:bg-white/[0.07] hover:border-white/[0.18]"
                 placeholder="telegram_user"
+                autoComplete="off"
               />
             </div>
           </div>
@@ -270,6 +273,7 @@ const EditUserModal = ({
                   errors.password ? 'border-red-500/40 focus:ring-red-500/10 focus:border-red-500/80' : 'border-white/[0.08]'
                 }`}
                 placeholder={isAddMode ? "Parol kiriting..." : "Yangi parol (bo'sh qoldirilsa, o'zgarmaydi)"}
+                autoComplete="new-password"
               />
               <button
                 type="button"
