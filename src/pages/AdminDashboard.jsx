@@ -2381,12 +2381,50 @@ const AdminDashboard = () => {
                       </div>
 
                       {/* Chart Labels under X axis */}
-                      <div className="h-4 flex justify-between px-1 text-zinc-500 font-bold text-[10px] mt-2 pointer-events-none">
-                        {stats.chartData && stats.chartData.map((d, index) => (
-                          <div key={index} className="text-center w-12 truncate">
-                            {d.label.split(' ')[0]}
-                          </div>
-                        ))}
+                      <div className="relative h-8 mt-2.5 w-full pointer-events-none">
+                        {stats.chartData && stats.chartData.map((d, index) => {
+                          const x = (index / (stats.chartData.length - 1)) * 100;
+                          const dayName = d.label.split(' ')[0];
+                          const dateStr = d.label.split(' ')[1] || '';
+                          
+                          // Uzbek 2-letter mapping
+                          const shortDayMap = {
+                            'Yak': 'Ya',
+                            'Dush': 'Du',
+                            'Sesh': 'Se',
+                            'Chor': 'Ch',
+                            'Pay': 'Pa',
+                            'Jum': 'Ju',
+                            'Shan': 'Sh'
+                          };
+                          const shortDay = shortDayMap[dayName] || dayName;
+                          
+                          let transformStyle = 'translateX(-50%)';
+                          if (index === 0) {
+                            transformStyle = 'translateX(0)';
+                          } else if (index === stats.chartData.length - 1) {
+                            transformStyle = 'translateX(-100%)';
+                          }
+                          
+                          return (
+                            <div
+                              key={index}
+                              style={{
+                                position: 'absolute',
+                                left: `${x}%`,
+                                transform: transformStyle,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center'
+                              }}
+                            >
+                              <span className="text-zinc-450 font-extrabold text-[9px] uppercase tracking-wider">{shortDay}</span>
+                              {dateStr && (
+                                <span className="text-zinc-600 text-[8px] font-bold font-mono mt-0.5">{dateStr}</span>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
