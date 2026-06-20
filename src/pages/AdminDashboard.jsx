@@ -29,6 +29,7 @@ import {
   FaSave,
   FaSpinner,
   FaChevronDown,
+  FaChevronRight,
   FaArrowLeft,
   FaYoutube,
   FaPlay,
