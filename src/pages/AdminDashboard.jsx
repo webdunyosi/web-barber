@@ -344,6 +344,7 @@ const AdminDashboard = () => {
   const [actionLoading, setActionLoading] = useState(null); // stores item ID currently updating
   const [successActions, setSuccessActions] = useState({}); // stores item ID and status after successful update
   const [servicesTimeframe, setServicesTimeframe] = useState('all'); // 'day' | 'week' | 'month' | 'all'
+  const [hoveredPoint, setHoveredPoint] = useState(null); // { index, x, y, value, date, onlineValue, offlineValue }
 
   // Offline Kassa (Cash Register) States
   const [kassaDate, setKassaDate] = useState(() => {
@@ -2129,84 +2130,170 @@ const AdminDashboard = () => {
                   </h4>
                   
                   {/* SVG Chart */}
-                  <div className="relative h-64 w-full">
-                    {/* Y-axis helper grids */}
-                    <div className="absolute inset-y-0 left-0 right-0 flex flex-col justify-between pointer-events-none pr-2">
-                      <div className="border-b border-white/5 w-full h-0"></div>
-                      <div className="border-b border-white/5 w-full h-0"></div>
-                      <div className="border-b border-white/5 w-full h-0"></div>
-                      <div className="border-b border-white/5 w-full h-0"></div>
-                    </div>
+                  <div className="relative h-64 w-full pl-5 flex select-none">
+                    {/* Y-axis Labels on Left */}
+                    {stats.chartData && stats.chartData.length > 0 && (() => {
+                      const maxVal = Math.max(...stats.chartData.map(c => c.value)) || 100000;
+                      return (
+                        <div className="absolute inset-y-0 w-8 text-[9px] text-zinc-500 font-mono font-bold select-none pt-4 pb-8 text-right pr-1" style={{ left: '-16px' }}>
+                          <div style={{ position: 'absolute', top: '20%', right: '4px', transform: 'translateY(-50%)' }}>
+                            {maxVal >= 1000 ? `${(maxVal / 1000).toLocaleString()}k` : maxVal}
+                          </div>
+                          <div style={{ position: 'absolute', top: '40%', right: '4px', transform: 'translateY(-50%)' }}>
+                            {maxVal >= 1000 ? `${((maxVal * 0.75) / 1000).toLocaleString()}k` : Math.round(maxVal * 0.75)}
+                          </div>
+                          <div style={{ position: 'absolute', top: '60%', right: '4px', transform: 'translateY(-50%)' }}>
+                            {maxVal >= 1000 ? `${((maxVal * 0.5) / 1000).toLocaleString()}k` : Math.round(maxVal * 0.5)}
+                          </div>
+                          <div style={{ position: 'absolute', top: '80%', right: '4px', transform: 'translateY(-50%)' }}>
+                            {maxVal >= 1000 ? `${((maxVal * 0.25) / 1000).toLocaleString()}k` : Math.round(maxVal * 0.25)}
+                          </div>
+                          <div style={{ position: 'absolute', top: '100%', right: '4px', transform: 'translateY(-50%)' }}>0</div>
+                        </div>
+                      );
+                    })()}
 
-                    {/* SVG canvas */}
-                    <svg className="w-full h-full pt-4 pb-8" viewBox="0 0 100 100" preserveAspectRatio="none">
-                      <defs>
-                        <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#10b981" stopOpacity="0.45" />
-                          <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
-                        </linearGradient>
-                      </defs>
+                    {/* Chart Canvas Area */}
+                    <div className="relative flex-1 h-full">
+                      {/* SVG canvas */}
+                      <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <defs>
+                          <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#10b981" stopOpacity="0.45" />
+                            <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+                          </linearGradient>
+                        </defs>
 
-                      {/* Area beneath the curve */}
-                      {stats.chartData && stats.chartData.length > 0 && (
-                        <polygon
-                          points={`
-                            0,100
-                            ${stats.chartData.map((d, index) => {
+                        {/* Grid Lines inside SVG */}
+                        <line x1="0" y1="20" x2="100" y2="20" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+                        <line x1="0" y1="40" x2="100" y2="40" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+                        <line x1="0" y1="60" x2="100" y2="60" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+                        <line x1="0" y1="80" x2="100" y2="80" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+                        <line x1="0" y1="100" x2="100" y2="100" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+
+                        {/* Area beneath the curve */}
+                        {stats.chartData && stats.chartData.length > 0 && (
+                          <polygon
+                            points={`
+                              0,100
+                              ${stats.chartData.map((d, index) => {
+                                const x = (index / (stats.chartData.length - 1)) * 100;
+                                const maxVal = Math.max(...stats.chartData.map(c => c.value)) || 100000;
+                                const y = 100 - (d.value / maxVal) * 80;
+                                return `${x},${y}`;
+                              }).join(' ')}
+                              100,100
+                            `}
+                            fill="url(#chartGradient)"
+                          />
+                        )}
+
+                        {/* Line connecting the points */}
+                        {stats.chartData && stats.chartData.length > 0 && (
+                          <polyline
+                            points={stats.chartData.map((d, index) => {
                               const x = (index / (stats.chartData.length - 1)) * 100;
                               const maxVal = Math.max(...stats.chartData.map(c => c.value)) || 100000;
                               const y = 100 - (d.value / maxVal) * 80;
                               return `${x},${y}`;
                             }).join(' ')}
-                            100,100
-                          `}
-                          fill="url(#chartGradient)"
-                        />
-                      )}
-
-                      {/* Line connecting the points */}
-                      {stats.chartData && stats.chartData.length > 0 && (
-                        <polyline
-                          points={stats.chartData.map((d, index) => {
-                            const x = (index / (stats.chartData.length - 1)) * 100;
-                            const maxVal = Math.max(...stats.chartData.map(c => c.value)) || 100000;
-                            const y = 100 - (d.value / maxVal) * 80;
-                            return `${x},${y}`;
-                          }).join(' ')}
-                          fill="none"
-                          stroke="#10b981"
-                          strokeWidth="2.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      )}
-
-                      {/* Dynamic Point circles */}
-                      {stats.chartData && stats.chartData.map((d, index) => {
-                        const x = (index / (stats.chartData.length - 1)) * 100;
-                        const maxVal = Math.max(...stats.chartData.map(c => c.value)) || 100000;
-                        const y = 100 - (d.value / maxVal) * 80;
-                        return (
-                          <circle
-                            key={index}
-                            cx={x}
-                            cy={y}
-                            r="1.5"
-                            fill="#059669"
-                            stroke="#ffffff"
-                            strokeWidth="0.5"
+                            fill="none"
+                            stroke="#10b981"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
                           />
-                        );
-                      })}
-                    </svg>
+                        )}
 
-                    {/* Chart Labels under X axis */}
-                    <div className="absolute bottom-0 left-0 right-0 flex justify-between px-1 text-zinc-500 font-bold text-xxs mt-2 pointer-events-none">
-                      {stats.chartData && stats.chartData.map((d, index) => (
-                        <div key={index} className="text-center w-12 truncate">
-                          {d.label.split(' ')[0]}
-                        </div>
-                      ))}
+                        {/* Dynamic Point circles */}
+                        {stats.chartData && stats.chartData.map((d, index) => {
+                          const x = (index / (stats.chartData.length - 1)) * 100;
+                          const maxVal = Math.max(...stats.chartData.map(c => c.value)) || 100000;
+                          const y = 100 - (d.value / maxVal) * 80;
+                          const isHovered = hoveredPoint && hoveredPoint.index === index;
+                          return (
+                            <g key={index}>
+                              {/* Visible point circle */}
+                              <circle
+                                cx={x}
+                                cy={y}
+                                r={isHovered ? "2.5" : "1.8"}
+                                fill={isHovered ? "#34d399" : "#059669"}
+                                stroke="#ffffff"
+                                strokeWidth="0.5"
+                                style={{ transition: 'all 0.2s ease' }}
+                              />
+                              {/* Invisible large hotspot circle for easy hovering */}
+                              <circle
+                                cx={x}
+                                cy={y}
+                                r="8"
+                                fill="transparent"
+                                className="cursor-pointer"
+                                onMouseEnter={() => setHoveredPoint({
+                                  index,
+                                  x,
+                                  y,
+                                  value: d.value,
+                                  date: d.label,
+                                  onlineValue: d.onlineValue || 0,
+                                  offlineValue: d.offlineValue || 0
+                                })}
+                                onMouseLeave={() => setHoveredPoint(null)}
+                              />
+                            </g>
+                          );
+                        })}
+                      </svg>
+
+                      {/* Tooltip */}
+                      {hoveredPoint && (() => {
+                        let leftVal = `${hoveredPoint.x}%`;
+                        let transformVal = 'translate(-50%, -115%)';
+                        
+                        if (hoveredPoint.index === 0) {
+                          leftVal = '0%';
+                          transformVal = 'translate(0, -115%)';
+                        } else if (hoveredPoint.index === stats.chartData.length - 1) {
+                          leftVal = '100%';
+                          transformVal = 'translate(-100%, -115%)';
+                        }
+                        
+                        return (
+                          <div
+                            style={{
+                              position: 'absolute',
+                              left: leftVal,
+                              top: `${hoveredPoint.y}%`,
+                              transform: transformVal,
+                              pointerEvents: 'none'
+                            }}
+                            className="bg-zinc-950 border border-emerald-500/30 rounded-xl px-3 py-2 text-xxs font-sans shadow-2xl z-30 min-w-[130px] animate-tooltipSimpleFade text-left"
+                          >
+                            <p className="text-zinc-400 font-bold mb-0.5">{hoveredPoint.date}</p>
+                            <p className="text-emerald-400 font-extrabold text-xs">Jami: {hoveredPoint.value.toLocaleString()} so'm</p>
+                            <div className="text-[9px] text-zinc-500 mt-1 border-t border-white/5 pt-1 space-y-0.5">
+                              <div className="flex justify-between gap-2">
+                                <span>🌐 Online:</span>
+                                <span className="text-white font-semibold">{hoveredPoint.onlineValue.toLocaleString()} so'm</span>
+                              </div>
+                              <div className="flex justify-between gap-2">
+                                <span>💵 Kassa (Offline):</span>
+                                <span className="text-white font-semibold">{hoveredPoint.offlineValue.toLocaleString()} so'm</span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      {/* Chart Labels under X axis */}
+                      <div className="absolute bottom-0 left-0 right-0 flex justify-between px-1 text-zinc-500 font-bold text-xxs mt-2 pointer-events-none">
+                        {stats.chartData && stats.chartData.map((d, index) => (
+                          <div key={index} className="text-center w-12 truncate">
+                            {d.label.split(' ')[0]}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
 

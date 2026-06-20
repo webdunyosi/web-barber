@@ -136,6 +136,20 @@
   animation: fadeIn 0.5s ease-out;
 }
 
+/* Tooltip simple fade-in animation that doesn't override translate transform */
+@keyframes tooltipSimpleFade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-tooltipSimpleFade {
+  animation: tooltipSimpleFade 0.15s ease-out forwards;
+}
+
 /* Respect user's motion preferences */
 @media (prefers-reduced-motion: reduce) {
   .animate-pulse-glow {
@@ -155,6 +169,10 @@
   }
   
   .animate-fadeIn {
+    animation: none;
+  }
+
+  .animate-tooltipSimpleFade {
     animation: none;
   }
 }
