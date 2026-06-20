@@ -1834,72 +1834,87 @@ const AdminDashboard = () => {
                   ) : (
                     <div className="space-y-3">
                       {bookingsList.filter(b => b && b.status === 'pending').slice(0, 3).map((booking) => (
-                        <div key={booking.id || booking._id} className="bg-zinc-950/40 border border-zinc-800 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                          <div>
-                            <div className="flex flex-wrap items-center gap-2">
-                              <span className="font-bold text-white">{booking.name}</span>
-                              <span className="text-xs text-zinc-550 font-mono">{booking.phone}</span>
-                              {booking.userId && booking.userId.status === 'blocked' && (
-                                <span className="text-[9px] font-extrabold uppercase bg-red-500/15 border border-red-500/30 text-red-400 px-1.5 py-0.5 rounded-full select-none animate-pulse">
-                                  Bloklangan
-                                </span>
-                              )}
-                              {booking.paymentMethod === 'cash' ? (
-                                <span className="text-[10px] font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-400 px-2 py-0.5 rounded-full select-none inline-flex items-center gap-1">
-                                  <FaMoneyBillWave size={10} />
-                                  <span>Joyida to'lash</span>
-                                </span>
-                              ) : (
-                                booking.receipt && (
-                                  booking.receipt.includes('res.cloudinary.com') ? (
-                                    <button
-                                      onClick={() => setZoomedReceipt(booking.receipt)}
-                                      className="text-[10px] font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full hover:bg-emerald-500/25 transition-colors cursor-pointer select-none inline-flex items-center gap-1"
-                                    >
-                                      <FaImage size={10} />
-                                      <span>Chekni ko'rish</span>
-                                    </button>
-                                  ) : (
-                                    <span className="text-[10px] font-semibold bg-zinc-800 border border-zinc-700/60 text-zinc-400 px-2 py-0.5 rounded-full select-none inline-flex items-center gap-1">
-                                      <FaComment size={10} />
-                                      <span>Chek Telegramda</span>
+                        <div
+                          key={booking.id || booking._id}
+                          className="bg-zinc-900/30 border border-zinc-800/60 rounded-2xl p-4 backdrop-blur-sm relative overflow-hidden flex flex-col gap-3.5 hover:border-zinc-700/60 transition-all duration-300 animate-fadeIn"
+                        >
+                          {/* Glowing left accent border matching pending status */}
+                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)]"></div>
+                          
+                          {/* Top section: Booking details */}
+                          <div className="pl-1">
+                            <div className="min-w-0 flex-1">
+                              <div className="flex flex-wrap items-center justify-between gap-3">
+                                <div>
+                                  <span className="font-bold text-zinc-200 text-sm tracking-wide block">{booking.name}</span>
+                                  <span className="text-[11px] text-zinc-550 font-mono font-medium block mt-0.5">{booking.phone}</span>
+                                </div>
+                                
+                                <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+                                  {booking.userId && booking.userId.status === 'blocked' && (
+                                    <span className="text-[9px] font-extrabold uppercase bg-red-500/15 border border-red-500/30 text-red-400 px-1.5 py-0.5 rounded-full select-none animate-pulse">
+                                      Bloklangan
                                     </span>
-                                  )
-                                )
-                              )}
-                            </div>
-                            <div className="text-xs text-zinc-400 mt-1">
-                              <span>{booking.serviceName}</span> • <span className="text-emerald-400 font-bold">{formatPrice(booking.servicePrice)} so'm</span>
-                            </div>
-                            <div className="text-xs text-zinc-500 mt-0.5 flex items-center gap-1">
-                              <FaClock size={10} />
-                              <span>{booking.date} soat {booking.time}</span>
+                                  )}
+                                  {booking.paymentMethod === 'cash' ? (
+                                    <span className="text-[10px] font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-400 px-2 py-0.5 rounded-full select-none inline-flex items-center gap-1">
+                                      <FaMoneyBillWave size={10} />
+                                      <span>Joyida to'lash</span>
+                                    </span>
+                                  ) : (
+                                    booking.receipt && (
+                                      booking.receipt.includes('res.cloudinary.com') ? (
+                                        <button
+                                          onClick={() => setZoomedReceipt(booking.receipt)}
+                                          className="text-[10px] font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full hover:bg-emerald-500/25 transition-colors cursor-pointer select-none inline-flex items-center gap-1"
+                                        >
+                                          <FaImage size={10} />
+                                          <span>Chekni ko'rish</span>
+                                        </button>
+                                      ) : (
+                                        <span className="text-[10px] font-semibold bg-zinc-800 border border-zinc-700/60 text-zinc-400 px-2 py-0.5 rounded-full select-none inline-flex items-center gap-1">
+                                          <FaComment size={10} />
+                                          <span>Chek Telegramda</span>
+                                        </span>
+                                      )
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                              <div className="text-xs text-zinc-400 mt-2">
+                                <span>{booking.serviceName}</span> • <span className="text-emerald-400 font-bold">{formatPrice(booking.servicePrice)} so'm</span>
+                              </div>
+                              <div className="text-xs text-zinc-500 mt-0.5 flex items-center gap-1">
+                                <FaClock size={10} />
+                                <span>{booking.date} soat {booking.time}</span>
+                              </div>
                             </div>
                           </div>
                           
-                          <div className={`grid gap-2 shrink-0 ${booking.userId ? 'grid-cols-3 w-full sm:w-auto' : 'grid-cols-2 w-full sm:w-auto'}`}>
+                          {/* Bottom Section: Compact Actions */}
+                          <div className="flex flex-wrap items-center gap-2 border-t border-zinc-800/40 pt-3 pl-1">
                             {/* Tasdiqlash Button */}
                             <button
                               disabled={actionLoading === (booking.id || booking._id) || successActions[booking.id || booking._id]}
                               onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'confirmed')}
-                              className={`flex flex-col items-center justify-center gap-1 font-bold py-2 px-2.5 rounded-xl text-center transition-all active:scale-[0.97] border cursor-pointer ${
+                              className={`flex items-center justify-center gap-1.5 font-bold py-1.5 px-3 rounded-xl text-center transition-all active:scale-[0.97] border cursor-pointer text-[10px] ${
                                 booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed'
                                   ? 'bg-emerald-600 border-emerald-500 text-white shadow-lg shadow-emerald-600/20'
-                                  : 'bg-transparent border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10'
+                                  : 'bg-emerald-500/5 border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/35'
                               }`}
                             >
                               {actionLoading === (booking.id || booking._id) && successActions[booking.id || booking._id] !== 'confirmed' ? (
                                 <>
-                                  <svg className="animate-spin h-3.5 w-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none">
+                                  <svg className="animate-spin h-3.5 w-3.5 text-emerald-400 animate-pulse" viewBox="0 0 24 24" fill="none">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                   </svg>
-                                  <span className="text-[10px] leading-tight">Kutilmoqda</span>
+                                  <span>Kutilmoqda</span>
                                 </>
                               ) : (
                                 <>
                                   <FaCheck size={11} className="shrink-0" />
-                                  <span className="text-[10px] leading-tight">{booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed' ? 'Tasdiqlandi' : 'Tasdiqlash'}</span>
+                                  <span>{booking.status === 'confirmed' || successActions[booking.id || booking._id] === 'confirmed' ? 'Tasdiqlandi' : 'Tasdiqlash'}</span>
                                 </>
                               )}
                             </button>
@@ -1908,24 +1923,24 @@ const AdminDashboard = () => {
                             <button
                               disabled={actionLoading === (booking.id || booking._id) || successActions[booking.id || booking._id]}
                               onClick={() => handleUpdateBookingStatus(booking.id || booking._id, 'rejected')}
-                              className={`flex flex-col items-center justify-center gap-1 font-bold py-2 px-2.5 rounded-xl text-center transition-all active:scale-[0.97] border cursor-pointer ${
+                              className={`flex items-center justify-center gap-1.5 font-bold py-1.5 px-3 rounded-xl text-center transition-all active:scale-[0.97] border cursor-pointer text-[10px] ${
                                 booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected'
                                   ? 'bg-red-600 border-red-500 text-white shadow-lg shadow-red-600/20'
-                                  : 'bg-transparent border-red-500/30 text-red-400 hover:bg-red-500/10'
+                                  : 'bg-red-500/5 border-red-500/25 text-red-400 hover:bg-red-500/10 hover:border-red-500/35'
                               }`}
                             >
                               {actionLoading === (booking.id || booking._id) && successActions[booking.id || booking._id] !== 'rejected' ? (
                                 <>
-                                  <svg className="animate-spin h-3.5 w-3.5 text-red-400" viewBox="0 0 24 24" fill="none">
+                                  <svg className="animate-spin h-3.5 w-3.5 text-red-400 animate-pulse" viewBox="0 0 24 24" fill="none">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                   </svg>
-                                  <span className="text-[10px] leading-tight">Kutilmoqda</span>
+                                  <span>Kutilmoqda</span>
                                 </>
                               ) : (
                                 <>
                                   <FaTimes size={11} className="shrink-0" />
-                                  <span className="text-[10px] leading-tight">{booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected' ? 'Rad etildi' : 'Rad etish'}</span>
+                                  <span>{booking.status === 'rejected' || successActions[booking.id || booking._id] === 'rejected' ? 'Rad etildi' : 'Rad etish'}</span>
                                 </>
                               )}
                             </button>
@@ -1935,29 +1950,29 @@ const AdminDashboard = () => {
                               <button
                                 disabled={actionLoading === (booking.userId._id || booking.userId.id)}
                                 onClick={() => handleBlockUser(booking.userId._id || booking.userId.id, booking.userId.status)}
-                                className={`flex flex-col items-center justify-center gap-1 font-bold py-2 px-2.5 rounded-xl text-center transition-all active:scale-[0.97] border cursor-pointer ${
+                                className={`flex items-center justify-center gap-1.5 font-bold py-1.5 px-3 rounded-xl text-center transition-all active:scale-[0.97] border cursor-pointer text-[10px] ${
                                   booking.userId.status === 'blocked'
                                     ? 'bg-amber-600 border-amber-500 text-white shadow-lg shadow-amber-600/20'
-                                    : 'bg-transparent border-amber-500/30 text-amber-400 hover:bg-amber-500/10'
+                                    : 'bg-amber-500/5 border-amber-500/25 text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/35'
                                 }`}
                               >
                                 {actionLoading === (booking.userId._id || booking.userId.id) ? (
                                   <>
-                                    <svg className="animate-spin h-3.5 w-3.5 text-amber-400" viewBox="0 0 24 24" fill="none">
+                                    <svg className="animate-spin h-3.5 w-3.5 text-amber-400 animate-pulse" viewBox="0 0 24 24" fill="none">
                                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
-                                    <span className="text-[10px] leading-tight">Kutilmoqda</span>
+                                    <span>Kutilmoqda</span>
                                   </>
                                 ) : booking.userId.status === 'blocked' ? (
                                   <>
                                     <FaBan size={11} className="shrink-0" />
-                                    <span className="text-[10px] leading-tight">Bloklangan</span>
+                                    <span>Bloklangan</span>
                                   </>
                                 ) : (
                                   <>
                                     <FaBan size={11} className="shrink-0" />
-                                    <span className="text-[10px] leading-tight">Bloklash</span>
+                                    <span>Bloklash</span>
                                   </>
                                 )}
                               </button>
