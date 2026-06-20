@@ -895,4 +895,32 @@ export const deleteNotificationApi = async (token, notificationId) => {
   return response.data;
 };
 
+export const updateNotificationApi = async (token, notificationId, notificationData) => {
+  if (MOCK_MODE) {
+    const mockNotifs = JSON.parse(localStorage.getItem('barber_notifications') || '[]');
+    const index = mockNotifs.findIndex(n => n.id === notificationId || n._id === notificationId);
+    if (index !== -1) {
+      mockNotifs[index] = {
+        ...mockNotifs[index],
+        title: notificationData.title,
+        description: notificationData.description,
+        content: notificationData.content || notificationData.description,
+        type: notificationData.type || 'system',
+        linkType: notificationData.linkType || 'none',
+        linkUrl: notificationData.linkUrl || '',
+        imageUrl: notificationData.imageUrl || '',
+        updatedAt: new Date().toISOString()
+      };
+      localStorage.setItem('barber_notifications', JSON.stringify(mockNotifs));
+      return { success: true, notification: mockNotifs[index] };
+    }
+    throw new Error('Bildirishnoma topilmadi');
+  }
+
+  const response = await axios.put(`${API_URL}/notifications/${notificationId}`, notificationData, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
 

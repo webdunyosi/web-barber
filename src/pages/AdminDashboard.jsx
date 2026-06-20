@@ -47,10 +47,12 @@ import {
   FaMoneyBillWave,
   FaCreditCard,
   FaPaperclip,
-  FaLink
+  FaLink,
+  FaGift,
+  FaCheckCircle
 } from 'react-icons/fa';
 import { formatPrice } from '../utils/format';
-import { getNotificationsApi, createNotificationApi, deleteNotificationApi } from '../utils/api';
+import { getNotificationsApi, createNotificationApi, deleteNotificationApi, updateNotificationApi } from '../utils/api';
 import ConfirmModal from '../components/common/ConfirmModal';
 import EditUserModal from '../components/common/EditUserModal';
 
@@ -340,6 +342,9 @@ const AdminDashboard = () => {
   const [userStatusFilter, setUserStatusFilter] = useState('all'); // 'all' | 'active' | 'blocked'
   const [bookingStatusFilter, setBookingStatusFilter] = useState('all'); // 'all' | 'pending' | 'confirmed' | 'rejected'
   const [zoomedReceipt, setZoomedReceipt] = useState(null);
+  const [zoomedImage, setZoomedImage] = useState(null); // { url: '', title: '' }
+  const [editingNotificationId, setEditingNotificationId] = useState(null);
+  const [previewNotification, setPreviewNotification] = useState(null);
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null); // stores item ID currently updating
   const [successActions, setSuccessActions] = useState({}); // stores item ID and status after successful update
@@ -672,14 +677,36 @@ const AdminDashboard = () => {
 
   const handleCreateNotification = async (e) => {
     e.preventDefault();
-    if (!newNotification.title || !newNotification.description) {
+    const titleTrimmed = (newNotification.title || '').trim();
+    const descriptionTrimmed = (newNotification.description || '').trim();
+    const contentTrimmed = (newNotification.content || '').trim();
+    const linkUrlTrimmed = (newNotification.linkUrl || '').trim();
+    const imageUrlTrimmed = (newNotification.imageUrl || '').trim();
+
+    if (!titleTrimmed || !descriptionTrimmed) {
       toast.error("Sarlavha va Qisqa matn kiritilishi majburiy!");
       return;
     }
     setNotificationSubmitting(true);
     try {
-      await createNotificationApi(token, newNotification);
-      toast.success("Bildirishnoma muvaffaqiyatli yuborildi! 📢");
+      const payload = {
+        ...newNotification,
+        title: titleTrimmed,
+        description: descriptionTrimmed,
+        content: contentTrimmed,
+        linkUrl: linkUrlTrimmed,
+        imageUrl: imageUrlTrimmed
+      };
+
+      if (editingNotificationId) {
+        await updateNotificationApi(token, editingNotificationId, payload);
+        toast.success("Bildirishnoma muvaffaqiyatli tahrirlandi! 📝");
+        setEditingNotificationId(null);
+      } else {
+        await createNotificationApi(token, payload);
+        toast.success("Bildirishnoma muvaffaqiyatli yuborildi! 📢");
+      }
+
       setNewNotification({
         title: '',
         description: '',
@@ -694,6 +721,23 @@ const AdminDashboard = () => {
       toast.error(err.message || "Xatolik yuz berdi");
     } finally {
       setNotificationSubmitting(false);
+    }
+  };
+
+  const handleStartEditNotification = (notif) => {
+    setEditingNotificationId(notif._id || notif.id);
+    setNewNotification({
+      title: notif.title || '',
+      description: notif.description || '',
+      content: notif.content || '',
+      type: notif.type || 'system',
+      linkType: notif.linkType || 'none',
+      linkUrl: notif.linkUrl || '',
+      imageUrl: notif.imageUrl || ''
+    });
+    const formElement = document.getElementById('notification-form');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -2813,13 +2857,25 @@ const AdminDashboard = () => {
                   <div className="absolute top-0 -left-4 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -z-10"></div>
                   <div className="absolute bottom-0 -right-4 w-32 h-32 bg-teal-500/10 rounded-full blur-3xl -z-10"></div>
 
-                  <div className="relative z-10">
+                  <div className="relative z-10" id="notification-form">
                     <h4 className="text-lg font-bold flex items-center gap-2">
-                      <FaBullhorn size={18} className="text-emerald-500 animate-pulse" />
-                      Yangi bildirishnoma yuborish
+                      {editingNotificationId ? (
+                        <>
+                          <FaEdit size={18} className="text-amber-500 animate-pulse" />
+                          <span>Bildirishnomani tahrirlash</span>
+                        </>
+                      ) : (
+                        <>
+                          <FaBullhorn size={18} className="text-emerald-500 animate-pulse" />
+                          <span>Yangi bildirishnoma yuborish</span>
+                        </>
+                      )}
                     </h4>
                     <p className="text-xs text-zinc-400 mt-1 leading-normal">
-                      Barcha foydalanuvchilarning shaxsiy kabinetiga xabar yuborish. Qisqa va batafsil ma'lumotlar bilan boyiting.
+                      {editingNotificationId
+                        ? "Tanlangan bildirishnomaning ma'lumotlarini o'zgartiring. O'zgarishlar barcha foydalanuvchilar uchun amal qiladi."
+                        : "Barcha foydalanuvchilarning shaxsiy kabinetiga xabar yuborish. Qisqa va batafsil ma'lumotlar bilan boyiting."
+                      }
                     </p>
                   </div>
 
@@ -3091,30 +3147,67 @@ const AdminDashboard = () => {
                       />
                     </div>
 
-                    {/* Submit Button */}
-                    <button
-                      type="submit"
-                      disabled={notificationSubmitting}
-                      className="w-full mt-4 group relative overflow-hidden bg-gradient-to-r from-emerald-500 to-green-600 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] text-white font-bold py-3.5 px-4 rounded-xl transition-all active:scale-[0.98] cursor-pointer disabled:bg-zinc-800 disabled:text-white/20 disabled:cursor-not-allowed flex items-center justify-center gap-2 border border-emerald-400/30"
-                    >
-                      {/* Hover shine effect */}
-                      <span className="absolute inset-0 -translate-x-full group-hover:animate-[button-shine_1.5s_ease-in-out] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 pointer-events-none"></span>
+                    {/* Submit and Cancel Buttons */}
+                    <div className="space-y-2">
+                      <button
+                        type="submit"
+                        disabled={notificationSubmitting}
+                        className={`w-full mt-4 group relative overflow-hidden text-white font-bold py-3.5 px-4 rounded-xl transition-all active:scale-[0.98] cursor-pointer disabled:bg-zinc-800 disabled:text-white/20 disabled:cursor-not-allowed flex items-center justify-center gap-2 border ${
+                          editingNotificationId 
+                            ? 'bg-gradient-to-r from-amber-500 to-orange-600 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] border-amber-400/30' 
+                            : 'bg-gradient-to-r from-emerald-500 to-green-600 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] border-emerald-400/30'
+                        }`}
+                      >
+                        {/* Hover shine effect */}
+                        <span className="absolute inset-0 -translate-x-full group-hover:animate-[button-shine_1.5s_ease-in-out] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 pointer-events-none"></span>
 
-                      {notificationSubmitting ? (
-                        <>
-                          <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" fill="none">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          <span>Yuborilmoqda...</span>
-                        </>
-                      ) : (
-                        <span className="flex items-center gap-2 tracking-wide uppercase text-sm">
-                          <span>Bildirishnomani Yuborish</span>
-                          <FaPaperPlane size={13} />
-                        </span>
+                        {notificationSubmitting ? (
+                          <>
+                            <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" fill="none">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>Saqlanmoqda...</span>
+                          </>
+                        ) : (
+                          <span className="flex items-center gap-2 tracking-wide uppercase text-sm">
+                            {editingNotificationId ? (
+                              <>
+                                <span>O'zgarishlarni Saqlash</span>
+                                <FaSave size={13} />
+                              </>
+                            ) : (
+                              <>
+                                <span>Bildirishnomani Yuborish</span>
+                                <FaPaperPlane size={13} />
+                              </>
+                            )}
+                          </span>
+                        )}
+                      </button>
+
+                      {editingNotificationId && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingNotificationId(null);
+                            setNewNotification({
+                              title: '',
+                              description: '',
+                              content: '',
+                              type: 'system',
+                              linkType: 'none',
+                              linkUrl: '',
+                              imageUrl: ''
+                            });
+                          }}
+                          className="w-full bg-zinc-800 hover:bg-zinc-750 border border-white/5 text-gray-300 font-semibold py-3 px-4 rounded-xl transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer text-xs"
+                        >
+                          <FaTimes size={12} />
+                          <span>Tahrirlashni bekor qilish</span>
+                        </button>
                       )}
-                    </button>
+                    </div>
                   </form>
                 </div>
 
@@ -3143,72 +3236,148 @@ const AdminDashboard = () => {
                       <p className="text-zinc-550 text-sm">Hali hech qanday bildirishnomalar yuborilmagan.</p>
                     </div>
                   ) : (
-                    <div className="space-y-4 max-h-[600px] overflow-y-auto pr-1">
-                      {notificationsList.map((notif) => (
-                        <div
-                          key={notif._id || notif.id}
-                          className="bg-zinc-950/30 border border-zinc-850 rounded-xl p-4 flex flex-col md:flex-row justify-between gap-4 hover:border-zinc-700 transition-colors"
-                        >
-                          <div className="flex-1 space-y-2">
-                            <div className="flex flex-wrap items-center gap-2">
-                              {/* Type Badge */}
-                              <span className={`inline-block text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
-                                notif.type === 'welcome'
-                                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25'
-                                  : notif.type === 'loyalty'
-                                  ? 'bg-amber-500/10 text-amber-400 border border-amber-500/25'
-                                  : notif.type === 'appointment'
-                                  ? 'bg-teal-500/10 text-teal-400 border border-teal-500/25'
-                                  : 'bg-blue-500/10 text-blue-400 border border-blue-500/25'
-                              }`}>
-                                {notif.type === 'welcome' && 'Xush kelibsiz'}
-                                {notif.type === 'loyalty' && 'Sadoqat dasturi'}
-                                {notif.type === 'appointment' && 'Navbat / Tashrif'}
-                                {notif.type === 'system' && 'Tizim'}
-                              </span>
+                    <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1 chat-scrollbar">
+                      {notificationsList.map((notif) => {
+                        const trimmedTitle = (notif.title || '').trim();
+                        const trimmedDesc = (notif.description || '').trim();
+                        const trimmedContent = (notif.content || '').trim();
+                        const trimmedImgUrl = (notif.imageUrl || '').trim();
 
-                              {/* Link action Badge */}
-                              {notif.linkType !== 'none' && (
-                                <span className="inline-flex items-center gap-1.5 text-[9px] font-bold bg-purple-500/10 border border-purple-500/25 text-purple-400 px-2 py-0.5 rounded-full select-none">
-                                  <FaLink size={8} />
-                                  <span>Tugma: {notif.linkType}</span>
+                        return (
+                          <div
+                            key={notif._id || notif.id}
+                            className="bg-zinc-900/30 border border-zinc-800/60 rounded-2xl p-4 pr-12 backdrop-blur-sm relative overflow-hidden flex flex-col gap-2 hover:border-zinc-700/60 transition-all duration-300 animate-fadeIn"
+                          >
+                            {/* Glowing left accent border matching category */}
+                            <div className={`absolute left-0 top-0 bottom-0 w-1 ${
+                              notif.type === 'welcome'
+                                ? 'bg-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                                : notif.type === 'loyalty'
+                                ? 'bg-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+                                : notif.type === 'appointment'
+                                ? 'bg-teal-500/50 shadow-[0_0_15px_rgba(20,184,166,0.3)]'
+                                : 'bg-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.3)]'
+                            }`}></div>
+
+                            {/* Header row (Icon, Badges, Time) */}
+                            <div className="flex items-center gap-2.5 select-none">
+                              {/* Category icon avatar */}
+                              <div className="shrink-0">
+                                {notif.type === 'welcome' && (
+                                  <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-inner">
+                                    <FaCheckCircle size={14} />
+                                  </div>
+                                )}
+                                {notif.type === 'loyalty' && (
+                                  <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-500/10 to-amber-600/5 border border-amber-500/20 flex items-center justify-center text-amber-400 shadow-inner">
+                                    <FaGift size={14} />
+                                  </div>
+                                )}
+                                {notif.type === 'appointment' && (
+                                  <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-teal-500/10 to-teal-600/5 border border-teal-500/25 flex items-center justify-center text-teal-400 shadow-inner">
+                                    <FaCalendarAlt size={14} />
+                                  </div>
+                                )}
+                                {notif.type !== 'welcome' && notif.type !== 'loyalty' && notif.type !== 'appointment' && (
+                                  <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-500/10 to-blue-600/5 border border-blue-500/20 flex items-center justify-center text-blue-400 shadow-inner">
+                                    <FaBell size={13} className="animate-pulse" />
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Badges list */}
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                {/* Type Badge */}
+                                <span className={`inline-block text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-lg border ${
+                                  notif.type === 'welcome'
+                                    ? 'bg-emerald-500/5 text-emerald-400 border-emerald-500/20'
+                                    : notif.type === 'loyalty'
+                                    ? 'bg-amber-500/5 text-amber-400 border-amber-500/20'
+                                    : notif.type === 'appointment'
+                                    ? 'bg-teal-500/5 text-teal-400 border-teal-500/20'
+                                    : 'text-blue-400 border-blue-500/20 bg-blue-500/5'
+                                }`}>
+                                  {notif.type === 'welcome' && 'Xush kelibsiz'}
+                                  {notif.type === 'loyalty' && 'Sadoqat dasturi'}
+                                  {notif.type === 'appointment' && 'Navbat / Tashrif'}
+                                  {notif.type === 'system' && 'Tizim'}
                                 </span>
-                              )}
-                              
-                              <span className="text-[10px] text-zinc-500 font-medium">
-                                {new Date(notif.createdAt || Date.now()).toLocaleString('uz-UZ')}
-                              </span>
+
+                                {/* Link Action Badge */}
+                                {notif.linkType !== 'none' && (
+                                  <span className="inline-flex items-center gap-1 text-[9px] font-bold bg-purple-500/5 border border-purple-500/20 text-purple-400 px-2 py-0.5 rounded-lg">
+                                    <FaLink size={8} className="shrink-0" />
+                                    <span>Tugma: {
+                                      notif.linkType === 'booking' ? 'Navbat Olish' :
+                                      notif.linkType === 'styles' ? 'Stillar' :
+                                      notif.linkType === 'loyalty' ? 'Karta' :
+                                      notif.linkType === 'external' ? 'Havola' : notif.linkType
+                                    }</span>
+                                  </span>
+                                )}
+
+                                <span className="text-[10px] text-zinc-500 font-semibold">
+                                  ⏱ {new Date(notif.createdAt || Date.now()).toLocaleString('uz-UZ')}
+                                </span>
+                              </div>
                             </div>
 
-                            <h5 className="font-bold text-white text-sm">{notif.title}</h5>
-                            <p className="text-xs text-zinc-400 leading-relaxed">{notif.description}</p>
-                            
-                            {notif.content && notif.content !== notif.description && (
-                              <div className="bg-zinc-900/40 p-2.5 rounded-lg border border-white/5 text-[11px] text-zinc-500 whitespace-pre-line mt-1.5 font-medium max-h-24 overflow-y-auto">
-                                <span className="text-zinc-400 font-bold block mb-1">Batafsil matni:</span>
-                                {notif.content}
-                              </div>
-                            )}
+                            {/* Content */}
+                            <div className="space-y-1.5 text-left pl-0.5 mt-0.5">
+                              <h5 className="font-bold text-zinc-200 text-sm tracking-wide">{trimmedTitle}</h5>
+                              <p className="text-xs text-zinc-400 leading-relaxed font-medium">{trimmedDesc}</p>
 
-                            {notif.imageUrl && (
-                              <div className="text-[10px] text-emerald-400/80 font-semibold truncate max-w-md inline-flex items-center gap-1">
-                                <FaImage size={10} />
-                                <span>Banner URL: <a href={notif.imageUrl} target="_blank" rel="noreferrer" className="underline hover:text-emerald-300">{notif.imageUrl}</a></span>
-                              </div>
-                            )}
-                          </div>
+                              {trimmedContent && trimmedContent !== trimmedDesc && (
+                                <div className="bg-zinc-950/40 px-3 py-2 rounded-xl border border-white/5 text-[11px] text-zinc-300/90 whitespace-pre-line mt-1.5 font-medium max-h-24 overflow-y-auto chat-scrollbar">
+                                  <span className="text-zinc-500 font-bold block mb-0.5 text-[9px] uppercase tracking-wider">Batafsil matni:</span>
+                                  {trimmedContent}
+                                </div>
+                              )}
 
-                          <div className="flex items-center justify-end md:border-l md:border-white/5 md:pl-4">
-                            <button
-                              onClick={() => handleDeleteNotification(notif._id || notif.id)}
-                              className="p-2.5 bg-red-500/10 border border-red-500/25 text-red-400 hover:bg-red-500/25 rounded-xl transition-all active:scale-[0.97] cursor-pointer"
-                              title="O'chirish"
-                            >
-                              <FaTrash size={12} />
-                            </button>
+                              {trimmedImgUrl && (
+                                <div className="mt-2.5 max-w-[160px] aspect-video rounded-xl overflow-hidden border border-white/10 shadow-md">
+                                  <img
+                                    src={trimmedImgUrl}
+                                    alt="Banner preview"
+                                    className="w-full h-full object-cover select-none"
+                                  />
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Absolute Positioned Action Buttons */}
+                            <div className="absolute top-3.5 right-3.5 z-10 flex flex-col gap-1.5">
+                              {/* Edit Button */}
+                              <button
+                                onClick={() => handleStartEditNotification(notif)}
+                                className="w-7 h-7 rounded-lg bg-zinc-900/60 hover:bg-amber-500/10 border border-zinc-855 hover:border-amber-500/30 text-zinc-500 hover:text-amber-400 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+                                title="Tahrirlash"
+                              >
+                                <FaEdit size={10} />
+                              </button>
+
+                              {/* Delete Button */}
+                              <button
+                                disabled={actionLoading === (notif._id || notif.id)}
+                                onClick={() => handleDeleteNotification(notif._id || notif.id)}
+                                className="w-7 h-7 rounded-lg bg-zinc-900/60 hover:bg-red-500/10 border border-zinc-855 hover:border-red-500/30 text-zinc-500 hover:text-red-400 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50"
+                                title="O'chirish"
+                              >
+                                <FaTrash size={10} />
+                              </button>
+
+                              {/* View Simulation Button */}
+                              <button
+                                onClick={() => setPreviewNotification(notif)}
+                                className="w-7 h-7 rounded-lg bg-zinc-900/60 hover:bg-emerald-500/10 border border-zinc-855 hover:border-emerald-500/30 text-zinc-500 hover:text-emerald-400 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+                                title="Foydalanuvchi ko'rinishida ko'rish"
+                              >
+                                <FaEye size={10} />
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -3246,6 +3415,138 @@ const AdminDashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Fullscreen Photo zoom overlay modal for Banners */}
+      {zoomedImage && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[150] p-4">
+          <div className="absolute inset-0 cursor-pointer" onClick={() => setZoomedImage(null)}></div>
+          
+          <div className="relative max-w-2xl w-full flex flex-col items-center z-10 animate-bounce-in">
+            {/* Header info */}
+            <div className="w-full flex justify-between items-center mb-3 bg-zinc-950/70 p-3 rounded-xl border border-white/5 backdrop-blur-md">
+              <span className="text-sm font-semibold">{zoomedImage.title}</span>
+              <button
+                onClick={() => setZoomedImage(null)}
+                className="text-white hover:text-emerald-400 transition-colors p-1 bg-transparent border-none cursor-pointer"
+              >
+                <FaTimesCircle size={20} />
+              </button>
+            </div>
+            {/* Large picture */}
+            <img
+              src={zoomedImage.url}
+              alt="Zoomed"
+              className="max-h-[75vh] object-contain rounded-2xl border border-emerald-500/30 shadow-2xl bg-zinc-900"
+            />
+            
+            <p className="mt-4 text-xs text-zinc-400 text-center">Yopish uchun rasm atrofidagi joyga yoki yuqoridagi yopish tugmasiga bosing</p>
+          </div>
+        </div>
+      )}
+
+      {/* Fullscreen Customer Simulation View Modal */}
+      {previewNotification && (() => {
+        const isLinked = previewNotification.linkType && previewNotification.linkType !== 'none';
+        
+        const getActionButtonLabel = () => {
+          switch (previewNotification.linkType) {
+            case 'booking':
+              return 'Hoziroq Navbat Olish 📅';
+            case 'styles':
+              return "Soch Stillarini Ko'rish 💈";
+            case 'loyalty':
+              return "Sadoqat Kartasiga O'tish 💳";
+            case 'external':
+            default:
+              return 'Batafsil ma\'lumot 🔗';
+          }
+        };
+
+        return (
+          <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-[150] p-4">
+            <div className="absolute inset-0 cursor-pointer" onClick={() => setPreviewNotification(null)}></div>
+            
+            <div className="relative max-w-xl w-full bg-zinc-950/90 border border-white/10 rounded-3xl overflow-hidden shadow-2xl z-10 animate-bounce-in flex flex-col max-h-[90vh] text-white">
+              {/* Close button at top right */}
+              <button
+                onClick={() => setPreviewNotification(null)}
+                className="absolute top-4 right-4 text-white/50 hover:text-white hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-300 p-2 rounded-full backdrop-blur-md z-30"
+              >
+                <FaTimes size={15} />
+              </button>
+
+              <div className="overflow-y-auto chat-scrollbar">
+                {/* Banner Image */}
+                {previewNotification.imageUrl ? (
+                  <div className="w-full h-48 sm:h-64 relative">
+                    <img
+                      src={previewNotification.imageUrl}
+                      alt={previewNotification.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/10 to-transparent"></div>
+                  </div>
+                ) : (
+                  <div className="w-full h-16 bg-gradient-to-r from-emerald-950/20 via-zinc-900/50 to-teal-950/20 border-b border-white/5"></div>
+                )}
+
+                {/* Detail Content Area */}
+                <div className="p-5 sm:p-6 md:p-8 space-y-5 text-left">
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className={`inline-block text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full ${
+                        previewNotification.type === 'welcome'
+                          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25'
+                          : previewNotification.type === 'loyalty'
+                          ? 'bg-amber-500/10 text-amber-400 border-amber-500/25'
+                          : previewNotification.type === 'appointment'
+                          ? 'bg-teal-500/10 text-teal-400 border border-teal-500/25'
+                          : 'bg-blue-500/10 text-blue-400 border border-blue-500/25'
+                      }`}>
+                        {previewNotification.type === 'welcome' && 'Xush kelibsiz'}
+                        {previewNotification.type === 'loyalty' && 'Sadoqat dasturi'}
+                        {previewNotification.type === 'appointment' && 'Navbat / Tashrif'}
+                        {previewNotification.type === 'system' && 'Tizim'}
+                      </span>
+                      
+                      <span className="text-xs text-zinc-550 font-semibold">
+                        ⏱ {new Date(previewNotification.createdAt || Date.now()).toLocaleString('uz-UZ', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </span>
+                    </div>
+
+                    <h1 className="text-xl sm:text-2xl font-extrabold text-white leading-tight">
+                      {previewNotification.title}
+                    </h1>
+                  </div>
+
+                  <div className="border-b border-white/5"></div>
+
+                  <div className="text-zinc-300 text-sm sm:text-base leading-relaxed whitespace-pre-line font-medium">
+                    {previewNotification.content || previewNotification.description}
+                  </div>
+
+                  {isLinked && (
+                    <div className="pt-4 border-t border-white/5">
+                      <button
+                        type="button"
+                        className="w-full sm:w-auto min-w-[200px] bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-3.5 px-6 rounded-2xl text-sm transition-all duration-300 shadow-lg shadow-emerald-500/20 border-none select-none cursor-pointer flex items-center justify-center gap-2"
+                      >
+                        {getActionButtonLabel()}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       <ConfirmModal
         isOpen={confirmModal.isOpen}

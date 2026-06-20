@@ -91,12 +91,19 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
 
     setIsLoading(true);
     try {
+      const trimmedPhone = formData.phone.trim();
       if (activeTab === 'login') {
-        const user = await login(formData.phone, formData.password);
+        const user = await login(trimmedPhone, formData.password);
         if (onSuccess) onSuccess(user);
         onClose();
       } else {
-        const user = await register(formData);
+        const trimmedData = {
+          ...formData,
+          name: formData.name.trim(),
+          phone: trimmedPhone,
+          telegram: formData.telegram.trim()
+        };
+        const user = await register(trimmedData);
         if (onSuccess) onSuccess(user);
         onClose();
       }
