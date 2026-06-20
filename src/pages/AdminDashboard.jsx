@@ -1405,36 +1405,46 @@ const AdminDashboard = () => {
           {activeTab === 'users' && (
             <div className="space-y-5 animate-fadeIn">
               {/* Filters Panel */}
-              <div className="flex flex-col sm:flex-row gap-3 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-3 backdrop-blur-sm relative z-30">
-                <div className="flex-1 relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
-                    <FaSearch size={12} />
+              <div className="flex flex-row items-center gap-2 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-2.5 backdrop-blur-sm relative z-30">
+                <div className="flex-1 min-w-0 relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-2.5 text-zinc-550">
+                    <FaSearch size={11} />
                   </span>
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Mijoz ismi yoki telefon raqami..."
-                    className="w-full pl-8 pr-4 py-2 bg-zinc-800/60 border border-zinc-700/50 rounded-xl outline-none focus:ring-1 focus:ring-emerald-500 focus:border-transparent text-xs text-white placeholder-zinc-500 transition-all duration-300"
+                    placeholder="Qidirish..."
+                    className="w-full pl-7 pr-3 py-2 bg-zinc-800/60 border border-zinc-700/50 rounded-xl outline-none focus:ring-1 focus:ring-emerald-500 focus:border-transparent text-[11px] sm:text-xs text-white placeholder-zinc-550 transition-all duration-300"
                   />
                 </div>
-                <div className="w-full sm:w-48 relative" ref={statusDropdownRef}>
+                <div className="w-28 sm:w-44 shrink-0 relative" ref={statusDropdownRef}>
                   <button
                     type="button"
                     onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
-                    className={`w-full flex items-center justify-between px-3 py-2 bg-zinc-800/60 border rounded-xl outline-none text-xs text-white cursor-pointer transition-all duration-300 ${
+                    className={`w-full flex items-center justify-between px-2.5 py-2 bg-zinc-800/60 border rounded-xl outline-none text-[11px] sm:text-xs text-white cursor-pointer transition-all duration-300 ${
                       isStatusDropdownOpen
                         ? 'border-emerald-500 ring-1 ring-emerald-500'
                         : 'border-zinc-700/50 hover:border-emerald-500/50 hover:bg-zinc-800/80'
                     }`}
                   >
                     <span>
-                      {userStatusFilter === 'all' && 'Barcha foydalanuvchilar'}
+                      {userStatusFilter === 'all' && (
+                        <>
+                          <span className="hidden sm:inline">Barcha foydalanuvchilar</span>
+                          <span className="sm:hidden">Barchasi</span>
+                        </>
+                      )}
                       {userStatusFilter === 'active' && 'Faollar'}
-                      {userStatusFilter === 'blocked' && 'Bloklanganlar'}
+                      {userStatusFilter === 'blocked' && (
+                        <>
+                          <span className="hidden sm:inline">Bloklanganlar</span>
+                          <span className="sm:hidden">Bloklangan</span>
+                        </>
+                      )}
                     </span>
                     <svg
-                      className={`w-3.5 h-3.5 text-zinc-400 transition-transform duration-300 ${isStatusDropdownOpen ? 'rotate-180 text-emerald-400' : ''}`}
+                      className={`w-3 h-3 text-zinc-500 transition-transform duration-300 shrink-0 ml-1 ${isStatusDropdownOpen ? 'rotate-180 text-emerald-400' : ''}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1453,13 +1463,13 @@ const AdminDashboard = () => {
                             setUserStatusFilter('all');
                             setIsStatusDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                          className={`w-full text-left px-3 py-2 text-[11px] sm:text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
                             userStatusFilter === 'all'
                               ? 'bg-emerald-500/10 text-emerald-400 font-bold'
                               : 'text-zinc-300 hover:bg-white/5 hover:text-white'
                           }`}
                         >
-                          Barcha foydalanuvchilar
+                          Barchasi
                         </button>
                         <button
                           type="button"
@@ -1467,7 +1477,7 @@ const AdminDashboard = () => {
                             setUserStatusFilter('active');
                             setIsStatusDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                          className={`w-full text-left px-3 py-2 text-[11px] sm:text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
                             userStatusFilter === 'active'
                               ? 'bg-emerald-500/10 text-emerald-400 font-bold'
                               : 'text-zinc-300 hover:bg-white/5 hover:text-white'
@@ -1481,7 +1491,7 @@ const AdminDashboard = () => {
                             setUserStatusFilter('blocked');
                             setIsStatusDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                          className={`w-full text-left px-3 py-2 text-[11px] sm:text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
                             userStatusFilter === 'blocked'
                               ? 'bg-emerald-500/10 text-emerald-400 font-bold'
                               : 'text-zinc-300 hover:bg-white/5 hover:text-white'
@@ -1501,10 +1511,11 @@ const AdminDashboard = () => {
                     setUserToEdit({ isAddMode: true });
                     setIsEditUserModalOpen(true);
                   }}
-                  className="flex items-center justify-center gap-1.5 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-zinc-950 font-bold text-xs rounded-xl transition-all cursor-pointer shrink-0"
+                  className="flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-zinc-950 font-extrabold text-[11px] sm:text-xs rounded-xl transition-all cursor-pointer shrink-0 shadow-lg shadow-emerald-500/10 border-none"
                 >
-                  <FaUserPlus size={13} className="shrink-0" />
-                  <span>Mijoz qo'shish</span>
+                  <FaUserPlus size={11} className="shrink-0" />
+                  <span className="hidden sm:inline">Mijoz qo'shish</span>
+                  <span className="sm:hidden">Qo'shish</span>
                 </button>
               </div>
 
