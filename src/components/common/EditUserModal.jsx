@@ -8,6 +8,8 @@ const EditUserModal = ({
   onClose,
   onSave
 }) => {
+  const isAddMode = userToEdit && userToEdit.isAddMode;
+
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -24,12 +26,12 @@ const EditUserModal = ({
   useEffect(() => {
     if (userToEdit) {
       setFormData({
-        name: userToEdit.name || '',
-        phone: userToEdit.phone || '',
-        telegram: userToEdit.telegram || '',
-        loyaltyStamps: userToEdit.loyaltyStamps || 0,
-        status: userToEdit.status || 'active',
-        role: userToEdit.role || 'user',
+        name: isAddMode ? '' : (userToEdit.name || ''),
+        phone: isAddMode ? '+998 ' : (userToEdit.phone || ''),
+        telegram: isAddMode ? '' : (userToEdit.telegram || ''),
+        loyaltyStamps: isAddMode ? 0 : (userToEdit.loyaltyStamps || 0),
+        status: isAddMode ? 'active' : (userToEdit.status || 'active'),
+        role: isAddMode ? 'user' : (userToEdit.role || 'user'),
         password: ''
       });
       setErrors({});
@@ -80,6 +82,14 @@ const EditUserModal = ({
       tempErrors.phone = "Telefon raqami noto'g'ri (12 ta raqam bo'lishi kerak)";
     }
 
+    if (isAddMode) {
+      if (!formData.password) {
+        tempErrors.password = "Parol kiritilishi shart";
+      } else if (formData.password.length < 4) {
+        tempErrors.password = "Parol kamida 4 ta belgidan iborat bo'lishi kerak";
+      }
+    }
+
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
   };
@@ -101,8 +111,13 @@ const EditUserModal = ({
         telegram: cleanTelegram
       };
 
-      await onSave(userToEdit.id || userToEdit._id, updatedData);
-      toast.success("Foydalanuvchi ma'lumotlari yangilandi!");
+      if (isAddMode) {
+        await onSave(null, updatedData);
+        toast.success("Yangi foydalanuvchi muvaffaqiyatli yaratildi!");
+      } else {
+        await onSave(userToEdit.id || userToEdit._id, updatedData);
+        toast.success("Foydalanuvchi ma'lumotlari yangilandi!");
+      }
       onClose();
     } catch (error) {
       console.error("Save user error:", error);
@@ -155,10 +170,12 @@ const EditUserModal = ({
         {/* Header */}
         <div className="space-y-1">
           <h3 className="text-xl font-bold text-white flex items-center gap-2">
-            <span className="text-emerald-500">📝</span>
-            Mijoz ma'lumotlarini tahrirlash
+            <span className="text-emerald-500">{isAddMode ? '👤' : '📝'}</span>
+            {isAddMode ? "Yangi mijoz qo'shish" : "Mijoz ma'lumotlarini tahrirlash"}
           </h3>
-          <p className="text-zinc-400 text-xs">Foydalanuvchi ma'lumotlari va sodiqlik ballarini yangilang</p>
+          <p className="text-zinc-400 text-xs">
+            {isAddMode ? "Tizimga yangi foydalanuvchini qo'shish" : "Foydalanuvchi ma'lumotlari va sodiqlik ballarini yangilang"}
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -221,7 +238,9 @@ const EditUserModal = ({
 
           {/* Parol Field */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block">Parolni o'zgartirish</label>
+            <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block">
+              {isAddMode ? 'Parol (Kamida 4 ta belgi)' : "Parolni o'zgartirish"}
+            </label>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
                 <FaLock size={12} />
@@ -231,7 +250,7 @@ const EditUserModal = ({
                 value={formData.password}
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                 className="w-full pl-9 pr-10 py-2.5 bg-zinc-900 border border-zinc-800 focus:border-emerald-500 rounded-xl outline-none focus:ring-1 focus:ring-emerald-500 text-sm text-white transition-all"
-                placeholder="Yangi parol (bo'sh qoldirilsa, o'zgarmaydi)"
+                placeholder={isAddMode ? "Parol kiriting..." : "Yangi parol (bo'sh qoldirilsa, o'zgarmaydi)"}
               />
               <button
                 type="button"
@@ -335,7 +354,7 @@ const EditUserModal = ({
               ) : (
                 <FaCheck size={12} />
               )}
-              Saqlash
+              {isAddMode ? "Qo'shish" : "Saqlash"}
             </button>
           </div>
         </form>

@@ -369,6 +369,40 @@ export const getUsersApi = async (token) => {
   return response.data;
 };
 
+// Create user
+export const createUserApi = async (token, userData) => {
+  if (MOCK_MODE) {
+    const users = getMockUsers();
+    const cleanPhone = userData.phone.replace(/\s+/g, '');
+    
+    const exists = users.some(u => u.phone.replace(/\s+/g, '') === cleanPhone);
+    if (exists) {
+      throw new Error("Bu telefon raqami allaqachon ro'yxatdan o'tgan!");
+    }
+
+    const newUser = {
+      id: 'user_' + Date.now(),
+      name: userData.name,
+      phone: userData.phone,
+      telegram: userData.telegram || '',
+      password: userData.password,
+      role: userData.role || 'user',
+      status: userData.status || 'active',
+      loyaltyStamps: userData.loyaltyStamps || 0,
+      createdAt: new Date().toISOString()
+    };
+
+    users.push(newUser);
+    saveMockUsers(users);
+    return newUser;
+  }
+
+  const response = await axios.post(`${API_URL}/admin/users`, userData, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
 // Block/Unblock user
 export const blockUserApi = async (token, userId, isBlocked) => {
   if (MOCK_MODE) {

@@ -52,7 +52,7 @@ import {
   FaCheckCircle
 } from 'react-icons/fa';
 import { formatPrice } from '../utils/format';
-import { getNotificationsApi, createNotificationApi, deleteNotificationApi, updateNotificationApi } from '../utils/api';
+import { getNotificationsApi, createNotificationApi, deleteNotificationApi, updateNotificationApi, createUserApi } from '../utils/api';
 import ConfirmModal from '../components/common/ConfirmModal';
 import EditUserModal from '../components/common/EditUserModal';
 
@@ -415,7 +415,11 @@ const AdminDashboard = () => {
 
   const handleEditUserSave = async (userId, updatedUserData) => {
     try {
-      await editUser(userId, updatedUserData);
+      if (userId) {
+        await editUser(userId, updatedUserData);
+      } else {
+        await createUserApi(token, updatedUserData);
+      }
       await loadData();
     } catch (err) {
       toast.error(err.message || 'Xatolik yuz berdi');
@@ -1489,6 +1493,19 @@ const AdminDashboard = () => {
                     </div>
                   )}
                 </div>
+
+                {/* Yangi mijoz qo'shish button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUserToEdit({ isAddMode: true });
+                    setIsEditUserModalOpen(true);
+                  }}
+                  className="flex items-center justify-center gap-1.5 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-zinc-950 font-bold text-xs rounded-xl transition-all cursor-pointer shrink-0"
+                >
+                  <FaUserPlus size={13} className="shrink-0" />
+                  <span>Mijoz qo'shish</span>
+                </button>
               </div>
 
               {/* Users Table */}
