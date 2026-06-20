@@ -3259,32 +3259,8 @@ const AdminDashboard = () => {
                                 : 'bg-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.3)]'
                             }`}></div>
 
-                            {/* Header row (Icon, Badges, Time) */}
-                            <div className="flex items-center gap-2.5 select-none">
-                              {/* Category icon avatar */}
-                              <div className="shrink-0">
-                                {notif.type === 'welcome' && (
-                                  <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-inner">
-                                    <FaCheckCircle size={14} />
-                                  </div>
-                                )}
-                                {notif.type === 'loyalty' && (
-                                  <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-500/10 to-amber-600/5 border border-amber-500/20 flex items-center justify-center text-amber-400 shadow-inner">
-                                    <FaGift size={14} />
-                                  </div>
-                                )}
-                                {notif.type === 'appointment' && (
-                                  <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-teal-500/10 to-teal-600/5 border border-teal-500/25 flex items-center justify-center text-teal-400 shadow-inner">
-                                    <FaCalendarAlt size={14} />
-                                  </div>
-                                )}
-                                {notif.type !== 'welcome' && notif.type !== 'loyalty' && notif.type !== 'appointment' && (
-                                  <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-500/10 to-blue-600/5 border border-blue-500/20 flex items-center justify-center text-blue-400 shadow-inner">
-                                    <FaBell size={13} className="animate-pulse" />
-                                  </div>
-                                )}
-                              </div>
-
+                            {/* Header row (Badges, Time) */}
+                            <div className="flex items-start gap-2.5 select-none">
                               {/* Badges list */}
                               <div className="flex flex-wrap items-center gap-1.5">
                                 {/* Type Badge */}
