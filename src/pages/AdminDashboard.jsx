@@ -520,6 +520,12 @@ const AdminDashboard = () => {
   const [isTimeframeDropdownOpen, setIsTimeframeDropdownOpen] = useState(false);
   const timeframeDropdownRef = useRef(null);
 
+  // Custom Dropdown States & Refs for Notifications Create
+  const [isTypeDropdownOpen, setIsTypeDropdownOpen] = useState(false);
+  const typeDropdownRef = useRef(null);
+  const [isLinkTypeDropdownOpen, setIsLinkTypeDropdownOpen] = useState(false);
+  const linkTypeDropdownRef = useRef(null);
+
   // Accordion state for client bookings expansion
   const [expandedClients, setExpandedClients] = useState({});
 
@@ -554,6 +560,12 @@ const AdminDashboard = () => {
       }
       if (timeframeDropdownRef.current && !timeframeDropdownRef.current.contains(event.target)) {
         setIsTimeframeDropdownOpen(false);
+      }
+      if (typeDropdownRef.current && !typeDropdownRef.current.contains(event.target)) {
+        setIsTypeDropdownOpen(false);
+      }
+      if (linkTypeDropdownRef.current && !linkTypeDropdownRef.current.contains(event.target)) {
+        setIsLinkTypeDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -2773,138 +2785,333 @@ const AdminDashboard = () => {
           {/* ================= TAB: NOTIFICATIONS ================= */}
           {activeTab === 'notifications' && (
             <div className="space-y-6 animate-fadeIn">
+              {/* Back Button Header Card */}
+              <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4 backdrop-blur-sm flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Link
+                    to="/admin?tab=profile"
+                    className="p-2.5 rounded-xl border border-white/10 bg-zinc-800/50 hover:bg-zinc-800 hover:border-emerald-500/30 text-emerald-400 hover:text-white transition-all cursor-pointer flex items-center justify-center active:scale-95 shrink-0 shadow-sm"
+                    title="Profilga qaytish"
+                  >
+                    <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </Link>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-bold leading-tight">Bildirishnomalar Boshqaruvi</h3>
+                    <p className="text-zinc-400 text-xs mt-0.5">Yangi xabar yuborish va tarixni kuzatish</p>
+                  </div>
+                </div>
+              </div>
+
               {/* Form & Sent Notifications History */}
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
                 
                 {/* 1. Dispatch Form */}
-                <div className="xl:col-span-1 bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm space-y-4">
-                  <div>
+                <div className="relative xl:col-span-1 bg-zinc-950/70 border border-emerald-500/20 rounded-3xl p-6 backdrop-blur-xl shadow-2xl overflow-hidden space-y-4 z-10">
+                  {/* Ambient glow backgrounds */}
+                  <div className="absolute top-0 -left-4 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -z-10"></div>
+                  <div className="absolute bottom-0 -right-4 w-32 h-32 bg-teal-500/10 rounded-full blur-3xl -z-10"></div>
+
+                  <div className="relative z-10">
                     <h4 className="text-lg font-bold flex items-center gap-2">
-                      <FaBullhorn size={18} className="text-emerald-500" />
+                      <FaBullhorn size={18} className="text-emerald-500 animate-pulse" />
                       Yangi bildirishnoma yuborish
                     </h4>
-                    <p className="text-xs text-zinc-400 mt-1">
+                    <p className="text-xs text-zinc-400 mt-1 leading-normal">
                       Barcha foydalanuvchilarning shaxsiy kabinetiga xabar yuborish. Qisqa va batafsil ma'lumotlar bilan boyiting.
                     </p>
                   </div>
 
-                  <form onSubmit={handleCreateNotification} className="space-y-4">
+                  <form onSubmit={handleCreateNotification} className="space-y-4 relative z-10">
                     {/* Title */}
-                    <div>
-                      <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Xabar sarlavhasi (Majburiy)</label>
+                    <div className="group flex flex-col">
+                      <label className="block text-left text-xs font-semibold uppercase tracking-wider text-zinc-400 group-focus-within:text-emerald-400 transition-colors duration-300 mb-1.5 pl-1">
+                        Xabar sarlavhasi (Majburiy)
+                      </label>
                       <input
                         type="text"
                         placeholder="Masalan: Yozgi yangi stillar qo'shildi! 💈"
                         value={newNotification.title}
                         onChange={(e) => setNewNotification({ ...newNotification, title: e.target.value })}
-                        className="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-white"
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 placeholder:text-white/20 text-sm hover:bg-white/10 text-white"
                         required
                       />
                     </div>
 
                     {/* Short Description */}
-                    <div>
-                      <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Qisqa ma'lumot (Listda ko'rinadi - Majburiy)</label>
+                    <div className="group flex flex-col">
+                      <label className="block text-left text-xs font-semibold uppercase tracking-wider text-zinc-400 group-focus-within:text-emerald-400 transition-colors duration-300 mb-1.5 pl-1">
+                        Qisqa ma'lumot (Listda ko'rinadi - Majburiy)
+                      </label>
                       <textarea
                         placeholder="Masalan: Katalogimizga yangi zamonaviy soch stillari yuklandi..."
                         value={newNotification.description}
                         onChange={(e) => setNewNotification({ ...newNotification, description: e.target.value })}
                         rows="2"
-                        className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-white resize-none"
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 placeholder:text-white/20 text-sm hover:bg-white/10 text-white resize-none"
                         required
                       ></textarea>
                     </div>
 
                     {/* Detailed Content */}
-                    <div>
-                      <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Batafsil matn (Ichiga kirganda o'qiladi - Ixtiyoriy)</label>
+                    <div className="group flex flex-col">
+                      <label className="block text-left text-xs font-semibold uppercase tracking-wider text-zinc-400 group-focus-within:text-emerald-400 transition-colors duration-300 mb-1.5 pl-1">
+                        Batafsil matn (Ichiga kirganda o'qiladi - Ixtiyoriy)
+                      </label>
                       <textarea
                         placeholder="Masalan: Ushbu xabarning batafsil mazmuni, o'zgarishlar va shartlar bu yerda to'liq yoziladi..."
                         value={newNotification.content}
                         onChange={(e) => setNewNotification({ ...newNotification, content: e.target.value })}
                         rows="4"
-                        className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-white"
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 placeholder:text-white/20 text-sm hover:bg-white/10 text-white"
                       ></textarea>
                     </div>
 
-                    {/* Category Type */}
+                    {/* Category Type & Action Button */}
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Tur (Kategoriya)</label>
-                        <select
-                          value={newNotification.type}
-                          onChange={(e) => setNewNotification({ ...newNotification, type: e.target.value })}
-                          className="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-white"
+                      {/* Category Type */}
+                      <div className="group flex flex-col relative" ref={typeDropdownRef}>
+                        <label className="block text-left text-xs font-semibold uppercase tracking-wider text-zinc-400 group-focus-within:text-emerald-400 transition-colors duration-300 mb-1.5 pl-1">
+                          Tur (Kategoriya)
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setIsTypeDropdownOpen(!isTypeDropdownOpen)}
+                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 text-sm hover:bg-white/10 text-white cursor-pointer flex items-center justify-between text-left"
                         >
-                          <option value="system">Tizim (Yangilik)</option>
-                          <option value="welcome">Xush kelibsiz</option>
-                          <option value="loyalty">Sadoqat dasturi</option>
-                          <option value="appointment">Navbat / Tashrif</option>
-                        </select>
+                          <span>
+                            {newNotification.type === 'system' && 'Tizim (Yangilik)'}
+                            {newNotification.type === 'welcome' && 'Xush kelibsiz'}
+                            {newNotification.type === 'loyalty' && 'Sadoqat dasturi'}
+                            {newNotification.type === 'appointment' && 'Navbat / Tashrif'}
+                          </span>
+                          <svg
+                            className={`w-4 h-4 text-zinc-400 transition-transform duration-300 ${isTypeDropdownOpen ? 'rotate-180 text-emerald-400' : ''}`}
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        
+                        {/* Custom Options List */}
+                        {isTypeDropdownOpen && (
+                          <div className="absolute top-full left-0 right-0 mt-1.5 z-50 bg-zinc-950/95 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden backdrop-blur-xl animate-fadeIn p-1 flex flex-col">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setNewNotification({ ...newNotification, type: 'system' });
+                                setIsTypeDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-205 cursor-pointer border-none bg-transparent ${
+                                newNotification.type === 'system'
+                                  ? 'bg-emerald-500/10 text-emerald-400 font-bold'
+                                  : 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                              }`}
+                            >
+                              Tizim (Yangilik)
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setNewNotification({ ...newNotification, type: 'welcome' });
+                                setIsTypeDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-205 cursor-pointer border-none bg-transparent ${
+                                newNotification.type === 'welcome'
+                                  ? 'bg-emerald-500/10 text-emerald-400 font-bold'
+                                  : 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                              }`}
+                            >
+                              Xush kelibsiz
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setNewNotification({ ...newNotification, type: 'loyalty' });
+                                setIsTypeDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-205 cursor-pointer border-none bg-transparent ${
+                                newNotification.type === 'loyalty'
+                                  ? 'bg-emerald-500/10 text-emerald-400 font-bold'
+                                  : 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                              }`}
+                            >
+                              Sadoqat dasturi
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setNewNotification({ ...newNotification, type: 'appointment' });
+                                setIsTypeDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-205 cursor-pointer border-none bg-transparent ${
+                                newNotification.type === 'appointment'
+                                  ? 'bg-emerald-500/10 text-emerald-400 font-bold'
+                                  : 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                              }`}
+                            >
+                              Navbat / Tashrif
+                            </button>
+                          </div>
+                        )}
                       </div>
 
                       {/* Action Link Type */}
-                      <div>
-                        <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Harakat tugmasi</label>
-                        <select
-                          value={newNotification.linkType}
-                          onChange={(e) => setNewNotification({ ...newNotification, linkType: e.target.value })}
-                          className="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-white"
+                      <div className="group flex flex-col relative" ref={linkTypeDropdownRef}>
+                        <label className="block text-left text-xs font-semibold uppercase tracking-wider text-zinc-400 group-focus-within:text-emerald-400 transition-colors duration-300 mb-1.5 pl-1">
+                          Harakat tugmasi
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setIsLinkTypeDropdownOpen(!isLinkTypeDropdownOpen)}
+                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 text-sm hover:bg-white/10 text-white cursor-pointer flex items-center justify-between text-left"
                         >
-                          <option value="none">Tugmasiz (Harakatsiz)</option>
-                          <option value="booking">Navbat olish sahifasi</option>
-                          <option value="styles">Stillar sahifasi</option>
-                          <option value="loyalty">Loyallik kartasi</option>
-                          <option value="external">Tashqi havola</option>
-                        </select>
+                          <span>
+                            {newNotification.linkType === 'none' && 'Tugmasiz (Harakatsiz)'}
+                            {newNotification.linkType === 'booking' && 'Navbat olish sahifasi'}
+                            {newNotification.linkType === 'styles' && 'Stillar sahifasi'}
+                            {newNotification.linkType === 'loyalty' && 'Loyallik kartasi'}
+                            {newNotification.linkType === 'external' && 'Tashqi havola'}
+                          </span>
+                          <svg
+                            className={`w-4 h-4 text-zinc-400 transition-transform duration-300 ${isLinkTypeDropdownOpen ? 'rotate-180 text-emerald-400' : ''}`}
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        
+                        {/* Custom Options List */}
+                        {isLinkTypeDropdownOpen && (
+                          <div className="absolute top-full left-0 right-0 mt-1.5 z-50 bg-zinc-950/95 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden backdrop-blur-xl animate-fadeIn p-1 flex flex-col">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setNewNotification({ ...newNotification, linkType: 'none' });
+                                setIsLinkTypeDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-205 cursor-pointer border-none bg-transparent ${
+                                newNotification.linkType === 'none'
+                                  ? 'bg-emerald-500/10 text-emerald-400 font-bold'
+                                  : 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                              }`}
+                            >
+                              Tugmasiz (Harakatsiz)
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setNewNotification({ ...newNotification, linkType: 'booking' });
+                                setIsLinkTypeDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-205 cursor-pointer border-none bg-transparent ${
+                                newNotification.linkType === 'booking'
+                                  ? 'bg-emerald-500/10 text-emerald-400 font-bold'
+                                  : 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                              }`}
+                            >
+                              Navbat olish sahifasi
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setNewNotification({ ...newNotification, linkType: 'styles' });
+                                setIsLinkTypeDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-205 cursor-pointer border-none bg-transparent ${
+                                newNotification.linkType === 'styles'
+                                  ? 'bg-emerald-500/10 text-emerald-400 font-bold'
+                                  : 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                              }`}
+                            >
+                              Stillar sahifasi
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setNewNotification({ ...newNotification, linkType: 'loyalty' });
+                                setIsLinkTypeDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-205 cursor-pointer border-none bg-transparent ${
+                                newNotification.linkType === 'loyalty'
+                                  ? 'bg-emerald-500/10 text-emerald-400 font-bold'
+                                  : 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                              }`}
+                            >
+                              Loyallik kartasi
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setNewNotification({ ...newNotification, linkType: 'external' });
+                                setIsLinkTypeDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-205 cursor-pointer border-none bg-transparent ${
+                                newNotification.linkType === 'external'
+                                  ? 'bg-emerald-500/10 text-emerald-400 font-bold'
+                                  : 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                              }`}
+                            >
+                              Tashqi havola
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
 
                     {/* Conditional Link URL */}
                     {newNotification.linkType === 'external' && (
-                      <div>
-                        <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Tashqi havola manzili (URL)</label>
+                      <div className="group flex flex-col">
+                        <label className="block text-left text-xs font-semibold uppercase tracking-wider text-zinc-400 group-focus-within:text-emerald-400 transition-colors duration-300 mb-1.5 pl-1">
+                          Tashqi havola manzili (URL)
+                        </label>
                         <input
                           type="url"
                           placeholder="Masalan: https://t.me/barber_bot"
                           value={newNotification.linkUrl}
                           onChange={(e) => setNewNotification({ ...newNotification, linkUrl: e.target.value })}
-                          className="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-white"
+                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 placeholder:text-white/20 text-sm hover:bg-white/10 text-white"
                           required
                         />
                       </div>
                     )}
 
                     {/* Image URL (optional) */}
-                    <div>
-                      <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Rasm havolasi (Banner - Ixtiyoriy)</label>
+                    <div className="group flex flex-col">
+                      <label className="block text-left text-xs font-semibold uppercase tracking-wider text-zinc-400 group-focus-within:text-emerald-400 transition-colors duration-300 mb-1.5 pl-1">
+                        Rasm havolasi (Banner - Ixtiyoriy)
+                      </label>
                       <input
                         type="url"
                         placeholder="Masalan: https://images.unsplash.com/... (yoki bo'sh qoldiring)"
                         value={newNotification.imageUrl}
                         onChange={(e) => setNewNotification({ ...newNotification, imageUrl: e.target.value })}
-                        className="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm text-white"
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 placeholder:text-white/20 text-sm hover:bg-white/10 text-white"
                       />
                     </div>
 
-                    {/* Submit */}
+                    {/* Submit Button */}
                     <button
                       type="submit"
                       disabled={notificationSubmitting}
-                      className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-2.5 px-4 rounded-xl text-xs hover:shadow-lg hover:shadow-emerald-500/20 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2 border-none"
+                      className="w-full mt-4 group relative overflow-hidden bg-gradient-to-r from-emerald-500 to-green-600 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] text-white font-bold py-3.5 px-4 rounded-xl transition-all active:scale-[0.98] cursor-pointer disabled:bg-zinc-800 disabled:text-white/20 disabled:cursor-not-allowed flex items-center justify-center gap-2 border border-emerald-400/30"
                     >
+                      {/* Hover shine effect */}
+                      <span className="absolute inset-0 -translate-x-full group-hover:animate-[button-shine_1.5s_ease-in-out] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 pointer-events-none"></span>
+
                       {notificationSubmitting ? (
                         <>
-                          <svg className="animate-spin h-3.5 w-3.5 text-white" viewBox="0 0 24 24" fill="none">
+                          <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" fill="none">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
                           <span>Yuborilmoqda...</span>
                         </>
                       ) : (
-                        <span className="flex items-center gap-1.5">
+                        <span className="flex items-center gap-2 tracking-wide uppercase text-sm">
                           <span>Bildirishnomani Yuborish</span>
-                          <FaPaperPlane size={11} />
+                          <FaPaperPlane size={13} />
                         </span>
                       )}
                     </button>
