@@ -2234,7 +2234,7 @@ const AdminDashboard = () => {
                     {stats.chartData && stats.chartData.length > 0 && (() => {
                       const maxVal = Math.max(...stats.chartData.map(c => c.value)) || 100000;
                       return (
-                        <div className="w-8 h-36 text-[9px] text-zinc-500 font-mono font-bold select-none text-right pr-2 flex flex-col justify-between">
+                        <div className="w-6 h-36 text-[9px] text-zinc-500 font-mono font-bold select-none text-right pr-1 flex flex-col justify-between">
                           <div>{maxVal >= 1000 ? `${(maxVal / 1000).toLocaleString()}k` : maxVal}</div>
                           <div>{maxVal >= 1000 ? `${((maxVal * 0.75) / 1000).toLocaleString()}k` : Math.round(maxVal * 0.75)}</div>
                           <div>{maxVal >= 1000 ? `${((maxVal * 0.5) / 1000).toLocaleString()}k` : Math.round(maxVal * 0.5)}</div>
@@ -2245,7 +2245,7 @@ const AdminDashboard = () => {
                     })()}
 
                     {/* Chart Canvas Area */}
-                    <div className="flex-1 flex flex-col ml-3">
+                    <div className="flex-1 flex flex-col ml-1">
                       {/* SVG Canvas wrapper */}
                       <div className="relative h-36 w-full">
                         {/* SVG canvas */}
@@ -2442,7 +2442,7 @@ const AdminDashboard = () => {
                     <div className="flex justify-between items-center gap-2 mb-6">
                       <h4 className="text-lg font-bold flex items-center gap-2">
                         <FaCut size={18} className="text-emerald-500" />
-                        Xizmatlar ko'rsatkichlari
+                        Xizmatlar
                       </h4>
                       <div className="relative" ref={timeframeDropdownRef}>
                         <button
@@ -2520,16 +2520,22 @@ const AdminDashboard = () => {
                               </div>
                               
                               {/* Glassmorphic progress bar */}
-                              <div className="w-full bg-zinc-800 rounded-full h-2 overflow-hidden border border-white/5">
+                              <div className="w-full bg-zinc-950/40 rounded-lg h-4 overflow-hidden border border-white/5 relative flex items-center shadow-inner">
                                 <div
                                   style={{ width: `${pct}%` }}
-                                  className="bg-linear-to-r from-emerald-500 to-green-400 h-full rounded-full transition-all duration-1000"
-                                ></div>
+                                  className="bg-linear-to-r from-emerald-500 to-green-400 h-full rounded-lg transition-all duration-1000 flex items-center justify-end pr-1.5"
+                                >
+                                  {pct >= 15 && (
+                                    <span className="text-[9px] font-extrabold text-zinc-950 select-none leading-none">{pct}%</span>
+                                  )}
+                                </div>
+                                {pct < 15 && (
+                                  <span className="text-[9px] font-extrabold text-zinc-400 select-none pl-1.5 leading-none">{pct}%</span>
+                                )}
                               </div>
                               
-                              <div className="flex justify-between text-xxs text-zinc-500">
-                                <span>Tegishli ulush: {pct}%</span>
-                                <span className="text-emerald-400/80 font-bold">Jami tushum: {(service.revenue || 0).toLocaleString()} so'm</span>
+                              <div className="flex justify-end text-xxs mt-1">
+                                <span className="text-emerald-400/80 font-bold">Jami: {(service.revenue || 0).toLocaleString()} so'm</span>
                               </div>
                             </div>
                           );
