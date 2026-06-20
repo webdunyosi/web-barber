@@ -3492,84 +3492,164 @@ const AdminDashboard = () => {
 
       {/* Kassa Modal */}
       {isKassaModalOpen && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-[150] p-4 animate-fadeIn">
-          <div className="absolute inset-0 cursor-pointer" onClick={() => {
-            setIsKassaModalOpen(false);
-            setIsKassaCalendarOpen(false);
-          }}></div>
-          
-          <div className="relative max-w-md w-full bg-zinc-950/90 border border-white/10 rounded-3xl overflow-visible shadow-2xl z-10 animate-bounce-in flex flex-col text-white p-6">
-            {/* Close button */}
-            <button
-              onClick={() => {
-                setIsKassaModalOpen(false);
-                setIsKassaCalendarOpen(false);
-              }}
-              className="absolute top-4 right-4 text-white/50 hover:text-white hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-300 p-2 rounded-full backdrop-blur-md z-30 cursor-pointer"
-            >
-              <FaTimes size={15} />
-            </button>
+        <div className="fixed inset-0 flex items-center justify-center z-[150] p-4 animate-fadeIn">
+          {/* Animated blur overlay */}
+          <div
+            className="absolute inset-0 cursor-pointer"
+            style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
+            onClick={() => { setIsKassaModalOpen(false); setIsKassaCalendarOpen(false); }}
+          />
 
-            <div className="space-y-4 text-left">
-              <h4 className="text-lg font-bold flex items-center gap-2">
-                <FaWallet size={16} className="text-emerald-500" />
-                Kunlik Kassa Kiritish
-              </h4>
-              <p className="text-xs text-zinc-400">
+          {/* Ambient glow orbs behind modal */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div style={{
+              position: 'absolute', width: '360px', height: '360px',
+              background: 'radial-gradient(circle, rgba(16,185,129,0.18) 0%, transparent 70%)',
+              bottom: '5%', left: '50%', transform: 'translateX(-50%)',
+              filter: 'blur(40px)', animation: 'pulse 4s ease-in-out infinite'
+            }} />
+            <div style={{
+              position: 'absolute', width: '220px', height: '220px',
+              background: 'radial-gradient(circle, rgba(52,211,153,0.12) 0%, transparent 70%)',
+              top: '15%', left: '20%',
+              filter: 'blur(50px)', animation: 'pulse 5s ease-in-out infinite 1s'
+            }} />
+          </div>
+
+          {/* Modal card */}
+          <div
+            className="relative max-w-md w-full z-10 flex flex-col text-white overflow-visible rounded-3xl"
+            style={{
+              background: 'linear-gradient(145deg, rgba(24,26,32,0.95) 0%, rgba(15,17,22,0.98) 100%)',
+              border: '1px solid rgba(255,255,255,0.09)',
+              boxShadow: '0 -8px 80px rgba(16,185,129,0.22), 0 40px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.08)',
+              backdropFilter: 'blur(40px)',
+              WebkitBackdropFilter: 'blur(40px)',
+            }}
+          >
+            {/* Gradient top accent line */}
+            <div style={{
+              position: 'absolute', top: 0, left: '15%', right: '15%', height: '1px',
+              background: 'linear-gradient(90deg, transparent, rgba(52,211,153,0.7), transparent)',
+              borderRadius: '999px'
+            }} />
+
+            {/* Inner content */}
+            <div className="p-6 sm:p-7 space-y-5">
+              {/* Header row */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  {/* Glowing icon */}
+                  <div style={{
+                    width: '44px', height: '44px', borderRadius: '14px', flexShrink: 0,
+                    background: 'linear-gradient(135deg, rgba(16,185,129,0.25) 0%, rgba(52,211,153,0.12) 100%)',
+                    border: '1px solid rgba(52,211,153,0.3)',
+                    boxShadow: '0 0 20px rgba(16,185,129,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  }}>
+                    <FaWallet size={18} className="text-emerald-400" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-extrabold text-white tracking-tight leading-tight">Kunlik Kassa Kiritish</h4>
+                    <p className="text-[11px] text-emerald-400/70 font-medium mt-0.5">Offline naqd pul kirimi</p>
+                  </div>
+                </div>
+
+                {/* Close button */}
+                <button
+                  onClick={() => { setIsKassaModalOpen(false); setIsKassaCalendarOpen(false); }}
+                  className="shrink-0 cursor-pointer transition-all duration-300 active:scale-90"
+                  style={{
+                    width: '34px', height: '34px', borderRadius: '10px',
+                    background: 'rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: 'rgba(255,255,255,0.5)',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.color = 'white'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; }}
+                >
+                  <FaTimes size={13} />
+                </button>
+              </div>
+
+              {/* Description */}
+              <p className="text-xs text-zinc-400 leading-relaxed"
+                style={{ padding: '10px 14px', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)' }}>
                 Saytdan tashqari (offline) sartaroshxonada yig'ilgan kunlik naqd pul tushumini bu yerga kiritib borishingiz mumkin.
               </p>
-              
+
               <form onSubmit={handleSaveOfflineIncome} className="space-y-4">
+                {/* Date field */}
                 <div className="relative" ref={kassaCalendarRef}>
-                  <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Sana</label>
+                  <label className="block text-[10px] uppercase tracking-widest font-bold mb-2"
+                    style={{ color: 'rgba(52,211,153,0.7)', letterSpacing: '0.12em' }}>Sana</label>
                   <button
                     type="button"
                     onClick={() => setIsKassaCalendarOpen(!isKassaCalendarOpen)}
-                    className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-300 outline-none text-left cursor-pointer ${
-                      isKassaCalendarOpen
-                        ? 'bg-zinc-800 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.25)]'
-                        : 'bg-zinc-800/50 border-zinc-700/50 hover:bg-zinc-800 hover:border-emerald-500/50'
-                    }`}
+                    className="w-full flex items-center justify-between cursor-pointer transition-all duration-300"
+                    style={{
+                      padding: '12px 16px',
+                      borderRadius: '14px',
+                      background: isKassaCalendarOpen
+                        ? 'linear-gradient(135deg, rgba(16,185,129,0.12), rgba(52,211,153,0.06))'
+                        : 'rgba(255,255,255,0.05)',
+                      border: isKassaCalendarOpen
+                        ? '1px solid rgba(52,211,153,0.5)'
+                        : '1px solid rgba(255,255,255,0.08)',
+                      boxShadow: isKassaCalendarOpen ? '0 0 20px rgba(16,185,129,0.15), inset 0 1px 0 rgba(255,255,255,0.05)' : 'none',
+                      outline: 'none',
+                    }}
                   >
-                    <span className="font-semibold text-white text-sm">
-                      {formatSelectedKassaDateUz()}
-                    </span>
-                    <svg 
-                      className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isKassaCalendarOpen ? 'rotate-180' : ''}`} 
+                    <span className="font-semibold text-white text-sm">{formatSelectedKassaDateUz()}</span>
+                    <svg
+                      className={`w-4 h-4 text-emerald-400 transition-transform duration-300 ${isKassaCalendarOpen ? 'rotate-180' : ''}`}
                       fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
-                  
+
                   {/* Calendar Popover */}
                   {isKassaCalendarOpen && (
-                    <div className="absolute top-full left-0 right-0 mt-2 z-[160] bg-zinc-950 border border-zinc-850 rounded-2xl shadow-2xl p-4 animate-fadeIn">
+                    <div
+                      className="absolute top-full left-0 right-0 mt-2 z-[160] animate-fadeIn"
+                      style={{
+                        background: 'linear-gradient(145deg, rgba(18,20,26,0.98), rgba(12,14,19,0.99))',
+                        border: '1px solid rgba(255,255,255,0.09)',
+                        borderRadius: '18px',
+                        boxShadow: '0 20px 60px rgba(0,0,0,0.8), 0 0 30px rgba(16,185,129,0.1)',
+                        backdropFilter: 'blur(30px)',
+                        padding: '16px',
+                      }}
+                    >
                       {/* Calendar Header */}
                       <div className="flex items-center justify-between mb-3">
-                        <button
-                          type="button"
-                          onClick={handleKassaPrevMonth}
-                          className="p-1 hover:bg-zinc-800 rounded-lg text-gray-400 hover:text-white transition-colors border-none bg-transparent cursor-pointer"
+                        <button type="button" onClick={handleKassaPrevMonth}
+                          className="cursor-pointer transition-all duration-200 active:scale-90"
+                          style={{ padding: '6px', borderRadius: '9px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' }}
                         >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                          </svg>
                         </button>
-                        <h4 className="text-xs font-semibold text-white uppercase tracking-wider">
+                        <h4 className="text-xs font-bold text-white uppercase tracking-widest">
                           {kassaMonths[kassaViewDate.getMonth()]} {kassaViewDate.getFullYear()}
                         </h4>
-                        <button
-                          type="button"
-                          onClick={handleKassaNextMonth}
-                          className="p-1 hover:bg-zinc-800 rounded-lg text-gray-400 hover:text-white transition-colors border-none bg-transparent cursor-pointer"
+                        <button type="button" onClick={handleKassaNextMonth}
+                          className="cursor-pointer transition-all duration-200 active:scale-90"
+                          style={{ padding: '6px', borderRadius: '9px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' }}
                         >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
                         </button>
                       </div>
 
                       {/* Weekdays */}
-                      <div className="grid grid-cols-7 gap-1 mb-1.5 border-b border-white/5 pb-1">
+                      <div className="grid grid-cols-7 gap-1 mb-2 pb-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                         {kassaDaysOfWeek.map(day => (
-                          <div key={day} className="text-center text-[10px] font-bold text-emerald-500 py-0.5 select-none">
+                          <div key={day} className="text-center text-[10px] font-bold py-0.5 select-none" style={{ color: 'rgba(52,211,153,0.8)' }}>
                             {day}
                           </div>
                         ))}
@@ -3578,21 +3658,25 @@ const AdminDashboard = () => {
                       {/* Days Grid */}
                       <div className="grid grid-cols-7 gap-1">
                         {getKassaCalendarDays().map((date, index) => {
-                          if (!date) return <div key={`empty-${index}`} className="h-8"></div>;
-
+                          if (!date) return <div key={`empty-${index}`} className="h-8" />;
                           const isSelected = kassaDate && date.toDateString() === parseToDate(kassaDate).toDateString();
                           const isToday = date.toDateString() === new Date().toDateString();
-
                           return (
                             <button
                               key={index}
                               type="button"
                               onClick={() => handleKassaDateSelect(date)}
-                              className={`
-                                h-8 w-full flex items-center justify-center rounded-lg text-xs font-semibold transition-all duration-200 border-none cursor-pointer
-                                ${isSelected ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30 hover:bg-emerald-400' : 'bg-transparent text-gray-300 hover:bg-emerald-500/20 hover:text-emerald-400'}
-                                ${isToday && !isSelected ? 'border border-emerald-500/50 text-emerald-400 font-bold' : ''}
-                              `}
+                              className="h-8 w-full flex items-center justify-center rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer"
+                              style={{
+                                background: isSelected
+                                  ? 'linear-gradient(135deg, #10b981, #059669)'
+                                  : isToday ? 'rgba(16,185,129,0.12)' : 'transparent',
+                                border: isSelected
+                                  ? '1px solid rgba(52,211,153,0.5)'
+                                  : isToday ? '1px solid rgba(52,211,153,0.4)' : '1px solid transparent',
+                                color: isSelected ? 'white' : isToday ? '#34d399' : 'rgba(255,255,255,0.65)',
+                                boxShadow: isSelected ? '0 4px 15px rgba(16,185,129,0.35)' : 'none',
+                              }}
                             >
                               {date.getDate()}
                             </button>
@@ -3602,42 +3686,87 @@ const AdminDashboard = () => {
                     </div>
                   )}
                 </div>
-                
+
+                {/* Amount field */}
                 <div>
-                  <label className="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1">Kassa Pul Miqdori (so'm)</label>
+                  <label className="block text-[10px] uppercase tracking-widest font-bold mb-2"
+                    style={{ color: 'rgba(52,211,153,0.7)', letterSpacing: '0.12em' }}>Kassa Pul Miqdori (so'm)</label>
                   <div className="relative">
                     <input
                       type="number"
                       placeholder="Masalan: 150000"
                       value={kassaAmount}
                       onChange={(e) => setKassaAmount(e.target.value)}
-                      className="w-full pl-3 pr-12 py-2.5 bg-zinc-800/60 border border-zinc-700/50 rounded-xl outline-none focus:ring-1 focus:ring-emerald-500 focus:border-transparent text-sm text-white"
                       min="0"
                       required
+                      style={{
+                        width: '100%', paddingLeft: '16px', paddingRight: '52px', paddingTop: '13px', paddingBottom: '13px',
+                        background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(255,255,255,0.09)',
+                        borderRadius: '14px',
+                        outline: 'none',
+                        color: 'white',
+                        fontSize: '14px',
+                        boxSizing: 'border-box',
+                        transition: 'all 0.3s',
+                      }}
+                      onFocus={e => {
+                        e.target.style.borderColor = 'rgba(52,211,153,0.5)';
+                        e.target.style.background = 'linear-gradient(135deg, rgba(16,185,129,0.08), rgba(52,211,153,0.04))';
+                        e.target.style.boxShadow = '0 0 20px rgba(16,185,129,0.12), inset 0 1px 0 rgba(255,255,255,0.05)';
+                      }}
+                      onBlur={e => {
+                        e.target.style.borderColor = 'rgba(255,255,255,0.09)';
+                        e.target.style.background = 'rgba(255,255,255,0.05)';
+                        e.target.style.boxShadow = 'none';
+                      }}
                     />
-                    <span className="absolute right-3 inset-y-0 flex items-center text-xs text-zinc-550 font-bold">so'm</span>
+                    <span className="absolute right-4 inset-y-0 flex items-center text-xs font-bold pointer-events-none"
+                      style={{ color: 'rgba(52,211,153,0.6)' }}>so'm</span>
                   </div>
                 </div>
 
+                {/* Submit button */}
                 <button
                   type="submit"
                   disabled={kassaSaving}
-                  className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-3 px-4 rounded-xl text-xs hover:shadow-lg hover:shadow-emerald-500/20 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2 border-none"
+                  className="w-full font-bold text-sm cursor-pointer transition-all duration-300 active:scale-[0.97] flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  style={{
+                    padding: '14px 24px',
+                    borderRadius: '14px',
+                    border: 'none',
+                    background: 'linear-gradient(135deg, #10b981 0%, #059669 60%, #047857 100%)',
+                    boxShadow: '0 8px 30px rgba(16,185,129,0.4), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2)',
+                    color: 'white',
+                    letterSpacing: '0.02em',
+                  }}
+                  onMouseEnter={e => { if (!kassaSaving) e.currentTarget.style.boxShadow = '0 12px 40px rgba(16,185,129,0.55), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 8px 30px rgba(16,185,129,0.4), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2)'; }}
                 >
                   {kassaSaving ? (
                     <>
-                      <svg className="animate-spin h-3.5 w-3.5 text-white" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                       </svg>
                       <span>Saqlanmoqda...</span>
                     </>
                   ) : (
-                    <span>Kassani Saqlash</span>
+                    <>
+                      <FaWallet size={14} />
+                      <span>Kassani Saqlash</span>
+                    </>
                   )}
                 </button>
               </form>
             </div>
+
+            {/* Bottom gradient line */}
+            <div style={{
+              position: 'absolute', bottom: 0, left: '20%', right: '20%', height: '1px',
+              background: 'linear-gradient(90deg, transparent, rgba(16,185,129,0.3), transparent)',
+              borderRadius: '999px'
+            }} />
           </div>
         </div>
       )}
