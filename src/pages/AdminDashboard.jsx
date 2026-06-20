@@ -1860,9 +1860,16 @@ const AdminDashboard = () => {
                     </h3>
                     <p className="text-xxs text-red-400 font-semibold">{stats.blockedUsersCount} bloklangan</p>
                   </div>
-                  <div className="w-12 h-12 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-400">
+                  <button
+                    onClick={() => {
+                      setUserToEdit({ isAddMode: true });
+                      setIsEditUserModalOpen(true);
+                    }}
+                    title="Yangi mijoz qo'shish"
+                    className="w-12 h-12 rounded-xl bg-zinc-800 border border-zinc-700 hover:bg-emerald-500/10 hover:border-emerald-500/30 hover:text-emerald-400 flex items-center justify-center text-zinc-400 transition-all duration-300 active:scale-95 cursor-pointer shrink-0"
+                  >
                     <FaUserPlus size={20} />
-                  </div>
+                  </button>
                 </div>
               </div>
 
