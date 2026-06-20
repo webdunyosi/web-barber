@@ -2083,26 +2083,10 @@ const AdminDashboard = () => {
                     </div>
                   </div>
 
-                  {/* Quick Actions (Tezkor Amallar) */}
-                  <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm space-y-4">
-                    <h4 className="text-lg font-bold flex items-center gap-2">
-                      <FaBolt size={16} className="text-emerald-500" />
-                      Tezkor Amallar
-                    </h4>
-                    <p className="text-xs text-zinc-400">
-                      Tizim bo'yicha tezkor boshqaruv amallari va yangiliklar yuborish.
-                    </p>
-                    <Link
-                      to="/admin?tab=notifications"
-                      className="w-full inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all text-center border-none cursor-pointer"
-                    >
-                      <FaBell size={13} />
-                      <span>Yangilik / Bildirishnoma Yuborish</span>
-                    </Link>
-                  </div>
                 </div>
               </div>
             </div>
+
           )}
 
           {/* ================= TAB: STATISTICS ================= */}
