@@ -49,7 +49,8 @@ import {
   FaPaperclip,
   FaLink,
   FaGift,
-  FaCheckCircle
+  FaCheckCircle,
+  FaPlus
 } from 'react-icons/fa';
 import { formatPrice } from '../utils/format';
 import { getNotificationsApi, createNotificationApi, deleteNotificationApi, updateNotificationApi, createUserApi } from '../utils/api';
@@ -1804,9 +1805,14 @@ const AdminDashboard = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0 ml-2">
-                    <FaDollarSign size={20} />
-                  </div>
+                  <button
+                    onClick={() => setIsKassaModalOpen(true)}
+                    title="Kunlik pul qo'shish"
+                    className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/40 hover:scale-105 active:scale-95 flex flex-col items-center justify-center text-emerald-400 shrink-0 ml-2 transition-all duration-300 cursor-pointer gap-0.5"
+                  >
+                    <FaPlus size={11} />
+                    <span className="text-[8px] font-extrabold uppercase tracking-wide leading-none">Qo'sh</span>
+                  </button>
                 </div>
 
                 {/* Weekly income */}

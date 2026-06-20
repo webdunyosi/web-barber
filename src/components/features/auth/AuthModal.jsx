@@ -288,14 +288,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
           </button>
         </form>
 
-        {/* Admin Login helper hint */}
-        {activeTab === 'login' && (
-          <div className="mt-6 text-center text-xs text-white/30 border-t border-white/5 pt-4">
-            <div className="bg-white/5 border border-white/5 rounded-xl py-2.5 px-4 inline-block backdrop-blur-md">
-              <span className="font-semibold text-emerald-400">Admin test:</span> +998 99 999 99 99 <span className="mx-1.5 text-white/10">|</span> <span className="font-semibold text-emerald-400">parol:</span> admin
-            </div>
-          </div>
-        )}
+
       </div>
     </div>
   );
