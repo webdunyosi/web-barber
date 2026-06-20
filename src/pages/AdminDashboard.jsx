@@ -33,7 +33,21 @@ import {
   FaArrowLeft,
   FaYoutube,
   FaPlay,
-  FaBookOpen
+  FaBookOpen,
+  FaChartLine,
+  FaCut,
+  FaWallet,
+  FaCog,
+  FaBolt,
+  FaBullhorn,
+  FaHistory,
+  FaImage,
+  FaComment,
+  FaClock,
+  FaMoneyBillWave,
+  FaCreditCard,
+  FaPaperclip,
+  FaLink
 } from 'react-icons/fa';
 import { formatPrice } from '../utils/format';
 import { getNotificationsApi, createNotificationApi, deleteNotificationApi } from '../utils/api';
@@ -1148,7 +1162,19 @@ const AdminDashboard = () => {
                                     <div className="flex flex-wrap items-center gap-2 mt-1 text-[11px] text-zinc-500 font-medium">
                                       <span className="font-bold text-emerald-400">{formatPrice(booking.servicePrice)} so'm</span>
                                       <span className="text-zinc-800">•</span>
-                                      <span>{booking.paymentMethod === 'cash' ? '💵 Joyida' : '💳 Karta'}</span>
+                                      <span className="inline-flex items-center gap-1">
+                                        {booking.paymentMethod === 'cash' ? (
+                                          <>
+                                            <FaMoneyBillWave size={10} className="text-emerald-400" />
+                                            <span>Joyida</span>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <FaCreditCard size={10} className="text-sky-400" />
+                                            <span>Karta</span>
+                                          </>
+                                        )}
+                                      </span>
                                       {booking.paymentMethod !== 'cash' && (
                                         <>
                                           <span className="text-zinc-800">•</span>
@@ -1157,12 +1183,19 @@ const AdminDashboard = () => {
                                               onClick={() => setZoomedReceipt(booking.receipt)}
                                               className="text-emerald-400 hover:text-emerald-300 font-bold hover:underline cursor-pointer bg-transparent border-none p-0 inline-flex items-center gap-0.5"
                                             >
-                                              📎 Chekni ko'rish
+                                              <FaPaperclip size={10} />
+                                              <span>Chekni ko'rish</span>
                                             </button>
                                           ) : booking.receipt ? (
-                                            <span className="text-sky-400 font-bold">💬 Telegramda</span>
+                                            <span className="text-sky-400 font-bold inline-flex items-center gap-1">
+                                              <FaComment size={10} />
+                                              <span>Telegramda</span>
+                                            </span>
                                           ) : (
-                                            <span className="text-zinc-600 font-bold">💳 Cheksiz</span>
+                                            <span className="text-zinc-650 font-bold inline-flex items-center gap-1">
+                                              <FaCreditCard size={10} />
+                                              <span>Cheksiz</span>
+                                            </span>
                                           )}
                                         </>
                                       )}
@@ -1674,7 +1707,7 @@ const AdminDashboard = () => {
                 {/* Recent Pending Bookings */}
                 <div className="lg:col-span-2 bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm">
                   <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
-                    <span className="text-amber-500">⏳</span>
+                    <FaHistory size={16} className="text-amber-500" />
                     Kutilayotgan yangi buyurtmalar
                   </h4>
 
@@ -1696,21 +1729,24 @@ const AdminDashboard = () => {
                                 </span>
                               )}
                               {booking.paymentMethod === 'cash' ? (
-                                <span className="text-[10px] font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-400 px-2 py-0.5 rounded-full select-none">
-                                  💵 Joyida to'lash
+                                <span className="text-[10px] font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-400 px-2 py-0.5 rounded-full select-none inline-flex items-center gap-1">
+                                  <FaMoneyBillWave size={10} />
+                                  <span>Joyida to'lash</span>
                                 </span>
                               ) : (
                                 booking.receipt && (
                                   booking.receipt.includes('res.cloudinary.com') ? (
                                     <button
                                       onClick={() => setZoomedReceipt(booking.receipt)}
-                                      className="text-[10px] font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full hover:bg-emerald-500/25 transition-colors cursor-pointer select-none"
+                                      className="text-[10px] font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full hover:bg-emerald-500/25 transition-colors cursor-pointer select-none inline-flex items-center gap-1"
                                     >
-                                      🖼 Chekni ko'rish
+                                      <FaImage size={10} />
+                                      <span>Chekni ko'rish</span>
                                     </button>
                                   ) : (
-                                    <span className="text-[10px] font-semibold bg-zinc-800 border border-zinc-700/60 text-zinc-400 px-2 py-0.5 rounded-full select-none">
-                                      💬 Chek Telegramda
+                                    <span className="text-[10px] font-semibold bg-zinc-800 border border-zinc-700/60 text-zinc-400 px-2 py-0.5 rounded-full select-none inline-flex items-center gap-1">
+                                      <FaComment size={10} />
+                                      <span>Chek Telegramda</span>
                                     </span>
                                   )
                                 )
@@ -1719,8 +1755,9 @@ const AdminDashboard = () => {
                             <div className="text-xs text-zinc-400 mt-1">
                               <span>{booking.serviceName}</span> • <span className="text-emerald-400 font-bold">{formatPrice(booking.servicePrice)} so'm</span>
                             </div>
-                            <div className="text-xs text-zinc-500 mt-0.5">
-                              ⏱ {booking.date} soat {booking.time}
+                            <div className="text-xs text-zinc-500 mt-0.5 flex items-center gap-1">
+                              <FaClock size={10} />
+                              <span>{booking.date} soat {booking.time}</span>
                             </div>
                           </div>
                           
@@ -1832,7 +1869,7 @@ const AdminDashboard = () => {
                   {/* Kassa (Offline Daromad) Kiritish Form */}
                   <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm space-y-4">
                     <h4 className="text-lg font-bold flex items-center gap-2">
-                      <span className="text-emerald-500">💵</span>
+                      <FaWallet size={16} className="text-emerald-500" />
                       Kunlik Kassa Kiritish
                     </h4>
                     <p className="text-xs text-zinc-400">
@@ -1963,7 +2000,7 @@ const AdminDashboard = () => {
                   <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm flex flex-col justify-between">
                     <div>
                       <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
-                        <span className="text-emerald-500">⚙️</span>
+                        <FaCog size={16} className="text-emerald-500" />
                         Tizim Xulosasi
                       </h4>
                       
@@ -2000,7 +2037,7 @@ const AdminDashboard = () => {
                   {/* Quick Actions (Tezkor Amallar) */}
                   <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm space-y-4">
                     <h4 className="text-lg font-bold flex items-center gap-2">
-                      <span className="text-emerald-500">⚡</span>
+                      <FaBolt size={16} className="text-emerald-500" />
                       Tezkor Amallar
                     </h4>
                     <p className="text-xs text-zinc-400">
@@ -2028,7 +2065,7 @@ const AdminDashboard = () => {
                 {/* 1. Revenue Chart (2/3 width) */}
                 <div className="lg:col-span-2 bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm">
                   <h4 className="text-lg font-bold mb-6 flex items-center gap-2">
-                    <span className="text-emerald-500">📈</span>
+                    <FaChartLine size={18} className="text-emerald-500" />
                     Kunlik Tushum Trendlari (Oxirgi 7 kun)
                   </h4>
                   
@@ -2125,7 +2162,7 @@ const AdminDashboard = () => {
                 <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm flex flex-col justify-between">
                   <div>
                     <h4 className="text-lg font-bold mb-6 flex items-center gap-2">
-                      <span className="text-emerald-500">💈</span>
+                      <FaCut size={18} className="text-emerald-500" />
                       Eng Ommabop Xizmatlar
                     </h4>
 
@@ -2535,7 +2572,7 @@ const AdminDashboard = () => {
                 <div className="xl:col-span-1 bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm space-y-4">
                   <div>
                     <h4 className="text-lg font-bold flex items-center gap-2">
-                      <span className="text-emerald-500">📢</span>
+                      <FaBullhorn size={18} className="text-emerald-500" />
                       Yangi bildirishnoma yuborish
                     </h4>
                     <p className="text-xs text-zinc-400 mt-1">
@@ -2657,7 +2694,10 @@ const AdminDashboard = () => {
                           <span>Yuborilmoqda...</span>
                         </>
                       ) : (
-                        <span>Bildirishnomani Yuborish 🚀</span>
+                        <span className="flex items-center gap-1.5">
+                          <span>Bildirishnomani Yuborish</span>
+                          <FaPaperPlane size={11} />
+                        </span>
                       )}
                     </button>
                   </form>
@@ -2667,7 +2707,7 @@ const AdminDashboard = () => {
                 <div className="xl:col-span-2 bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm space-y-4 min-h-[400px]">
                   <div>
                     <h4 className="text-lg font-bold flex items-center gap-2">
-                      <span className="text-emerald-500">📜</span>
+                      <FaHistory size={16} className="text-emerald-500" />
                       Yuborilgan bildirishnomalar tarixi
                     </h4>
                     <p className="text-xs text-zinc-400 mt-1">
@@ -2714,8 +2754,9 @@ const AdminDashboard = () => {
 
                               {/* Link action Badge */}
                               {notif.linkType !== 'none' && (
-                                <span className="inline-flex items-center gap-1 text-[9px] font-bold bg-purple-500/10 border border-purple-500/25 text-purple-400 px-2 py-0.5 rounded-full select-none">
-                                  🔗 Tugma: {notif.linkType}
+                                <span className="inline-flex items-center gap-1.5 text-[9px] font-bold bg-purple-500/10 border border-purple-500/25 text-purple-400 px-2 py-0.5 rounded-full select-none">
+                                  <FaLink size={8} />
+                                  <span>Tugma: {notif.linkType}</span>
                                 </span>
                               )}
                               
@@ -2735,8 +2776,9 @@ const AdminDashboard = () => {
                             )}
 
                             {notif.imageUrl && (
-                              <div className="text-[10px] text-emerald-400/80 font-semibold truncate max-w-md">
-                                🖼 Banner URL: <a href={notif.imageUrl} target="_blank" rel="noreferrer" className="underline hover:text-emerald-300">{notif.imageUrl}</a>
+                              <div className="text-[10px] text-emerald-400/80 font-semibold truncate max-w-md inline-flex items-center gap-1">
+                                <FaImage size={10} />
+                                <span>Banner URL: <a href={notif.imageUrl} target="_blank" rel="noreferrer" className="underline hover:text-emerald-300">{notif.imageUrl}</a></span>
                               </div>
                             )}
                           </div>
