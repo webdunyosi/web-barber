@@ -2125,7 +2125,7 @@ const AdminDashboard = () => {
                 <div className="lg:col-span-2 bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 backdrop-blur-sm">
                   <h4 className="text-lg font-bold mb-6 flex items-center gap-2">
                     <FaChartLine size={18} className="text-emerald-500" />
-                    Kunlik Tushum Trendlari (Oxirgi 7 kun)
+                    Kunlik daromad grafigi (Oxirgi 7 kun)
                   </h4>
                   
                   {/* SVG Chart */}
