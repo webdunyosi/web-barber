@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { FaPhone, FaPaperPlane, FaSignOutAlt, FaUserShield, FaSignInAlt, FaEdit, FaSave, FaTimes, FaSpinner, FaCut, FaRobot, FaChevronRight, FaCalendarCheck, FaGift, FaBell, FaBookOpen, FaPlay, FaYoutube, FaArrowLeft } from 'react-icons/fa';
+import { FaPhone, FaPaperPlane, FaSignOutAlt, FaUserShield, FaSignInAlt, FaEdit, FaSave, FaTimes, FaSpinner, FaCut, FaRobot, FaChevronRight, FaCalendarCheck, FaGift, FaBell, FaBookOpen, FaPlay, FaYoutube, FaArrowLeft, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import AuthModal from '../components/features/auth/AuthModal';
 
@@ -28,13 +28,15 @@ const ProfilePage = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Initialize edit fields when user info changes or edit mode is toggled
   useEffect(() => {
     if (user) {
-      setEditedName(user.name || '');
-      setEditedTelegram(user.telegram || '');
+      setEditedName('');
+      setEditedTelegram('');
       setEditedPassword('');
+      setShowPassword(false);
     }
   }, [user, view]);
 
@@ -57,10 +59,8 @@ const ProfilePage = () => {
 
   const handleSaveProfile = async (e) => {
     e.preventDefault();
-    if (!editedName.trim()) {
-      setErrorMessage('Ism kiritilishi majburiy!');
-      return;
-    }
+    const finalName = editedName.trim() || user?.name || '';
+    const finalTelegram = editedTelegram.trim() || user?.telegram || '';
     
     setIsUpdating(true);
     setErrorMessage('');
@@ -68,8 +68,8 @@ const ProfilePage = () => {
     
     try {
       const updateData = {
-        name: editedName,
-        telegram: editedTelegram
+        name: finalName,
+        telegram: finalTelegram
       };
       if (editedPassword.trim()) {
         updateData.password = editedPassword;
@@ -138,7 +138,7 @@ const ProfilePage = () => {
           /* Editing Form Card */
           <div className="bg-zinc-900/70 border border-white/10 rounded-3xl p-5 backdrop-blur-xl shadow-xl space-y-4">
             <h3 className="text-base font-bold text-white mb-2 border-b border-white/5 pb-3">Profilni tahrirlash</h3>
-            <form onSubmit={handleSaveProfile} className="space-y-4">
+            <form onSubmit={handleSaveProfile} className="space-y-4" autoComplete="off">
               {/* Name Input */}
               <div>
                 <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Ism</label>
@@ -148,8 +148,8 @@ const ProfilePage = () => {
                   onChange={(e) => setEditedName(e.target.value)}
                   disabled={isUpdating}
                   className="w-full bg-zinc-800/80 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
-                  placeholder="Ismingizni kiriting"
-                  required
+                  placeholder={user?.name || "Ismingizni kiriting"}
+                  autoComplete="off"
                 />
               </div>
 
@@ -176,7 +176,8 @@ const ProfilePage = () => {
                     }}
                     disabled={isUpdating}
                     className="w-full bg-zinc-800/80 border border-white/10 rounded-xl pl-7 pr-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
-                    placeholder="username"
+                    placeholder={user?.telegram || "username"}
+                    autoComplete="off"
                   />
                 </div>
               </div>
@@ -184,14 +185,24 @@ const ProfilePage = () => {
               {/* Password Input */}
               <div>
                 <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Yangi parol (ixtiyoriy)</label>
-                <input
-                  type="password"
-                  value={editedPassword}
-                  onChange={(e) => setEditedPassword(e.target.value)}
-                  disabled={isUpdating}
-                  className="w-full bg-zinc-800/80 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
-                  placeholder="Bo'sh qoldirilsa o'zgarmaydi"
-                />
+                <div className="relative flex items-center">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={editedPassword}
+                    onChange={(e) => setEditedPassword(e.target.value)}
+                    disabled={isUpdating}
+                    className="w-full bg-zinc-800/80 border border-white/10 rounded-xl pl-3 pr-10 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                    placeholder="Bo'sh qoldirilsa o'zgarmaydi"
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-zinc-500 hover:text-white transition-colors cursor-pointer"
+                  >
+                    {showPassword ? <FaEyeSlash size={14} /> : <FaEye size={14} />}
+                  </button>
+                </div>
               </div>
 
               {/* Action Buttons */}
@@ -328,29 +339,43 @@ const ProfilePage = () => {
           <>
             {/* User Info Header Card */}
             <div className="bg-zinc-900/70 border border-white/10 rounded-3xl p-4 sm:p-5 backdrop-blur-xl shadow-xl">
-              <div className="flex items-center gap-4">
-                <div className="relative group shrink-0">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-300 animate-pulse"></div>
-                  <img 
-                    src="/avatar/men.png" 
-                    alt="Profile" 
-                    className="relative w-16 h-16 rounded-full object-cover border-2 border-emerald-500/30" 
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-base sm:text-lg font-bold tracking-wide text-white truncate">{user?.name}</h3>
-                  <p className="text-xs text-zinc-400 font-medium mt-0.5">{user?.phone}</p>
-                  <div className="mt-2 flex items-center gap-2">
-                    <span className="inline-block px-2.5 py-0.5 text-[9px] font-extrabold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
-                      {isAdmin ? 'Sartarosh (Admin)' : 'Mijoz'}
-                    </span>
-                    {user?.loyaltyPoints > 0 && (
-                      <span className="inline-block px-2.5 py-0.5 text-[9px] font-extrabold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">
-                        ⭐ premium
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4 min-w-0 flex-1">
+                  <div className="relative group shrink-0">
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-300 animate-pulse"></div>
+                    <img 
+                      src="/avatar/men.png" 
+                      alt="Profile" 
+                      className="relative w-16 h-16 rounded-full object-cover border-2 border-emerald-500/30" 
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base sm:text-lg font-bold tracking-wide text-white truncate">{user?.name}</h3>
+                    <p className="text-xs text-zinc-400 font-medium mt-0.5">{user?.phone}</p>
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="inline-block px-2.5 py-0.5 text-[9px] font-extrabold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
+                        {isAdmin ? 'Sartarosh (Admin)' : 'Mijoz'}
                       </span>
-                    )}
+                      {user?.loyaltyPoints > 0 && (
+                        <span className="inline-block px-2.5 py-0.5 text-[9px] font-extrabold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">
+                          ⭐ premium
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
+
+                {/* Edit profile header shortcut */}
+                <button
+                  onClick={() => {
+                    setView('edit');
+                    setErrorMessage('');
+                  }}
+                  className="w-10 h-10 rounded-xl bg-zinc-800/80 hover:bg-zinc-850 border border-white/5 hover:border-emerald-500/30 text-zinc-400 hover:text-emerald-400 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 shrink-0"
+                  title="Profilni tahrirlash"
+                >
+                  <FaEdit size={16} />
+                </button>
               </div>
             </div>
 

@@ -18,6 +18,7 @@ import {
   FaSearch,
   FaTimesCircle,
   FaEye,
+  FaEyeSlash,
   FaSync,
   FaSignOutAlt,
   FaTachometerAlt,
@@ -392,6 +393,8 @@ const AdminDashboard = () => {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [editedName, setEditedName] = useState('');
   const [editedTelegram, setEditedTelegram] = useState('');
+  const [editedPassword, setEditedPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isProfileUpdating, setIsProfileUpdating] = useState(false);
   const [profileError, setProfileError] = useState('');
   const [profileSuccess, setProfileSuccess] = useState('');
@@ -484,27 +487,31 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (user) {
-      setEditedName(user.name || '');
-      setEditedTelegram(user.telegram || '');
+      setEditedName('');
+      setEditedTelegram('');
+      setEditedPassword('');
+      setShowPassword(false);
     }
   }, [user, isEditingProfile]);
 
   const handleSaveAdminProfile = async (e) => {
     e.preventDefault();
-    if (!editedName.trim()) {
-      setProfileError('Ism kiritilishi majburiy!');
-      return;
-    }
+    const finalName = editedName.trim() || user?.name || '';
+    const finalTelegram = editedTelegram.trim() || user?.telegram || '';
     
     setIsProfileUpdating(true);
     setProfileError('');
     setProfileSuccess('');
     
     try {
-      await updateProfile({
-        name: editedName,
-        telegram: editedTelegram
-      });
+      const updateData = {
+        name: finalName,
+        telegram: finalTelegram
+      };
+      if (editedPassword.trim()) {
+        updateData.password = editedPassword;
+      }
+      await updateProfile(updateData);
       setProfileSuccess('Profil muvaffaqiyatli yangilandi!');
       setIsEditingProfile(false);
       setTimeout(() => setProfileSuccess(''), 3000);
@@ -2583,7 +2590,7 @@ const AdminDashboard = () => {
                   /* Editing Form Card */
                   <div className="bg-zinc-900/70 border border-white/10 rounded-3xl p-5 backdrop-blur-xl shadow-xl space-y-4">
                     <h3 className="text-base font-bold text-white mb-2 border-b border-white/5 pb-3">Profilni tahrirlash</h3>
-                    <form onSubmit={handleSaveAdminProfile} className="space-y-4">
+                    <form onSubmit={handleSaveAdminProfile} className="space-y-4" autoComplete="off">
                       {/* Name Input */}
                       <div>
                         <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Ism</label>
@@ -2593,8 +2600,8 @@ const AdminDashboard = () => {
                           onChange={(e) => setEditedName(e.target.value)}
                           disabled={isProfileUpdating}
                           className="w-full bg-zinc-800/80 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
-                          placeholder="Ismingizni kiriting"
-                          required
+                          placeholder={user?.name || "Ismingizni kiriting"}
+                          autoComplete="off"
                         />
                       </div>
 
@@ -2621,8 +2628,32 @@ const AdminDashboard = () => {
                             }}
                             disabled={isProfileUpdating}
                             className="w-full bg-zinc-800/80 border border-white/10 rounded-xl pl-7 pr-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
-                            placeholder="username"
+                            placeholder={user?.telegram || "username"}
+                            autoComplete="off"
                           />
+                        </div>
+                      </div>
+
+                      {/* Password Input */}
+                      <div>
+                        <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Yangi parol (ixtiyoriy)</label>
+                        <div className="relative flex items-center">
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            value={editedPassword}
+                            onChange={(e) => setEditedPassword(e.target.value)}
+                            disabled={isProfileUpdating}
+                            className="w-full bg-zinc-850/80 border border-white/10 rounded-xl pl-3 pr-10 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                            placeholder="Bo'sh qoldirilsa o'zgarmaydi"
+                            autoComplete="new-password"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute inset-y-0 right-0 flex items-center pr-3 text-zinc-500 hover:text-white transition-colors cursor-pointer border-none bg-transparent"
+                          >
+                            {showPassword ? <FaEyeSlash size={14} /> : <FaEye size={14} />}
+                          </button>
                         </div>
                       </div>
 

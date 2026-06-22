@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
-import { FaTimes, FaUser, FaPhone, FaPaperPlane, FaLock } from 'react-icons/fa';
+import { FaTimes, FaUser, FaPhone, FaPaperPlane, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const AuthModal = ({ isOpen, onClose, onSuccess }) => {
   const { login, register } = useAuth();
@@ -13,6 +13,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -253,14 +254,21 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
                 <FaLock size={13} />
               </span>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={(e) => handleChange('password', e.target.value)}
                 placeholder="••••••••"
-                className={`w-full pl-11 pr-4 py-3.5 bg-white/5 border rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 placeholder:text-white/20 text-sm hover:bg-white/10 ${
+                className={`w-full pl-11 pr-11 py-3.5 bg-white/5 border rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 placeholder:text-white/20 text-sm hover:bg-white/10 ${
                   errors.password ? 'border-red-500/50 focus:ring-red-500/10 focus:border-red-500' : 'border-white/10'
                 }`}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-white/40 hover:text-white transition-colors cursor-pointer"
+              >
+                {showPassword ? <FaEyeSlash size={14} /> : <FaEye size={14} />}
+              </button>
             </div>
             {errors.password && <p className="mt-1.5 text-xs text-red-400 pl-1 text-left">{errors.password}</p>}
           </div>
