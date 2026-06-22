@@ -1,16 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { FaPhone, FaPaperPlane, FaSignOutAlt, FaUserShield, FaSignInAlt, FaEdit, FaSave, FaTimes, FaSpinner, FaCut, FaRobot, FaChevronRight, FaCalendarCheck, FaGift, FaBell } from 'react-icons/fa';
+import { FaPhone, FaPaperPlane, FaSignOutAlt, FaUserShield, FaSignInAlt, FaEdit, FaSave, FaTimes, FaSpinner, FaCut, FaRobot, FaChevronRight, FaCalendarCheck, FaGift, FaBell, FaBookOpen, FaPlay, FaYoutube, FaArrowLeft } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import AuthModal from '../components/features/auth/AuthModal';
+
+const userTutorialsList = [
+  {
+    id: 'user-tut1',
+    youtubeId: 'dQw4w9WgXcQ',
+    title: "1-Dars: Navbatga yozilish va vaqt tanlash",
+    description: "Sartaroshlik xizmatini tanlash, taqvimdan qulay kun va bo'sh soatni band qilish yo'riqnomasi.",
+    duration: "01:30"
+  },
+  {
+    id: 'user-tut2',
+    youtubeId: 'dQw4w9WgXcQ',
+    title: "2-Dars: To'lov qilish va chekni yuklash",
+    description: "Karta orqali to'lov o'tkazish, to'lov skrinshotini tizimga yuklash va buyurtmani yuborish.",
+    duration: "02:10"
+  },
+  {
+    id: 'user-tut3',
+    youtubeId: 'dQw4w9WgXcQ',
+    title: "3-Dars: Sadoqat kartasi va premium imkoniyatlar",
+    description: "Har bir tashrifda ball yig'ish, bepul 10-xizmatga ega bo'lish va undan foydalanish qoidalari.",
+    duration: "01:45"
+  }
+];
 
 const ProfilePage = () => {
   const { user, isAuthenticated, isAdmin, logout, updateProfile } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Profile editing state
-  const [isEditing, setIsEditing] = useState(false);
+  // Profile view state
+  const [view, setView] = useState('profile'); // 'profile' | 'edit' | 'tutorials'
+  const [playingVideoId, setPlayingVideoId] = useState(null);
   const [editedName, setEditedName] = useState('');
   const [editedTelegram, setEditedTelegram] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
@@ -23,7 +48,7 @@ const ProfilePage = () => {
       setEditedName(user.name || '');
       setEditedTelegram(user.telegram || '');
     }
-  }, [user, isEditing]);
+  }, [user, view]);
 
   // Notifications unread count
   const [unreadCount, setUnreadCount] = useState(0);
@@ -59,7 +84,7 @@ const ProfilePage = () => {
         telegram: editedTelegram
       });
       setSuccessMessage('Profil muvaffaqiyatli yangilandi!');
-      setIsEditing(false);
+      setView('profile');
       // Clear success message after 3 seconds
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
@@ -117,7 +142,7 @@ const ProfilePage = () => {
           </div>
         )}
 
-        {isEditing ? (
+        {view === 'edit' ? (
           /* Editing Form Card */
           <div className="bg-zinc-900/70 border border-white/10 rounded-3xl p-5 backdrop-blur-xl shadow-xl space-y-4">
             <h3 className="text-base font-bold text-white mb-2 border-b border-white/5 pb-3">Profilni tahrirlash</h3>
@@ -180,7 +205,7 @@ const ProfilePage = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setIsEditing(false)}
+                  onClick={() => setView('profile')}
                   disabled={isUpdating}
                   className="flex-1 bg-zinc-800 border border-white/5 hover:bg-zinc-750 text-gray-300 font-semibold py-2.5 px-3 rounded-xl transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer text-xs disabled:opacity-50"
                 >
@@ -189,6 +214,109 @@ const ProfilePage = () => {
                 </button>
               </div>
             </form>
+          </div>
+        ) : view === 'tutorials' ? (
+          /* Video Tutorials Card */
+          <div className="space-y-6 animate-fadeIn pb-6">
+            {/* Back button */}
+            <button
+              onClick={() => {
+                setView('profile');
+                setPlayingVideoId(null);
+              }}
+              className="flex items-center gap-2 text-zinc-400 hover:text-white transition-all duration-300 font-bold text-xs uppercase tracking-wider bg-zinc-900 border border-zinc-850 px-4 py-2.5 rounded-xl active:scale-95 cursor-pointer hover:border-emerald-500/30 hover:text-emerald-400"
+            >
+              <FaArrowLeft size={10} />
+              <span>Ortga qaytish</span>
+            </button>
+
+            {/* Title Header */}
+            <div className="space-y-1">
+              <h3 className="text-2xl font-extrabold bg-gradient-to-r from-emerald-400 to-green-500 bg-clip-text text-transparent uppercase tracking-wider">
+                Ilovadan foydalanish darsliklari
+              </h3>
+              <p className="text-zinc-400 text-xs">Ilova imkoniyatlaridan to'g'ri foydalanish bo'yicha video darsliklar</p>
+            </div>
+
+            {/* Summary / Text Guidance */}
+            <div className="bg-zinc-900/40 border border-zinc-800 rounded-3xl p-5 backdrop-blur-sm space-y-4">
+              <h4 className="font-bold text-white text-sm flex items-center gap-2">
+                <FaBookOpen className="text-emerald-500" size={16} />
+                Foydalanuvchi Qo'llanmasi:
+              </h4>
+              <div className="grid grid-cols-1 gap-3 text-xs text-zinc-400 leading-relaxed">
+                <div className="bg-zinc-950/40 border border-zinc-900 p-3.5 rounded-2xl space-y-1">
+                  <span className="font-bold text-zinc-200 block text-xs">1. Joy band qilish:</span>
+                  <span>Kerakli sartaroshlik xizmatini tanlang, taqvimdan kun va soatni belgilang, so'ngra shaxsiy ma'lumotlaringizni to'ldiring.</span>
+                </div>
+                <div className="bg-zinc-950/40 border border-zinc-900 p-3.5 rounded-2xl space-y-1">
+                  <span className="font-bold text-zinc-200 block text-xs">2. To'lovni tasdiqlash:</span>
+                  <span>Onlayn karta orqali to'lov qilib, chek rasmini tizimga yuklang. Sartarosh to'lovni tekshirib, buyurtmangizni tasdiqlaydi.</span>
+                </div>
+                <div className="bg-zinc-950/40 border border-zinc-900 p-3.5 rounded-2xl space-y-1">
+                  <span className="font-bold text-zinc-200 block text-xs">3. Sadoqat dasturi (Cashback):</span>
+                  <span>Har safar buyurtmangiz tasdiqlanganda 1 ball to'playsiz. Ballar soni 9 taga yetganda, keyingi 10-tashrif bepul bo'ladi.</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Video Lessons List */}
+            <div className="space-y-4">
+              {userTutorialsList.map((tutorial) => (
+                <div key={tutorial.id} className="bg-zinc-900/50 border border-zinc-800/80 rounded-3xl overflow-hidden hover:border-zinc-700 transition-all duration-300 group flex flex-col justify-between">
+                  {/* Thumbnail container */}
+                  <div className="relative aspect-video bg-zinc-950 flex items-center justify-center overflow-hidden border-b border-zinc-850">
+                    {playingVideoId === tutorial.id ? (
+                      <iframe
+                        src={`https://www.youtube.com/embed/${tutorial.youtubeId}?autoplay=1&rel=0`}
+                        title={tutorial.title}
+                        className="w-full h-full border-0 absolute inset-0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    ) : (
+                      <>
+                        <img 
+                          src={`https://img.youtube.com/vi/${tutorial.youtubeId}/hqdefault.jpg`} 
+                          alt={tutorial.title}
+                          className="w-full h-full object-cover opacity-60 group-hover:scale-105 group-hover:opacity-40 transition-all duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent opacity-60"></div>
+                        <button
+                          onClick={() => setPlayingVideoId(tutorial.id)}
+                          className="absolute w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 scale-95 group-hover:scale-105 transition-all duration-300 cursor-pointer animate-pulse z-10"
+                        >
+                          <FaPlay className="ml-1 text-zinc-950" size={16} />
+                        </button>
+                        <span className="absolute bottom-3 right-3 bg-zinc-950/80 border border-white/10 px-2 py-0.5 rounded-md text-[10px] font-bold font-mono">
+                          {tutorial.duration}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  {/* Body */}
+                  <div className="p-5 space-y-2 flex-1 flex flex-col justify-between">
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-white text-sm group-hover:text-emerald-400 transition-colors">
+                        {tutorial.title}
+                      </h4>
+                      <p className="text-zinc-400 text-xs leading-normal">
+                        {tutorial.description}
+                      </p>
+                    </div>
+                    <a
+                      href={`https://www.youtube.com/watch?v=${tutorial.youtubeId}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center justify-center gap-1.5 w-full bg-zinc-800 hover:bg-zinc-750 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all active:scale-[0.98] border border-white/5 mt-4"
+                    >
+                      <FaYoutube className="text-red-500" size={14} />
+                      <span>YouTubeda tomosha qilish</span>
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         ) : (
           /* Profile Details \ Navigation lists (App style) */
@@ -218,17 +346,6 @@ const ProfilePage = () => {
                     )}
                   </div>
                 </div>
-                {/* Edit profile header shortcut */}
-                <button
-                  onClick={() => {
-                    setIsEditing(true);
-                    setErrorMessage('');
-                  }}
-                  className="w-10 h-10 rounded-xl bg-zinc-800/80 hover:bg-zinc-855 border border-white/5 hover:border-emerald-500/30 text-zinc-400 hover:text-emerald-400 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 shrink-0"
-                  title="Profilni tahrirlash"
-                >
-                  <FaEdit size={16} />
-                </button>
               </div>
             </div>
 
@@ -250,7 +367,7 @@ const ProfilePage = () => {
                 {/* Item 2: Mening bildirishnomalarim */}
                 <button
                   onClick={() => navigate('/bildirishnomalar')}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                  className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans border-b border-white/5"
                 >
                   <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                     <FaBell size={16} />
@@ -265,41 +382,63 @@ const ProfilePage = () => {
                   
                   <FaChevronRight size={12} className="text-zinc-500 ml-1" />
                 </button>
-              </div>
-            </div>
 
-            {/* Guruh 2: Sozlamalar va Ma'lumotlar (List Group 2) */}
-            <div className="bg-zinc-900/70 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-xl">
-              <div className="p-1">
-                {/* Item 1: Telegram Username */}
-                <div className="w-full flex items-center gap-3 px-4 py-3 border-b border-white/5 text-left">
-                  <div className="w-9 h-9 rounded-xl bg-zinc-800/80 border border-white/5 flex items-center justify-center text-gray-400">
-                    <FaPaperPlane size={14} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="block text-[10px] text-gray-400 uppercase tracking-wider">Telegram username</span>
-                    <span className="text-sm font-semibold text-zinc-200 truncate block">
-                      {user?.telegram ? `@${user.telegram}` : 'Kiritilmagan'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Item 2: Profil Sozlamalari (Tahrirlash) */}
+                {/* Item 3: Ilovadan foydalanish darsliklari */}
                 <button
-                  onClick={() => {
-                    setIsEditing(true);
-                    setErrorMessage('');
-                  }}
+                  onClick={() => setView('tutorials')}
                   className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
                 >
-                  <div className="w-9 h-9 rounded-xl bg-zinc-800/80 border border-white/5 flex items-center justify-center text-gray-400">
-                    <FaEdit size={14} />
+                  <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                    <FaBookOpen size={16} />
                   </div>
-                  <span className="flex-1 text-sm font-semibold text-zinc-200">Profil ma'lumotlarini tahrirlash</span>
+                  <span className="flex-1 text-sm font-semibold text-zinc-200">Ilovadan foydalanish darsliklari</span>
                   <FaChevronRight size={12} className="text-zinc-500" />
                 </button>
               </div>
             </div>
+
+            {/* Guruh 2: Sartarosh bilan bog'lanish (Barber Contact Info) */}
+            <div className="bg-zinc-900/70 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-xl">
+              <div className="p-1">
+                {/* Item 1: Telegram Link */}
+                <a
+                  href="https://t.me/behruz_sartarosh"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-all duration-200 border-b border-white/5 text-left font-sans cursor-pointer group"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 group-hover:bg-sky-500/20 group-hover:border-sky-500/30 flex items-center justify-center text-sky-400 transition-colors duration-200 shrink-0">
+                    <FaPaperPlane size={14} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="block text-[10px] text-gray-400 uppercase tracking-wider">Sartarosh Telegram</span>
+                    <span className="text-sm font-semibold text-zinc-200 truncate block group-hover:text-white transition-colors duration-200">
+                      @behruz_sartarosh
+                    </span>
+                  </div>
+                  <FaChevronRight size={12} className="text-zinc-500 group-hover:text-zinc-300 transition-colors duration-200" />
+                </a>
+
+                {/* Item 2: Phone Link */}
+                <a
+                  href="tel:+998509988965"
+                  className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-all duration-200 text-left font-sans cursor-pointer group"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 group-hover:bg-emerald-500/20 group-hover:border-emerald-500/30 flex items-center justify-center text-emerald-400 transition-colors duration-200 shrink-0">
+                    <FaPhone size={14} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="block text-[10px] text-gray-400 uppercase tracking-wider">Sartarosh Telefon</span>
+                    <span className="text-sm font-semibold text-zinc-200 truncate block group-hover:text-white transition-colors duration-200">
+                      +998 (50) 998-89-65
+                    </span>
+                  </div>
+                  <FaChevronRight size={12} className="text-zinc-500 group-hover:text-zinc-300 transition-colors duration-200" />
+                </a>
+              </div>
+            </div>
+
+
 
             {/* Guruh 3: Admin Paneli (agar foydalanuvchi Admin bo'lsa) */}
             {isAdmin && (
