@@ -4,7 +4,7 @@ import axios from 'axios';
 const API_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ? 'http://localhost:5000/api'
   : 'https://web-barber-backend.onrender.com/api';
-const TELEGRAM_BOT_TOKEN = '8598199374:AAF2PC8uHwutdUg0VU9Q8jeypNzV3egcOXk';
+const TELEGRAM_BOT_TOKEN = '8598199374:AAHCRZz4YlkuY-FhfLKZPMYL4wi0gyXUK0g';
 const TELEGRAM_CHAT_ID = '-1004413936957';
 
 // Set this to false when connecting to the real deployed backend

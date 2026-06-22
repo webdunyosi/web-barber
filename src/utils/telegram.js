@@ -5,7 +5,7 @@
 
 import { formatPrice } from './format';
 
-const TELEGRAM_BOT_TOKEN = '8598199374:AAGgeu2SY9n7zuVhU7HNC4zhdQrwooDpPfc';
+const TELEGRAM_BOT_TOKEN = '8598199374:AAHCRZz4YlkuY-FhfLKZPMYL4wi0gyXUK0g';
 const TELEGRAM_CHAT_ID = '-1004413936957';
 
 // Check if credentials are configured
