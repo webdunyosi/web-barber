@@ -100,12 +100,12 @@ const LoyaltyPage = () => {
               <FaSignInAlt size={16} />
               <span>Tizimga kirish</span>
             </button>
-            
-            <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
           </div>
         )}
 
       </div>
+      
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </div>
   );
 };
