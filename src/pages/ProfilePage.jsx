@@ -24,6 +24,7 @@ const ProfilePage = () => {
   const [playingVideoId, setPlayingVideoId] = useState(null);
   const [editedName, setEditedName] = useState('');
   const [editedTelegram, setEditedTelegram] = useState('');
+  const [editedPassword, setEditedPassword] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -33,6 +34,7 @@ const ProfilePage = () => {
     if (user) {
       setEditedName(user.name || '');
       setEditedTelegram(user.telegram || '');
+      setEditedPassword('');
     }
   }, [user, view]);
 
@@ -65,10 +67,14 @@ const ProfilePage = () => {
     setSuccessMessage('');
     
     try {
-      await updateProfile({
+      const updateData = {
         name: editedName,
         telegram: editedTelegram
-      });
+      };
+      if (editedPassword.trim()) {
+        updateData.password = editedPassword;
+      }
+      await updateProfile(updateData);
       setSuccessMessage('Profil muvaffaqiyatli yangilandi!');
       setView('profile');
       // Clear success message after 3 seconds
@@ -173,6 +179,19 @@ const ProfilePage = () => {
                     placeholder="username"
                   />
                 </div>
+              </div>
+
+              {/* Password Input */}
+              <div>
+                <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Yangi parol (ixtiyoriy)</label>
+                <input
+                  type="password"
+                  value={editedPassword}
+                  onChange={(e) => setEditedPassword(e.target.value)}
+                  disabled={isUpdating}
+                  className="w-full bg-zinc-800/80 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                  placeholder="Bo'sh qoldirilsa o'zgarmaydi"
+                />
               </div>
 
               {/* Action Buttons */}

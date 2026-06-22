@@ -809,6 +809,10 @@ export const updateProfileApi = async (token, userData) => {
     }
     users[userIndex].telegram = cleanTelegram.trim();
     
+    if (userData.password && userData.password.trim() !== '') {
+      users[userIndex].password = userData.password;
+    }
+    
     saveMockUsers(users);
     
     return {
