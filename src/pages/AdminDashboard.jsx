@@ -289,10 +289,10 @@ const ProfileSkeleton = () => (
 const tutorialsList = [
   {
     id: 'tut1',
-    youtubeId: '8hIGqS66e8g',
-    title: "Web barber shop botiga kirish",
-    description: "Web barber shop botiga kirish va undan foydalanish bo'yicha to'liq video yo'riqnoma.",
-    duration: "00:46"
+    youtubeId: '6HPVo-X5qg0',
+    title: "Botga kirish",
+    description: "Botga kirish va dasturni ochishning 3 xil usuli bo'yicha yo'riqnoma.",
+    duration: "01:00"
   }
 ];
 
