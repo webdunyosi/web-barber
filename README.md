@@ -107,7 +107,7 @@ The system sends two types of messages:
 👤 *Mijoz:* Javohir Aliyev
 📱 *Telefon:* +998 90 123 45 67
 
-💈 *Xizmat:* Klassik soch olish
+💈 *Xizmat:* Soch olish
 💰 *Narx:* 50 000 so'm
 
 📅 *Sana:* 10.02.2026
@@ -123,7 +123,7 @@ The system sends two types of messages:
 👤 *Mijoz:* Javohir Aliyev
 📱 *Telefon:* +998 90 123 45 67
 
-💈 *Xizmat:* Klassik soch olish
+💈 *Xizmat:* Soch olish
 💰 *To'langan summa:* 50 000 so'm
 
 💳 *Karta:* **** **** **** 9012

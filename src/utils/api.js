@@ -75,7 +75,7 @@ const initMockDb = () => {
         name: 'Jasur Aliyev',
         phone: '+998 90 123 45 67',
         telegram_user: 'jasur_ali',
-        serviceName: 'Soch kesish (Classic)',
+        serviceName: 'Soch olish',
         servicePrice: 50000,
         date: '06.06.2026',
         time: '11:00',

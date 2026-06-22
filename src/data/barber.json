@@ -2,8 +2,8 @@
   "services": [
     {
       "id": 1,
-      "name": "Klassik soch olish",
-      "name_en": "Classic Haircut",
+      "name": "Soch olish",
+      "name_en": "Haircut",
       "price": 50000,
       "duration": 30,
       "image_url": "/styles/1.png"
