@@ -426,6 +426,11 @@ const AdminDashboard = () => {
   const [blockReason, setBlockReason] = useState('');
   const [isSavingSchedule, setIsSavingSchedule] = useState(false);
 
+  // Blocked Schedules Custom Calendar States & Refs
+  const [isBlockCalendarOpen, setIsBlockCalendarOpen] = useState(false);
+  const [blockCalendarViewDate, setBlockCalendarViewDate] = useState(new Date());
+  const blockCalendarRef = useRef(null);
+
   const handleEditUserSave = async (userId, updatedUserData) => {
     try {
       if (userId) {
@@ -878,6 +883,62 @@ const AdminDashboard = () => {
       toast.error(err.response?.data?.error || err.message || 'Blokdan chiqarishda xatolik yuz berdi');
     }
   };
+
+  const getBlockCalendarDays = () => {
+    const year = blockCalendarViewDate.getFullYear();
+    const month = blockCalendarViewDate.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    let firstDayIndex = new Date(year, month, 1).getDay() - 1;
+    if (firstDayIndex === -1) firstDayIndex = 6; // Sunday = index 6
+
+    const days = [];
+    for (let i = 0; i < firstDayIndex; i++) {
+      days.push(null);
+    }
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push(new Date(year, month, i));
+    }
+    return days;
+  };
+
+  const handleBlockPrevMonth = () => {
+    setBlockCalendarViewDate(new Date(blockCalendarViewDate.getFullYear(), blockCalendarViewDate.getMonth() - 1, 1));
+  };
+
+  const handleBlockNextMonth = () => {
+    setBlockCalendarViewDate(new Date(blockCalendarViewDate.getFullYear(), blockCalendarViewDate.getMonth() + 1, 1));
+  };
+
+  const handleBlockDateSelect = (date) => {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    setSelectedBlockDate(`${yyyy}-${mm}-${dd}`);
+    setIsBlockCalendarOpen(false);
+  };
+
+  const formatSelectedBlockDateUz = () => {
+    if (!selectedBlockDate) return "Sanani tanlang";
+    const parts = selectedBlockDate.split('-');
+    if (parts.length === 3) {
+      const year = parts[0];
+      const monthIndex = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      return `${day}-${kassaMonths[monthIndex]} ${year}-yil`;
+    }
+    return selectedBlockDate;
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (blockCalendarRef.current && !blockCalendarRef.current.contains(event.target)) {
+        setIsBlockCalendarOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     loadData();
@@ -2788,18 +2849,130 @@ const AdminDashboard = () => {
 
                   <form onSubmit={handleSaveBlockedSchedule} className="space-y-4">
                     {/* Date Input */}
-                    <div className="flex flex-col">
+                    <div className="flex flex-col relative" ref={blockCalendarRef}>
                       <label className="text-xs font-semibold text-zinc-400 mb-1.5 pl-1">
                         Sanani tanlang
                       </label>
-                      <input
-                        type="date"
-                        min={new Date().toISOString().split('T')[0]}
-                        value={selectedBlockDate}
-                        onChange={(e) => setSelectedBlockDate(e.target.value)}
-                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 text-sm text-white"
-                        required
-                      />
+                      <button
+                        type="button"
+                        onClick={() => setIsBlockCalendarOpen(!isBlockCalendarOpen)}
+                        className={`w-full flex items-center justify-between px-4 py-3 bg-white/5 border rounded-xl outline-none text-sm text-white cursor-pointer transition-all duration-300 ${
+                          isBlockCalendarOpen
+                            ? 'border-emerald-500 ring-4 ring-emerald-500/10'
+                            : 'border-white/10 hover:border-emerald-500/50 hover:bg-white/10'
+                        }`}
+                      >
+                        <span className={`${selectedBlockDate ? 'text-white' : 'text-zinc-500'} font-medium`}>
+                          {formatSelectedBlockDateUz()}
+                        </span>
+                        <svg
+                          className={`w-5 h-5 text-emerald-400 transition-transform duration-300 ${isBlockCalendarOpen ? 'rotate-180' : ''}`}
+                          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+
+                      {/* Dropdown Custom Calendar Popup */}
+                      {isBlockCalendarOpen && (
+                        <div
+                          className="absolute top-full left-0 right-0 mt-2 z-50 animate-fadeIn"
+                          style={{
+                            background: 'linear-gradient(145deg, rgba(18,20,26,0.98), rgba(12,14,19,0.99))',
+                            border: '1px solid rgba(255,255,255,0.09)',
+                            borderRadius: '18px',
+                            boxShadow: '0 20px 60px rgba(0,0,0,0.8), 0 0 30px rgba(16,185,129,0.1)',
+                            backdropFilter: 'blur(30px)',
+                            padding: '16px',
+                          }}
+                        >
+                          {/* Calendar Header */}
+                          <div className="flex items-center justify-between mb-3">
+                            <button
+                              type="button"
+                              onClick={handleBlockPrevMonth}
+                              className="p-1.5 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-white cursor-pointer transition-all duration-250 active:scale-90"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                              </svg>
+                            </button>
+                            <h4 className="text-xs font-bold text-white uppercase tracking-widest">
+                              {kassaMonths[blockCalendarViewDate.getMonth()]} {blockCalendarViewDate.getFullYear()}
+                            </h4>
+                            <button
+                              type="button"
+                              onClick={handleBlockNextMonth}
+                              className="p-1.5 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-white cursor-pointer transition-all duration-250 active:scale-90"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </button>
+                          </div>
+
+                          {/* Weekdays */}
+                          <div className="grid grid-cols-7 gap-1 mb-2 pb-2 border-b border-white/5">
+                            {kassaDaysOfWeek.map(day => (
+                              <div key={day} className="text-center text-[10px] font-bold py-0.5 text-emerald-400 select-none">
+                                {day}
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Days Grid */}
+                          <div className="grid grid-cols-7 gap-1">
+                            {getBlockCalendarDays().map((date, index) => {
+                              if (!date) return <div key={`empty-${index}`} className="h-8" />;
+                              
+                              const dateToCheck = new Date(date);
+                              dateToCheck.setHours(0, 0, 0, 0);
+                              const today = new Date();
+                              today.setHours(0, 0, 0, 0);
+                              
+                              const isDisabled = dateToCheck < today;
+                              const isSunday = date.getDay() === 0;
+                              
+                              const isSelected = selectedBlockDate && date.toDateString() === parseToDate(selectedBlockDate).toDateString();
+                              const isToday = date.toDateString() === new Date().toDateString();
+                              
+                              return (
+                                <button
+                                  key={index}
+                                  type="button"
+                                  disabled={isDisabled}
+                                  onClick={() => handleBlockDateSelect(date)}
+                                  className={`h-8 w-full flex items-center justify-center rounded-lg text-xs font-semibold transition-all duration-200 ${
+                                    isDisabled
+                                      ? 'text-zinc-700 cursor-not-allowed opacity-40'
+                                      : 'cursor-pointer hover:bg-emerald-500/10'
+                                  }`}
+                                  style={{
+                                    background: isSelected
+                                      ? 'linear-gradient(135deg, #10b981, #059669)'
+                                      : isToday && !isSelected ? 'rgba(16,185,129,0.12)' : 'transparent',
+                                    border: isSelected
+                                      ? '1px solid rgba(52,211,153,0.5)'
+                                      : isToday && !isSelected ? '1px solid rgba(52,211,153,0.4)' : '1px solid transparent',
+                                    color: isSelected
+                                      ? 'white'
+                                      : isDisabled
+                                      ? ''
+                                      : isSunday
+                                      ? '#ef4444'
+                                      : isToday
+                                      ? '#34d399'
+                                      : 'rgba(255,255,255,0.75)',
+                                    boxShadow: isSelected ? '0 4px 15px rgba(16,185,129,0.35)' : 'none',
+                                  }}
+                                >
+                                  {date.getDate()}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Block Type Tabs */}
