@@ -5,7 +5,7 @@ const API_URL = typeof window !== 'undefined' && (window.location.hostname === '
   ? 'http://localhost:5000/api'
   : 'https://web-barber-backend.onrender.com/api';
 const TELEGRAM_BOT_TOKEN = '8598199374:AAF2PC8uHwutdUg0VU9Q8jeypNzV3egcOXk';
-const TELEGRAM_CHAT_ID = '5414733748';
+const TELEGRAM_CHAT_ID = '-1004413936957';
 
 // Set this to false when connecting to the real deployed backend
 const MOCK_MODE = false;

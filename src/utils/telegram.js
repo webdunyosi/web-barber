@@ -6,7 +6,7 @@
 import { formatPrice } from './format';
 
 const TELEGRAM_BOT_TOKEN = '8598199374:AAGgeu2SY9n7zuVhU7HNC4zhdQrwooDpPfc';
-const TELEGRAM_CHAT_ID = '5414733748';
+const TELEGRAM_CHAT_ID = '-1004413936957';
 
 // Check if credentials are configured
 const isTelegramConfigured = () => {
