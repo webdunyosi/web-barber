@@ -7,24 +7,10 @@ import AuthModal from '../components/features/auth/AuthModal';
 const userTutorialsList = [
   {
     id: 'user-tut1',
-    youtubeId: 'dQw4w9WgXcQ',
-    title: "1-Dars: Navbatga yozilish va vaqt tanlash",
-    description: "Sartaroshlik xizmatini tanlash, taqvimdan qulay kun va bo'sh soatni band qilish yo'riqnomasi.",
-    duration: "01:30"
-  },
-  {
-    id: 'user-tut2',
-    youtubeId: 'dQw4w9WgXcQ',
-    title: "2-Dars: To'lov qilish va chekni yuklash",
-    description: "Karta orqali to'lov o'tkazish, to'lov skrinshotini tizimga yuklash va buyurtmani yuborish.",
-    duration: "02:10"
-  },
-  {
-    id: 'user-tut3',
-    youtubeId: 'dQw4w9WgXcQ',
-    title: "3-Dars: Sadoqat kartasi va premium imkoniyatlar",
-    description: "Har bir tashrifda ball yig'ish, bepul 10-xizmatga ega bo'lish va undan foydalanish qoidalari.",
-    duration: "01:45"
+    youtubeId: '8hIGqS66e8g',
+    title: "Web barber shop botiga kirish",
+    description: "Web barber shop botiga kirish va undan foydalanish bo'yicha to'liq video yo'riqnoma.",
+    duration: "00:46"
   }
 ];
 

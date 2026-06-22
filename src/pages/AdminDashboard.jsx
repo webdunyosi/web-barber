@@ -289,24 +289,10 @@ const ProfileSkeleton = () => (
 const tutorialsList = [
   {
     id: 'tut1',
-    youtubeId: 'dQw4w9WgXcQ',
-    title: "1-Dars: Statistika va Moliyaviy Tushumlar",
-    description: "Ushbu darsda kunlik/haftalik daromadlarni hisoblash, ommabop xizmatlar tahlilini ko'rish va kassa (offline) daromadlarini kiritishni o'rganasiz.",
-    duration: "02:45"
-  },
-  {
-    id: 'tut2',
-    youtubeId: 'dQw4w9WgXcQ',
-    title: "2-Dars: Buyurtmalar va To'lovlar Nazorati",
-    description: "Mijozlar tomonidan band qilingan vaqtlar va yuborilgan to'lov cheklarini tasdiqlash yoki rad etish, shuningdek buyurtmalarni o'chirish logikasini o'rganish.",
-    duration: "03:15"
-  },
-  {
-    id: 'tut3',
-    youtubeId: 'dQw4w9WgXcQ',
-    title: "3-Dars: Mijozlarni Bloklash va Tahrirlash",
-    description: "Foydalanuvchilarning shaxsiy ma'lumotlarini tahrirlash, ularning sodiqlik cashback ballarini ko'tarish/tushirish va nofaol mijozlarni bloklash jarayonlari.",
-    duration: "01:50"
+    youtubeId: '8hIGqS66e8g',
+    title: "Web barber shop botiga kirish",
+    description: "Web barber shop botiga kirish va undan foydalanish bo'yicha to'liq video yo'riqnoma.",
+    duration: "00:46"
   }
 ];
 
