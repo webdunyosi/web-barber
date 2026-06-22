@@ -53,7 +53,7 @@ import {
   FaPlus
 } from 'react-icons/fa';
 import { formatPrice } from '../utils/format';
-import { getNotificationsApi, createNotificationApi, deleteNotificationApi, updateNotificationApi, createUserApi } from '../utils/api';
+import { getNotificationsApi, createNotificationApi, deleteNotificationApi, updateNotificationApi, createUserApi, getBlockedSchedulesApi, saveBlockedScheduleApi, deleteBlockedScheduleApi } from '../utils/api';
 import ConfirmModal from '../components/common/ConfirmModal';
 import EditUserModal from '../components/common/EditUserModal';
 
@@ -416,6 +416,15 @@ const AdminDashboard = () => {
 
   // Kassa Entry modal state
   const [isKassaModalOpen, setIsKassaModalOpen] = useState(false);
+
+  // Blocked Schedules States
+  const [blockedSchedules, setBlockedSchedules] = useState([]);
+  const [isSchedulesLoading, setIsSchedulesLoading] = useState(false);
+  const [selectedBlockDate, setSelectedBlockDate] = useState('');
+  const [blockAllDay, setBlockAllDay] = useState(true);
+  const [selectedBlockTimes, setSelectedBlockTimes] = useState([]);
+  const [blockReason, setBlockReason] = useState('');
+  const [isSavingSchedule, setIsSavingSchedule] = useState(false);
 
   const handleEditUserSave = async (userId, updatedUserData) => {
     try {
@@ -808,6 +817,68 @@ const AdminDashboard = () => {
     }
   };
 
+  const loadBlockedSchedules = async () => {
+    setIsSchedulesLoading(true);
+    try {
+      const data = await getBlockedSchedulesApi(token);
+      setBlockedSchedules(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Ish jadvalini yuklashda xatolik:', error);
+      toast.error('Ish jadvalini yuklashda xatolik yuz berdi');
+    } finally {
+      setIsSchedulesLoading(false);
+    }
+  };
+
+  const handleSaveBlockedSchedule = async (e) => {
+    e.preventDefault();
+    if (!selectedBlockDate) {
+      toast.error("Iltimos, sanani tanlang!");
+      return;
+    }
+    if (!blockAllDay && selectedBlockTimes.length === 0) {
+      toast.error("Kamida bitta soatni tanlashingiz kerak!");
+      return;
+    }
+
+    setIsSavingSchedule(true);
+    try {
+      const formattedDate = formatToDbDate(selectedBlockDate); // "YYYY-MM-DD" -> "DD.MM.YYYY"
+      const payload = {
+        date: formattedDate,
+        blockedTimes: blockAllDay ? ['ALL'] : selectedBlockTimes,
+        reason: blockReason.trim()
+      };
+
+      await saveBlockedScheduleApi(token, payload);
+      toast.success("Ish jadvali muvaffaqiyatli saqlandi! 📅");
+      
+      // Clear form
+      setSelectedBlockDate('');
+      setBlockAllDay(true);
+      setSelectedBlockTimes([]);
+      setBlockReason('');
+      
+      await loadBlockedSchedules();
+    } catch (err) {
+      console.error('Ish jadvalini saqlashda xato:', err);
+      toast.error(err.response?.data?.error || err.message || 'Saqlashda xatolik yuz berdi');
+    } finally {
+      setIsSavingSchedule(false);
+    }
+  };
+
+  const handleDeleteBlockedSchedule = async (date) => {
+    try {
+      await deleteBlockedScheduleApi(token, date);
+      toast.success("Kun muvaffaqiyatli blokdan chiqarildi! 🔓");
+      await loadBlockedSchedules();
+    } catch (err) {
+      console.error('Blokdan chiqarishda xato:', err);
+      toast.error(err.response?.data?.error || err.message || 'Blokdan chiqarishda xatolik yuz berdi');
+    }
+  };
+
   useEffect(() => {
     loadData();
   }, []);
@@ -816,6 +887,8 @@ const AdminDashboard = () => {
     setSearchTerm('');
     if (activeTab === 'notifications') {
       loadNotifications();
+    } else if (activeTab === 'schedule') {
+      loadBlockedSchedules();
     }
   }, [activeTab]);
 
@@ -2590,12 +2663,24 @@ const AdminDashboard = () => {
                         {/* Item 3: Dastur Yo'riqnomalari (Tutorials) */}
                         <button
                           onClick={() => setSearchParams({ tab: 'tutorials' })}
-                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer border-b border-white/5 text-left font-sans"
                         >
                           <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                             <FaBookOpen size={16} />
                           </div>
                           <span className="flex-1 text-sm font-semibold text-zinc-200">Boshqaruv tizimi darsliklari</span>
+                          <FaChevronRight size={12} className="text-zinc-500" />
+                        </button>
+
+                        {/* Item 4: Ish jadvali boshqaruvi */}
+                        <button
+                          onClick={() => setSearchParams({ tab: 'schedule' })}
+                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                        >
+                          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <FaCalendarAlt size={16} />
+                          </div>
+                          <span className="flex-1 text-sm font-semibold text-zinc-200">Ish jadvali boshqaruvi</span>
                           <FaChevronRight size={12} className="text-zinc-500" />
                         </button>
                       </div>
@@ -2659,6 +2744,267 @@ const AdminDashboard = () => {
                     </p>
                   </>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* ================= TAB: SCHEDULE ================= */}
+          {activeTab === 'schedule' && (
+            <div className="space-y-6 max-w-6xl mx-auto animate-fadeIn pb-12">
+              {/* Back Button Header Card */}
+              <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4 backdrop-blur-sm flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setSearchParams({ tab: 'profile' })}
+                    className="p-2.5 rounded-xl border border-white/10 bg-zinc-800/50 hover:bg-zinc-800 hover:border-emerald-500/30 text-emerald-400 hover:text-white transition-all cursor-pointer flex items-center justify-center active:scale-95 shrink-0 shadow-sm"
+                    title="Profilga qaytish"
+                  >
+                    <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-bold leading-tight text-white">Ish jadvali boshqaruvi</h3>
+                    <p className="text-zinc-400 text-xs mt-0.5">Sartaroshning band kunlarini va soatlarini sozlash</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Form & List Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                {/* 1. Form Card */}
+                <div className="lg:col-span-5 relative bg-zinc-950/70 border border-white/10 rounded-3xl p-6 backdrop-blur-xl shadow-2xl overflow-hidden space-y-5 z-10">
+                  <div className="absolute top-0 -left-4 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -z-10"></div>
+                  
+                  <div>
+                    <h4 className="text-base font-bold flex items-center gap-2 text-white">
+                      <FaCalendarAlt size={16} className="text-emerald-500 animate-pulse" />
+                      <span>Vaqtni band qilish (Bloklash)</span>
+                    </h4>
+                    <p className="text-xs text-zinc-450 mt-1 leading-normal">
+                      Sartaroshning shaxsiy ishi chiqib qolganda, ma'lum sana yoki soatlarni band qibly qo'yish uchun foydalaniladi. Mijozlar bu vaqtlarda buyurtma bera olmaydilar.
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleSaveBlockedSchedule} className="space-y-4">
+                    {/* Date Input */}
+                    <div className="flex flex-col">
+                      <label className="text-xs font-semibold text-zinc-400 mb-1.5 pl-1">
+                        Sanani tanlang
+                      </label>
+                      <input
+                        type="date"
+                        min={new Date().toISOString().split('T')[0]}
+                        value={selectedBlockDate}
+                        onChange={(e) => setSelectedBlockDate(e.target.value)}
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 text-sm text-white"
+                        required
+                      />
+                    </div>
+
+                    {/* Block Type Tabs */}
+                    <div className="flex flex-col">
+                      <label className="text-xs font-semibold text-zinc-400 mb-1.5 pl-1">
+                        Bloklash turi
+                      </label>
+                      <div className="grid grid-cols-2 gap-2 bg-zinc-900/80 p-1 rounded-xl border border-white/5">
+                        <button
+                          type="button"
+                          onClick={() => setBlockAllDay(true)}
+                          className={`py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                            blockAllDay
+                              ? 'bg-emerald-500 text-zinc-950 shadow-md shadow-emerald-500/20'
+                              : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                          }`}
+                        >
+                          Butun kunni bloklash
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setBlockAllDay(false)}
+                          className={`py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                            !blockAllDay
+                              ? 'bg-emerald-500 text-zinc-950 shadow-md shadow-emerald-500/20'
+                              : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                          }`}
+                        >
+                          Ma'lum soatlarni bloklash
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Time Slots Chips (Conditional) */}
+                    {!blockAllDay && (
+                      <div className="flex flex-col animate-fadeIn">
+                        <label className="text-xs font-semibold text-zinc-400 mb-1.5 pl-1">
+                          Bloklanadigan soatlarni tanlang
+                        </label>
+                        <div className="grid grid-cols-4 gap-1.5 p-2 bg-zinc-900/50 rounded-xl border border-white/5 max-h-48 overflow-y-auto custom-scrollbar">
+                          {[
+                            "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", 
+                            "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", 
+                            "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", 
+                            "18:00", "18:30"
+                          ].map((time) => {
+                            const isSelected = selectedBlockTimes.includes(time);
+                            return (
+                              <button
+                                type="button"
+                                key={time}
+                                onClick={() => {
+                                  if (isSelected) {
+                                    setSelectedBlockTimes(selectedBlockTimes.filter(t => t !== time));
+                                  } else {
+                                    setSelectedBlockTimes([...selectedBlockTimes, time]);
+                                  }
+                                }}
+                                className={`py-1.5 px-2 rounded-lg text-[10px] sm:text-xs font-bold border transition-all text-center cursor-pointer ${
+                                  isSelected
+                                    ? 'bg-emerald-500/20 border-emerald-400/50 text-emerald-400 shadow-inner'
+                                    : 'bg-zinc-800/40 border-white/5 text-zinc-400 hover:border-white/10 hover:text-white'
+                                }`}
+                              >
+                                {time}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Reason input */}
+                    <div className="flex flex-col">
+                      <label className="text-xs font-semibold text-zinc-400 mb-1.5 pl-1">
+                        Sababi (Ixtiyoriy)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Masalan: Shaxsiy yumushlar, dam olish"
+                        value={blockReason}
+                        onChange={(e) => setBlockReason(e.target.value)}
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 text-sm text-white"
+                      />
+                    </div>
+
+                    {/* Submit Button */}
+                    <button
+                      type="submit"
+                      disabled={isSavingSchedule}
+                      className="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-zinc-950 font-bold py-3 px-4 rounded-xl shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-sm disabled:opacity-50 cursor-pointer"
+                    >
+                      {isSavingSchedule ? (
+                        <>
+                          <FaSpinner size={16} className="animate-spin" />
+                          <span>Saqlanmoqda...</span>
+                        </>
+                      ) : (
+                        <>
+                          <FaSave size={16} />
+                          <span>Bloklashni saqlash</span>
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </div>
+
+                {/* 2. Blocked List Card */}
+                <div className="lg:col-span-7 bg-zinc-950/40 border border-white/10 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-4">
+                  <div>
+                    <h4 className="text-base font-bold text-white flex items-center gap-2">
+                      <FaHistory size={16} className="text-emerald-500" />
+                      <span>Faol bloklangan kunlar va soatlar</span>
+                    </h4>
+                    <p className="text-xs text-zinc-450 mt-1 leading-normal">
+                      Belgilangan kunlar va vaqtlar ro'yxati. Ularni o'chirish orqali yana mijozlar uchun ochiq qilishingiz mumkin.
+                    </p>
+                  </div>
+
+                  {isSchedulesLoading ? (
+                    <div className="space-y-3 py-6">
+                      {[...Array(3)].map((_, i) => (
+                        <div key={i} className="h-16 w-full bg-zinc-900/30 border border-zinc-800/40 rounded-2xl animate-pulse"></div>
+                      ))}
+                    </div>
+                  ) : blockedSchedules.length === 0 ? (
+                    <div className="text-center py-12 border border-dashed border-white/10 rounded-2xl bg-zinc-900/10">
+                      <FaCalendarAlt size={32} className="mx-auto text-zinc-600 mb-3 animate-bounce" />
+                      <p className="text-sm font-semibold text-zinc-400">Hozirda band qilingan kunlar/soatlar mavjud emas</p>
+                      <p className="text-xs text-zinc-500 mt-1">Bloklash uchun chap tomondagi formadan foydalaning</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar pr-1">
+                      {blockedSchedules
+                        .sort((a, b) => {
+                          const dateA = a.date.split('.').reverse().join('-');
+                          const dateB = b.date.split('.').reverse().join('-');
+                          return new Date(dateA) - new Date(dateB);
+                        })
+                        .map((schedule) => {
+                          const isAllDay = schedule.blockedTimes.includes('ALL');
+                          return (
+                            <div
+                              key={schedule._id || schedule.id}
+                              className="group flex items-center justify-between p-4 bg-zinc-900/60 border border-white/5 rounded-2xl hover:border-emerald-500/30 hover:bg-zinc-900 transition-all duration-300"
+                            >
+                              <div className="space-y-2 flex-1 min-w-0 pr-4">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <span className="text-sm font-bold text-white tracking-wide">
+                                    {formatBookingDate(schedule.date)}
+                                  </span>
+                                  {isAllDay ? (
+                                    <span className="px-2 py-0.5 text-[10px] font-extrabold rounded-full bg-red-500/10 text-red-400 border border-red-500/20 uppercase tracking-wide">
+                                      Butun kun
+                                    </span>
+                                  ) : (
+                                    <span className="px-2 py-0.5 text-[10px] font-extrabold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wide">
+                                      {schedule.blockedTimes.length} ta soat
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* List of specific blocked times */}
+                                {!isAllDay && (
+                                  <div className="flex flex-wrap gap-1 mt-1">
+                                    {schedule.blockedTimes.map((t) => (
+                                      <span key={t} className="px-1.5 py-0.5 bg-zinc-800 text-zinc-300 rounded text-[9px] font-mono border border-white/5">
+                                        {t}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Reason text if provided */}
+                                {schedule.reason && (
+                                  <p className="text-xs text-zinc-400 italic font-medium truncate mt-1">
+                                    Sabab: <span className="text-zinc-300">{schedule.reason}</span>
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* Delete Button */}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  triggerConfirm({
+                                    title: "Bloklashni o'chirish",
+                                    message: `${schedule.date} kunidagi bloklashni o'chirmoqchimisiz? Ushbu vaqtlar mijozlar uchun yana bron qilishga ochiq bo'ladi.`,
+                                    confirmText: "Ha, o'chirish",
+                                    cancelText: "Yo'q, bekor qilish",
+                                    type: "danger",
+                                    onConfirm: () => handleDeleteBlockedSchedule(schedule.date)
+                                  });
+                                }}
+                                className="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 shrink-0"
+                                title="Blokdan chiqarish"
+                              >
+                                <FaTrash size={12} />
+                              </button>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}

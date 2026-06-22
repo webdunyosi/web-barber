@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getBookedTimes } from '../../../utils/api';
+import { getBookedTimes, getBlockedDaysApi } from '../../../utils/api';
 import { FaCalendarAlt, FaClock } from 'react-icons/fa';
 
 const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, onSelectTime }) => {
   const [bookedTimes, setBookedTimes] = useState([]);
+  const [blockedDays, setBlockedDays] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   
   // Kalendar uchun state'lar
@@ -14,6 +15,19 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
 
   const months = ['Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'];
   const daysOfWeek = ['Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh', 'Ya']; // Dushanbadan boshlanadi
+
+  // Fetch blocked days from backend
+  useEffect(() => {
+    const fetchBlockedDays = async () => {
+      try {
+        const days = await getBlockedDaysApi();
+        setBlockedDays(days || []);
+      } catch (err) {
+        console.error('Error fetching blocked days:', err);
+      }
+    };
+    fetchBlockedDays();
+  }, []);
 
   // YANGI QO'SHILGAN QISM: Boshlang'ich holatda bugungi sanani tanlab qo'yish
   useEffect(() => {
@@ -95,7 +109,20 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
   const isDateDisabled = (date) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return date < today; // O'tib ketgan kunlarni tanlab bo'lmaydi
+    
+    // O'tib ketgan kunlarni tanlab bo'lmaydi
+    if (date < today) return true;
+
+    // Yakshanba dam olish kuni
+    if (date.getDay() === 0) return true;
+
+    // Sartarosh tomonidan blocklangan kunlarni tekshirish
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const formattedDate = `${day}.${month}.${year}`;
+
+    return blockedDays.includes(formattedDate);
   };
 
   // Tanlangan sanani formatlash (tugmada ko'rsatish uchun)

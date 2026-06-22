@@ -957,4 +957,68 @@ export const updateNotificationApi = async (token, notificationId, notificationD
   return response.data;
 };
 
+// ================= BLOCKED SCHEDULES API =================
+export const getBlockedSchedulesApi = async (token) => {
+  if (MOCK_MODE) {
+    return JSON.parse(localStorage.getItem('barber_blocked_schedules') || '[]');
+  }
+
+  const response = await axios.get(`${API_URL}/admin/blocked-schedules`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const saveBlockedScheduleApi = async (token, scheduleData) => {
+  if (MOCK_MODE) {
+    const schedules = JSON.parse(localStorage.getItem('barber_blocked_schedules') || '[]');
+    const index = schedules.findIndex(s => s.date === scheduleData.date);
+    const newSchedule = {
+      _id: 'block_' + Date.now(),
+      date: scheduleData.date,
+      blockedTimes: scheduleData.blockedTimes,
+      reason: scheduleData.reason || '',
+      createdAt: new Date().toISOString()
+    };
+    if (index !== -1) {
+      schedules[index] = newSchedule;
+    } else {
+      schedules.push(newSchedule);
+    }
+    localStorage.setItem('barber_blocked_schedules', JSON.stringify(schedules));
+    return { success: true, schedule: newSchedule };
+  }
+
+  const response = await axios.post(`${API_URL}/admin/blocked-schedules`, scheduleData, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const deleteBlockedScheduleApi = async (token, date) => {
+  if (MOCK_MODE) {
+    let schedules = JSON.parse(localStorage.getItem('barber_blocked_schedules') || '[]');
+    schedules = schedules.filter(s => s.date !== date);
+    localStorage.setItem('barber_blocked_schedules', JSON.stringify(schedules));
+    return { success: true, message: 'Sana blokdan chiqarildi' };
+  }
+
+  const response = await axios.delete(`${API_URL}/admin/blocked-schedules/by-date/${date}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const getBlockedDaysApi = async () => {
+  if (MOCK_MODE) {
+    const schedules = JSON.parse(localStorage.getItem('barber_blocked_schedules') || '[]');
+    return schedules
+      .filter(s => s.blockedTimes.includes('ALL'))
+      .map(s => s.date);
+  }
+
+  const response = await axios.get(`${API_URL}/appointments/blocked-days`);
+  return response.data;
+};
+
 
