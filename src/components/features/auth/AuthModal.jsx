@@ -293,5 +293,5 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
     </div>
   );
 };
-
+ 
 export default AuthModal;
