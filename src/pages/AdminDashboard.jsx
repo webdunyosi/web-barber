@@ -392,6 +392,7 @@ const AdminDashboard = () => {
   // Profile editing states
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [editedName, setEditedName] = useState('');
+  const [editedPhone, setEditedPhone] = useState('');
   const [editedTelegram, setEditedTelegram] = useState('');
   const [editedPassword, setEditedPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -488,6 +489,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     if (user) {
       setEditedName('');
+      setEditedPhone('');
       setEditedTelegram('');
       setEditedPassword('');
       setShowPassword(false);
@@ -498,6 +500,7 @@ const AdminDashboard = () => {
     e.preventDefault();
     const finalName = editedName.trim() || user?.name || '';
     const finalTelegram = editedTelegram.trim() || user?.telegram || '';
+    const finalPhone = editedPhone.trim() || user?.phone || '';
     
     setIsProfileUpdating(true);
     setProfileError('');
@@ -506,6 +509,7 @@ const AdminDashboard = () => {
     try {
       const updateData = {
         name: finalName,
+        phone: finalPhone,
         telegram: finalTelegram
       };
       if (editedPassword.trim()) {
@@ -2605,12 +2609,20 @@ const AdminDashboard = () => {
                         />
                       </div>
 
-                      {/* Phone Input (Readonly) */}
+                      {/* Phone Input */}
                       <div>
                         <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Telefon raqam</label>
-                        <div className="flex items-center gap-2 bg-zinc-850/50 border border-white/5 rounded-xl px-3 py-2.5 text-zinc-500 text-sm">
-                          <FaPhone size={12} className="text-zinc-650" />
-                          <span>{user?.phone}</span>
+                        <div className="relative flex items-center">
+                          <FaPhone size={12} className="absolute left-3 text-zinc-500 z-10" />
+                          <input
+                            type="text"
+                            value={editedPhone}
+                            onChange={(e) => setEditedPhone(e.target.value)}
+                            disabled={isProfileUpdating}
+                            className="w-full bg-zinc-800/80 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                            placeholder={user?.phone || "+998 99 999 99 99"}
+                            autoComplete="off"
+                          />
                         </div>
                       </div>
 
