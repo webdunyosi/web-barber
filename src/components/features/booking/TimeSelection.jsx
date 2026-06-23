@@ -113,9 +113,6 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
     // O'tib ketgan kunlarni tanlab bo'lmaydi
     if (date < today) return true;
 
-    // Yakshanba dam olish kuni
-    if (date.getDay() === 0) return true;
-
     // Sartarosh tomonidan blocklangan kunlarni tekshirish
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
