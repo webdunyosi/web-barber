@@ -31,7 +31,7 @@ const AdminBottomNavigation = () => {
   }, []);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden h-[68px] flex items-end">
+    <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden h-[68px] flex items-end admin-bottom-nav">
       {/* Background with Notch */}
       <div className="absolute inset-0 flex items-end h-[68px] -z-10 pointer-events-none">
         <div className="flex-1 h-full bg-zinc-950/95 border-t border-white/10 rounded-tl-2xl"></div>

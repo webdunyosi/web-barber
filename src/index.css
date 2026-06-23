@@ -402,4 +402,9 @@ input:-webkit-autofill:active {
   box-shadow: 0 0 0 1000px rgba(9, 9, 11, 0.95) inset !important;
   text-fill-color: #ffffff !important;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Hide bottom navigation bar in mobile view when any modal is open */
+body.modal-open .admin-bottom-nav {
+  display: none !important;
 }

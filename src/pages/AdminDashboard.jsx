@@ -617,6 +617,26 @@ const AdminDashboard = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Hide bottom navigation bar and disable body scrolling when any modal or fullscreen preview is active
+  useEffect(() => {
+    const isAnyModalActive = !!(
+      isServiceModalOpen ||
+      isKassaModalOpen ||
+      isEditUserModalOpen ||
+      confirmModal.isOpen ||
+      zoomedReceipt ||
+      zoomedImage
+    );
+    if (isAnyModalActive) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [isServiceModalOpen, isKassaModalOpen, isEditUserModalOpen, confirmModal.isOpen, zoomedReceipt, zoomedImage]);
+
   const getKassaCalendarDays = () => {
     const year = kassaViewDate.getFullYear();
     const month = kassaViewDate.getMonth();
@@ -1712,45 +1732,50 @@ const AdminDashboard = () => {
                   {servicesList.map((service) => (
                     <div
                       key={service._id || service.id}
-                      className="bg-zinc-900/40 border border-zinc-800 hover:border-emerald-500/30 rounded-2xl p-4 flex flex-col justify-between transition-all duration-300 relative group overflow-hidden shadow-md"
+                      className="bg-zinc-800/60 border border-green-500/20 hover:border-green-500/50 hover:shadow-lg hover:shadow-green-500/10 hover:bg-zinc-800/80 hover:scale-[1.005] active:scale-[0.995] rounded-xl p-4 flex flex-col justify-between transition-all duration-300 relative group overflow-hidden"
                     >
-                      {/* Image placeholder or custom uploaded image */}
-                      <div className="w-full h-36 bg-zinc-950 rounded-xl overflow-hidden mb-4 border border-white/5 relative">
-                        <img
-                          src={service.image_url.startsWith('http') || service.image_url.startsWith('/uploads') || service.image_url.startsWith('/styles')
-                            ? service.image_url 
-                            : '/styles/1.png'}
-                          alt={service.name}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          onError={(e) => { e.target.src = '/styles/1.png'; }}
-                        />
-                        <div className="absolute inset-0 bg-linear-to-t from-zinc-950/80 via-transparent to-transparent"></div>
-                        <div className="absolute bottom-2.5 left-3">
-                          <span className="bg-emerald-500/90 text-zinc-950 font-extrabold text-[10px] px-2 py-0.5 rounded-lg select-none">
-                            {service.duration} min
-                          </span>
+                      {/* Shine effect on hover */}
+                      <div className="absolute inset-0 rounded-xl overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                        <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                      </div>
+
+                      <div className="flex items-center gap-4 relative z-10">
+                        <div className="transition-all duration-300 relative w-16 h-16 shrink-0 overflow-hidden rounded-xl bg-zinc-700/50 group-hover:scale-105">
+                          <img
+                            src={service.image_url.startsWith('http') || service.image_url.startsWith('/uploads') || service.image_url.startsWith('/styles')
+                              ? service.image_url 
+                              : '/styles/1.png'}
+                            alt={service.name}
+                            className="w-full h-full object-cover rounded-xl shadow-md transition-all duration-300"
+                            onError={(e) => { e.target.src = '/styles/1.png'; }}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start gap-1">
+                            <h4 className="text-base sm:text-lg font-bold truncate text-white group-hover:text-green-300 transition-colors duration-300">
+                              {service.name}
+                            </h4>
+                            <span className="text-[11px] text-gray-400 mt-1 shrink-0">
+                              {service.duration} min
+                            </span>
+                          </div>
+                          {service.name_en && (
+                            <p className="text-xs text-gray-400 truncate mt-0.5">
+                              {service.name_en}
+                            </p>
+                          )}
+                          <p className="text-green-400 group-hover:text-green-300 font-extrabold text-lg mt-2.5 transition-colors duration-300">
+                            {formatPrice(service.price)} so'm
+                          </p>
                         </div>
                       </div>
 
-                      {/* Service Info */}
-                      <div className="flex-1">
-                        <h4 className="font-extrabold text-zinc-150 text-sm tracking-wide line-clamp-1">{service.name}</h4>
-                        {service.name_en && (
-                          <p className="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider mt-0.5 line-clamp-1">
-                            {service.name_en}
-                          </p>
-                        )}
-                        <p className="text-emerald-400 font-extrabold text-sm mt-3">
-                          {formatPrice(service.price)} so'm
-                        </p>
-                      </div>
-
                       {/* Actions */}
-                      <div className="flex gap-2.5 mt-4 border-t border-zinc-800/40 pt-3">
+                      <div className="flex gap-2.5 mt-4 border-t border-zinc-800/40 pt-3 relative z-10">
                         <button
                           type="button"
                           onClick={() => handleOpenEditService(service)}
-                          className="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl bg-zinc-800 hover:bg-emerald-500/10 border border-zinc-700/50 hover:border-emerald-500/30 text-zinc-300 hover:text-emerald-400 text-xs font-bold transition-all duration-300 active:scale-[0.97] cursor-pointer"
+                          className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-zinc-800/80 hover:bg-emerald-500/10 border border-zinc-700/50 hover:border-emerald-500/30 text-zinc-300 hover:text-emerald-400 text-xs font-bold transition-all duration-300 active:scale-[0.97] cursor-pointer"
                         >
                           <FaEdit size={11} />
                           <span>Tahrirlash</span>
