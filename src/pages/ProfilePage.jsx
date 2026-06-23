@@ -11,6 +11,55 @@ const userTutorialsList = [
     title: "Botga kirish",
     description: "Botga kirish va dasturni ochishning 3 xil usuli bo'yicha yo'riqnoma.",
     duration: "01:00"
+  },
+  {
+    id: 'user-tut2',
+    youtubeId: 'L0duYJ0zPpc',
+    title: "Ro'yxatdan o'tish",
+    description: "Mijozlar uchun ilovada ro'yxatdan o'tish bo'yicha video darslik.",
+    duration: "01:00"
+  },
+  {
+    id: 'user-tut3',
+    youtubeId: 'Wo8sAmFKm94',
+    title: "Stillar bo'limi",
+    description: "Stillar bo'limidan foydalanish va soch turmaklarini tanlash bo'yicha darslik.",
+    duration: "00:50"
+  },
+  {
+    id: 'user-tut4',
+    youtubeId: '149-MpmVEBs',
+    title: "Sartarosh haqida bo'limi",
+    description: "Sartarosh haqidagi bo'lim va uning faoliyati bilan tanishish.",
+    duration: "00:45"
+  },
+  {
+    id: 'user-tut5',
+    youtubeId: 'ImqFzzKCsOA',
+    title: "Sadoqat kartasi",
+    description: "Sadoqat kartasi bo'limi va cashback tizimidan foydalanish tartibi.",
+    duration: "01:10"
+  },
+  {
+    id: 'user-tut6',
+    youtubeId: 'Ojyyr0JvVJ8',
+    title: "Sun'iy intellekt chat boti",
+    description: "Sun'iy intellekt chat boti bo'limidan foydalanish bo'yicha video darslik.",
+    duration: "01:15"
+  },
+  {
+    id: 'user-tut7',
+    youtubeId: 'RkpoqSi1xBs',
+    title: "Buyurtma berish",
+    description: "Dastur orqali xizmatlarga buyurtma berish va joy band qilish jarayoni.",
+    duration: "02:30"
+  },
+  {
+    id: 'user-tut8',
+    youtubeId: 'VIMN2WEHq6Q',
+    title: "Profil bo'limi",
+    description: "Profil bo'limi va shaxsiy ma'lumotlarni tahrirlash bo'yicha video darslik.",
+    duration: "01:20"
   }
 ];
 
@@ -409,7 +458,7 @@ const ProfilePage = () => {
                 {/* Item 2: Mening bildirishnomalarim */}
                 <button
                   onClick={() => navigate('/bildirishnomalar')}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans border-b border-white/5"
+                  className={`w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans ${!isAdmin ? 'border-b border-white/5' : ''}`}
                 >
                   <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                     <FaBell size={16} />
@@ -426,16 +475,18 @@ const ProfilePage = () => {
                 </button>
 
                 {/* Item 3: Ilovadan foydalanish darsliklari */}
-                <button
-                  onClick={() => setView('tutorials')}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                    <FaBookOpen size={16} />
-                  </div>
-                  <span className="flex-1 text-sm font-semibold text-zinc-200">Ilovadan foydalanish darsliklari</span>
-                  <FaChevronRight size={12} className="text-zinc-500" />
-                </button>
+                {!isAdmin && (
+                  <button
+                    onClick={() => setView('tutorials')}
+                    className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                      <FaBookOpen size={16} />
+                    </div>
+                    <span className="flex-1 text-sm font-semibold text-zinc-200">Ilovadan foydalanish darsliklari</span>
+                    <FaChevronRight size={12} className="text-zinc-500" />
+                  </button>
+                )}
               </div>
             </div>
 
