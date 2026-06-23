@@ -4310,7 +4310,7 @@ const AdminDashboard = () => {
 
       {/* Kassa Modal */}
       {isKassaModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-[150] p-4 animate-fadeIn">
+        <div className="fixed inset-0 flex items-center justify-center z-[150] p-0 sm:p-4 animate-fadeIn">
           {/* Animated blur overlay */}
           <div
             className="absolute inset-0 cursor-pointer"
@@ -4336,7 +4336,7 @@ const AdminDashboard = () => {
 
           {/* Modal card */}
           <div
-            className="relative max-w-md w-full z-10 flex flex-col text-white overflow-visible rounded-3xl"
+            className="relative w-full sm:max-w-md min-h-screen sm:min-h-0 sm:h-auto z-10 flex flex-col text-white sm:rounded-3xl rounded-none overflow-y-auto sm:overflow-visible"
             style={{
               background: 'linear-gradient(145deg, rgba(24,26,32,0.95) 0%, rgba(15,17,22,0.98) 100%)',
               border: '1px solid rgba(255,255,255,0.09)',
@@ -4591,8 +4591,8 @@ const AdminDashboard = () => {
 
       {/* ================= SERVICE ADD/EDIT MODAL ================= */}
       {isServiceModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-md animate-fadeIn">
-          <div className="relative w-full max-w-lg bg-zinc-900/90 border border-white/10 rounded-3xl p-6 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-zinc-950/80 backdrop-blur-md animate-fadeIn">
+          <div className="relative w-full sm:max-w-lg min-h-screen sm:min-h-0 sm:h-auto bg-zinc-900/90 sm:border border-white/10 sm:rounded-3xl rounded-none p-5 sm:p-6 shadow-2xl flex flex-col max-h-screen sm:max-h-[90vh] overflow-hidden animate-fadeIn">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-4 shrink-0">
               <h3 className="text-lg font-extrabold text-white">
