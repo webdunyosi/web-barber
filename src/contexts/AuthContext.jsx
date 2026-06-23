@@ -15,7 +15,11 @@ import {
   getMyBookingsApi,
   updateProfileApi,
   saveOfflineIncomeApi,
-  getOfflineIncomeApi
+  getOfflineIncomeApi,
+  getServicesApi,
+  addServiceApi,
+  updateServiceApi,
+  deleteServiceApi
 } from '../utils/api';
 
 export const AuthProvider = ({ children }) => {
@@ -156,6 +160,25 @@ export const AuthProvider = ({ children }) => {
     return await getOfflineIncomeApi(token, date);
   };
 
+  const getServices = async () => {
+    return await getServicesApi();
+  };
+
+  const addService = async (serviceData, file) => {
+    if (!token) throw new Error('Unauthenticated');
+    return await addServiceApi(token, serviceData, file);
+  };
+
+  const updateService = async (serviceId, serviceData, file) => {
+    if (!token) throw new Error('Unauthenticated');
+    return await updateServiceApi(token, serviceId, serviceData, file);
+  };
+
+  const deleteService = async (serviceId) => {
+    if (!token) throw new Error('Unauthenticated');
+    return await deleteServiceApi(token, serviceId);
+  };
+
   const value = {
     user,
     token,
@@ -176,7 +199,11 @@ export const AuthProvider = ({ children }) => {
     getMyBookings,
     updateProfile,
     saveOfflineIncome,
-    getOfflineIncome
+    getOfflineIncome,
+    getServices,
+    addService,
+    updateService,
+    deleteService
   };
 
   return (

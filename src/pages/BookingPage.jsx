@@ -6,7 +6,7 @@ import SuccessModal from '../components/features/payment/SuccessModal';
 import AuthModal from '../components/features/auth/AuthModal';
 import barberData from '../data/barber.json';
 // Eski telegram.js o'rniga biz yaratgan api.js ni chaqiramiz
-import { submitBooking } from '../utils/api'; 
+import { submitBooking, getServicesApi } from '../utils/api'; 
 import { useStep } from '../hooks/useStep';
 import { useAuth } from '../hooks/useAuth';
 import { toast } from 'react-hot-toast';
@@ -35,6 +35,22 @@ const BookingPage = () => {
   });
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [services, setServices] = useState(barberData.services);
+
+  // Fetch dynamic services
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const data = await getServicesApi();
+        if (Array.isArray(data) && data.length > 0) {
+          setServices(data);
+        }
+      } catch (err) {
+        console.error("Xizmatlarni yuklashda xatolik:", err);
+      }
+    };
+    fetchServices();
+  }, []);
 
   // Auto-fill info if user is authenticated
   useEffect(() => {
@@ -221,7 +237,7 @@ const BookingPage = () => {
       <div className="max-w-5xl mx-auto px-0 md:px-8">
         {currentStep === STEPS.SERVICE && (
           <ServiceSelection
-            services={barberData.services}
+            services={services}
             selectedService={selectedService}
             onSelectService={(service) => {
               setSelectedService(service);

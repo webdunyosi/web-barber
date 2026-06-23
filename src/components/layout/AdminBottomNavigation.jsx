@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaChartBar, FaCalendarCheck, FaUsers, FaUser, FaTachometerAlt } from 'react-icons/fa';
+import { FaChartBar, FaCalendarCheck, FaUser, FaTachometerAlt, FaCut } from 'react-icons/fa';
 import { useAuth } from '../../hooks/useAuth';
 
 const AdminBottomNavigation = () => {
@@ -95,15 +95,15 @@ const AdminBottomNavigation = () => {
         {/* Right Tabs */}
         <div className="flex-1 flex justify-around pl-0">
           <Link
-            to="/admin?tab=users"
+            to="/admin?tab=services"
             className={`flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
-              currentTab === 'users'
+              currentTab === 'services'
                 ? 'text-emerald-400 scale-105 font-semibold'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
-            <FaUsers size={19} />
-            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Mijozlar</span>
+            <FaCut size={19} />
+            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Xizmatlar</span>
           </Link>
 
           <Link

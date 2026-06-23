@@ -16,7 +16,7 @@ import {
 import barberData from '../data/barber.json';
 import barberProfile from '../data/barberProfile.json';
 import hairStyles from '../data/hairStyles.json';
-import { sendChatMessageApi } from '../utils/api';
+import { sendChatMessageApi, getServicesApi } from '../utils/api';
 import ConfirmModal from '../components/common/ConfirmModal';
 
 const AiChatPage = () => {
@@ -47,7 +47,23 @@ const AiChatPage = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [services, setServices] = useState(barberData.services);
   const messagesEndRef = useRef(null);
+
+  // Fetch dynamic services list for AI context
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const data = await getServicesApi();
+        if (Array.isArray(data) && data.length > 0) {
+          setServices(data);
+        }
+      } catch (err) {
+        console.error("Chat xizmatlarini yuklashda xato:", err);
+      }
+    };
+    fetchServices();
+  }, []);
 
   const quickSuggestions = [
     { label: "Xizmatlar", type: "services", icon: <FaCut size={12} className="text-emerald-400" /> },
@@ -140,7 +156,7 @@ const AiChatPage = () => {
 
       if (result.action === 'services') {
         attachmentType = 'services';
-        attachmentData = barberData.services;
+        attachmentData = services;
       } else if (result.action === 'barber') {
         attachmentType = 'barber';
         attachmentData = barberProfile;

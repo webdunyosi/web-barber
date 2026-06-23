@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import {
   FaUser,
+  FaUsers,
   FaCheck,
   FaTimes,
   FaBan,
@@ -314,7 +315,11 @@ const AdminDashboard = () => {
     getStatistics,
     saveOfflineIncome,
     updateProfile,
-    token
+    token,
+    getServices,
+    addService,
+    updateService,
+    deleteService
   } = useAuth();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -334,6 +339,22 @@ const AdminDashboard = () => {
   const [editingNotificationId, setEditingNotificationId] = useState(null);
   const [previewNotification, setPreviewNotification] = useState(null);
   const [isDataLoading, setIsDataLoading] = useState(true);
+  
+  // Services States
+  const [servicesList, setServicesList] = useState([]);
+  const [servicesLoading, setServicesLoading] = useState(false);
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [editingService, setEditingService] = useState(null); // null means "Add Mode"
+  const [serviceForm, setServiceForm] = useState({
+    name: '',
+    name_en: '',
+    price: '',
+    duration: '',
+    image_url: '/styles/1.png',
+  });
+  const [serviceImageFile, setServiceImageFile] = useState(null);
+  const [serviceSaving, setServiceSaving] = useState(false);
+  const [serviceError, setServiceError] = useState('');
   const [actionLoading, setActionLoading] = useState(null); // stores item ID currently updating
   const [successActions, setSuccessActions] = useState({}); // stores item ID and status after successful update
   const [servicesTimeframe, setServicesTimeframe] = useState('all'); // 'day' | 'week' | 'month' | 'all'
@@ -783,10 +804,11 @@ const AdminDashboard = () => {
   const loadData = async (showSkeleton = true) => {
     if (showSkeleton) setIsDataLoading(true);
     try {
-      const [usersData, bookingsData, statsData] = await Promise.all([
+      const [usersData, bookingsData, statsData, servicesData] = await Promise.all([
         getUsers(),
         getBookings(),
-        getStatistics()
+        getStatistics(),
+        getServices()
       ]);
       
       // Sort users: newest first. Exclude current admin to prevent self-deletion
@@ -811,6 +833,7 @@ const AdminDashboard = () => {
       });
       setBookingsList(sortedBookings);
       setStats(statsData);
+      setServicesList(Array.isArray(servicesData) ? servicesData : []);
       await loadNotifications();
     } catch (error) {
       console.error('Admin data loading error:', error);
@@ -829,6 +852,19 @@ const AdminDashboard = () => {
       toast.error('Ish jadvalini yuklashda xatolik yuz berdi');
     } finally {
       setIsSchedulesLoading(false);
+    }
+  };
+
+  const loadServices = async () => {
+    setServicesLoading(true);
+    try {
+      const data = await getServices();
+      setServicesList(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Xizmatlarni yuklashda xatolik:', error);
+      toast.error('Xizmatlarni yuklashda xatolik yuz berdi');
+    } finally {
+      setServicesLoading(false);
     }
   };
 
@@ -947,8 +983,96 @@ const AdminDashboard = () => {
       loadNotifications();
     } else if (activeTab === 'schedule') {
       loadBlockedSchedules();
+    } else if (activeTab === 'services') {
+      loadServices();
     }
   }, [activeTab]);
+
+  // Services Management handlers
+  const handleOpenAddService = () => {
+    setEditingService(null);
+    setServiceForm({
+      name: '',
+      name_en: '',
+      price: '',
+      duration: '',
+      image_url: '/styles/1.png',
+    });
+    setServiceImageFile(null);
+    setServiceError('');
+    setIsServiceModalOpen(true);
+  };
+
+  const handleOpenEditService = (service) => {
+    setEditingService(service);
+    setServiceForm({
+      name: service.name,
+      name_en: service.name_en || '',
+      price: service.price.toString(),
+      duration: service.duration.toString(),
+      image_url: service.image_url || '/styles/1.png',
+    });
+    setServiceImageFile(null);
+    setServiceError('');
+    setIsServiceModalOpen(true);
+  };
+
+  const handleSaveService = async (e) => {
+    e.preventDefault();
+    if (!serviceForm.name || !serviceForm.price || !serviceForm.duration) {
+      setServiceError("Xizmat nomi, narxi va davomiyligi kiritilishi shart!");
+      return;
+    }
+
+    setServiceSaving(true);
+    setServiceError('');
+
+    try {
+      const payload = {
+        name: serviceForm.name,
+        name_en: serviceForm.name_en,
+        price: Number(serviceForm.price),
+        duration: Number(serviceForm.duration),
+        image_url: serviceForm.image_url
+      };
+
+      if (editingService) {
+        await updateService(editingService._id || editingService.id, payload, serviceImageFile);
+        toast.success("Xizmat muvaffaqiyatli yangilandi! 💈");
+      } else {
+        await addService(payload, serviceImageFile);
+        toast.success("Yangi xizmat muvaffaqiyatli qo'shildi! 💈");
+      }
+
+      setIsServiceModalOpen(false);
+      await loadServices();
+    } catch (err) {
+      console.error("Xizmatni saqlashda xatolik:", err);
+      setServiceError(err.response?.data?.error || err.message || "Saqlashda xatolik yuz berdi");
+    } finally {
+      setServiceSaving(false);
+    }
+  };
+
+  const handleDeleteService = (serviceId) => {
+    triggerConfirm({
+      title: "Xizmatni o'chirish",
+      message: "Haqiqatan ham ushbu xizmatni o'chirmoqchimisiz? Ushbu xizmatga tegishli barcha ma'lumotlar o'chadi.",
+      confirmText: "Ha, o'chirish",
+      cancelText: "Yo'q, qolsin",
+      type: "danger",
+      onConfirm: async () => {
+        try {
+          await deleteService(serviceId);
+          toast.success("Xizmat muvaffaqiyatli o'chirildi! 🗑️");
+          await loadServices();
+        } catch (err) {
+          console.error("Xizmatni o'chirishda xatolik:", err);
+          toast.error(err.response?.data?.error || err.message || "O'chirishda xatolik yuz berdi");
+        }
+      }
+    });
+  };
 
   // User Actions handlers
   const handleBlockUser = async (targetUserId, currentStatus) => {
@@ -1553,9 +1677,121 @@ const AdminDashboard = () => {
             </div>
           )}
 
+          {/* ================= TAB: SERVICES ================= */}
+          {activeTab === 'services' && (
+            <div className="space-y-5 animate-fadeIn">
+              {/* Header card with Add Button */}
+              <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-4 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-extrabold text-lg text-white tracking-wide">Xizmatlar Boshqaruvi</h3>
+                  <p className="text-xs text-zinc-400 font-medium mt-0.5">Xizmatlarni qo'shish, o'chirish va ma'lumotlarini tahrirlash</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleOpenAddService}
+                  className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-zinc-950 font-extrabold text-xs rounded-xl transition-all cursor-pointer shadow-lg shadow-emerald-500/10 border-none shrink-0"
+                >
+                  <FaPlus size={11} className="shrink-0" />
+                  <span>Xizmat qo'shish</span>
+                </button>
+              </div>
+
+              {/* Services Grid */}
+              {servicesLoading && servicesList.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20 bg-zinc-900/10 border border-zinc-800 rounded-2xl">
+                  <FaSpinner size={24} className="animate-spin text-emerald-400 mb-3" />
+                  <p className="text-zinc-400 text-xs font-semibold">Yuklanmoqda...</p>
+                </div>
+              ) : servicesList.length === 0 ? (
+                <div className="text-center py-16 bg-zinc-900/10 border border-dashed border-zinc-800 rounded-2xl">
+                  <FaFolderOpen className="mx-auto text-4xl text-zinc-600 mb-3 animate-pulse" />
+                  <p className="text-zinc-400 text-xs font-semibold">Hozircha xizmatlar mavjud emas.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {servicesList.map((service) => (
+                    <div
+                      key={service._id || service.id}
+                      className="bg-zinc-900/40 border border-zinc-800 hover:border-emerald-500/30 rounded-2xl p-4 flex flex-col justify-between transition-all duration-300 relative group overflow-hidden shadow-md"
+                    >
+                      {/* Image placeholder or custom uploaded image */}
+                      <div className="w-full h-36 bg-zinc-950 rounded-xl overflow-hidden mb-4 border border-white/5 relative">
+                        <img
+                          src={service.image_url.startsWith('http') || service.image_url.startsWith('/uploads') || service.image_url.startsWith('/styles')
+                            ? service.image_url 
+                            : '/styles/1.png'}
+                          alt={service.name}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          onError={(e) => { e.target.src = '/styles/1.png'; }}
+                        />
+                        <div className="absolute inset-0 bg-linear-to-t from-zinc-950/80 via-transparent to-transparent"></div>
+                        <div className="absolute bottom-2.5 left-3">
+                          <span className="bg-emerald-500/90 text-zinc-950 font-extrabold text-[10px] px-2 py-0.5 rounded-lg select-none">
+                            {service.duration} min
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Service Info */}
+                      <div className="flex-1">
+                        <h4 className="font-extrabold text-zinc-150 text-sm tracking-wide line-clamp-1">{service.name}</h4>
+                        {service.name_en && (
+                          <p className="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider mt-0.5 line-clamp-1">
+                            {service.name_en}
+                          </p>
+                        )}
+                        <p className="text-emerald-400 font-extrabold text-sm mt-3">
+                          {formatPrice(service.price)} so'm
+                        </p>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex gap-2.5 mt-4 border-t border-zinc-800/40 pt-3">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenEditService(service)}
+                          className="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl bg-zinc-800 hover:bg-emerald-500/10 border border-zinc-700/50 hover:border-emerald-500/30 text-zinc-300 hover:text-emerald-400 text-xs font-bold transition-all duration-300 active:scale-[0.97] cursor-pointer"
+                        >
+                          <FaEdit size={11} />
+                          <span>Tahrirlash</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteService(service._id || service.id)}
+                          className="w-10 flex items-center justify-center rounded-xl bg-zinc-800/50 hover:bg-red-500/10 border border-zinc-700/50 hover:border-red-500/30 text-zinc-500 hover:text-red-400 transition-all duration-300 active:scale-[0.97] cursor-pointer"
+                          title="Xizmatni o'chirish"
+                        >
+                          <FaTrash size={11} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* ================= TAB: USERS ================= */}
           {activeTab === 'users' && (
             <div className="space-y-5 animate-fadeIn">
+              {/* Back Button Header Card */}
+              <div className="bg-zinc-900/50 border border-zinc-800/80 rounded-2xl p-4 backdrop-blur-sm flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setSearchParams({ tab: 'profile' })}
+                    className="p-2.5 rounded-xl border border-white/10 bg-zinc-800/50 hover:bg-zinc-800 hover:border-emerald-500/30 text-emerald-400 hover:text-white transition-all cursor-pointer flex items-center justify-center active:scale-95 shrink-0 shadow-sm"
+                    title="Profilga qaytish"
+                  >
+                    <FaArrowLeft size={14} />
+                  </button>
+                  <div>
+                    <h3 className="font-extrabold text-sm text-white sm:text-base tracking-wide">Mijozlar Boshqaruvi</h3>
+                    <p className="text-[10px] text-zinc-400 font-medium mt-0.5 sm:text-xs">Ro'yxatdan o'tgan mijozlarni boshqarish</p>
+                  </div>
+                </div>
+              </div>
+
               {/* Filters Panel */}
               <div className="flex flex-row items-center gap-2 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-2.5 backdrop-blur-sm relative z-30">
                 <div className="flex-1 min-w-0 relative">
@@ -2738,6 +2974,18 @@ const AdminDashboard = () => {
                     {/* Group 1: Manage Sections */}
                     <div className="bg-zinc-900/70 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-xl">
                       <div className="p-1">
+                        {/* Item 1: Mijozlar Boshqaruvi */}
+                        <button
+                          onClick={() => setSearchParams({ tab: 'users' })}
+                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer border-b border-white/5 text-left font-sans"
+                        >
+                          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <FaUsers size={16} />
+                          </div>
+                          <span className="flex-1 text-sm font-semibold text-zinc-200">Mijozlar boshqaruvi</span>
+                          <FaChevronRight size={12} className="text-zinc-500" />
+                        </button>
+
                         {/* Item 2: Bildirishnomalar Boshqaruvi */}
                         <button
                           onClick={() => setSearchParams({ tab: 'notifications' })}
@@ -4312,6 +4560,206 @@ const AdminDashboard = () => {
               background: 'linear-gradient(90deg, transparent, rgba(16,185,129,0.3), transparent)',
               borderRadius: '999px'
             }} />
+          </div>
+        </div>
+      )}
+
+      {/* ================= SERVICE ADD/EDIT MODAL ================= */}
+      {isServiceModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-md animate-fadeIn">
+          <div className="relative w-full max-w-lg bg-zinc-900/90 border border-white/10 rounded-3xl p-6 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-fadeIn">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-4 shrink-0">
+              <h3 className="text-lg font-extrabold text-white">
+                {editingService ? "Xizmatni tahrirlash" : "Yangi xizmat qo'shish"}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsServiceModalOpen(false)}
+                className="w-8 h-8 rounded-xl bg-zinc-800 border border-white/5 text-zinc-400 hover:text-white flex items-center justify-center cursor-pointer hover:border-zinc-700 transition-all"
+              >
+                <FaTimes size={14} />
+              </button>
+            </div>
+
+            {/* Error message */}
+            {serviceError && (
+              <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold rounded-xl mb-4 shrink-0 animate-fadeIn">
+                {serviceError}
+              </div>
+            )}
+
+            {/* Scrollable Form Body */}
+            <form onSubmit={handleSaveService} className="flex-1 overflow-y-auto pr-1 space-y-4 pb-4">
+              {/* Service Name */}
+              <div>
+                <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Xizmat Nomi (Uzbek)</label>
+                <input
+                  type="text"
+                  required
+                  value={serviceForm.name}
+                  onChange={(e) => setServiceForm({ ...serviceForm, name: e.target.value })}
+                  placeholder="Masalan: Soch kesish"
+                  className="w-full bg-zinc-850/80 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                />
+              </div>
+
+              {/* Service English Name */}
+              <div>
+                <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Inglizcha Nomi</label>
+                <input
+                  type="text"
+                  value={serviceForm.name_en}
+                  onChange={(e) => setServiceForm({ ...serviceForm, name_en: e.target.value })}
+                  placeholder="Masalan: Haircut"
+                  className="w-full bg-zinc-850/80 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {/* Price */}
+                <div>
+                  <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Narxi (so'm)</label>
+                  <input
+                    type="number"
+                    required
+                    min="0"
+                    value={serviceForm.price}
+                    onChange={(e) => setServiceForm({ ...serviceForm, price: e.target.value })}
+                    placeholder="50000"
+                    className="w-full bg-zinc-850/80 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+
+                {/* Duration */}
+                <div>
+                  <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Davomiyligi (daqiqa)</label>
+                  <input
+                    type="number"
+                    required
+                    min="1"
+                    value={serviceForm.duration}
+                    onChange={(e) => setServiceForm({ ...serviceForm, duration: e.target.value })}
+                    placeholder="30"
+                    className="w-full bg-zinc-850/80 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              {/* Preset Image Selection */}
+              <div>
+                <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-2">Preset Rasm Tanlash</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {[1, 2, 3, 4].map((i) => {
+                    const presetPath = `/styles/${i}.png`;
+                    const isSelected = serviceForm.image_url === presetPath && !serviceImageFile;
+                    return (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => {
+                          setServiceForm({ ...serviceForm, image_url: presetPath });
+                          setServiceImageFile(null);
+                        }}
+                        className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                          isSelected
+                            ? 'border-emerald-500 scale-95 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
+                            : 'border-white/5 opacity-55 hover:opacity-100 hover:border-white/20'
+                        }`}
+                      >
+                        <img src={presetPath} alt={`Style ${i}`} className="w-full h-full object-cover" />
+                        {isSelected && (
+                          <div className="absolute inset-0 bg-emerald-500/20 flex items-center justify-center">
+                            <span className="bg-emerald-500 text-zinc-950 rounded-full p-0.5 text-[9px] font-extrabold">✓</span>
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Custom Image Upload */}
+              <div className="pt-1">
+                <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1.5">Sartaroshlik rasmini yuklash (ixtiyoriy)</label>
+                <div className="flex items-center gap-3">
+                  <div className="relative flex-1">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      id="service-image-upload"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setServiceImageFile(e.target.files[0]);
+                          setServiceForm({ ...serviceForm, image_url: e.target.files[0].name });
+                        }
+                      }}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="service-image-upload"
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-zinc-800 hover:bg-zinc-750 border border-white/5 hover:border-white/10 text-zinc-300 font-bold text-xs rounded-xl transition-all cursor-pointer active:scale-[0.98] select-none text-center"
+                    >
+                      <FaImage size={13} className="text-emerald-400" />
+                      <span>{serviceImageFile ? serviceImageFile.name : "Rasm faylini tanlash"}</span>
+                    </label>
+                  </div>
+                  {serviceImageFile && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setServiceImageFile(null);
+                        setServiceForm({ ...serviceForm, image_url: '/styles/1.png' });
+                      }}
+                      className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center cursor-pointer hover:bg-red-500/20 transition-all shrink-0"
+                      title="O'chirish"
+                    >
+                      <FaTimes size={13} />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Image URL (Alternative) */}
+              <div>
+                <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Yoki Rasm URL manzili</label>
+                <input
+                  type="text"
+                  value={serviceForm.image_url}
+                  onChange={(e) => {
+                    setServiceForm({ ...serviceForm, image_url: e.target.value });
+                    setServiceImageFile(null);
+                  }}
+                  placeholder="https://example.com/image.jpg"
+                  className="w-full bg-zinc-850/80 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                />
+              </div>
+
+              {/* Form Buttons */}
+              <div className="flex gap-3 pt-2 shrink-0 border-t border-white/5 mt-4">
+                <button
+                  type="submit"
+                  disabled={serviceSaving}
+                  className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-zinc-950 font-extrabold py-3 px-4 rounded-xl transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer text-xs disabled:opacity-60"
+                >
+                  {serviceSaving ? (
+                    <FaSpinner size={12} className="animate-spin text-zinc-950" />
+                  ) : (
+                    <FaSave size={12} className="text-zinc-950" />
+                  )}
+                  <span>Saqlash</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsServiceModalOpen(false)}
+                  disabled={serviceSaving}
+                  className="flex-1 bg-zinc-800 hover:bg-zinc-750 text-gray-300 font-semibold py-3 px-4 rounded-xl transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer text-xs disabled:opacity-50 border border-white/5"
+                >
+                  <FaTimes size={12} />
+                  <span>Bekor qilish</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

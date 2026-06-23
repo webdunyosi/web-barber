@@ -1,5 +1,6 @@
 // src/utils/api.js
 import axios from 'axios';
+import barberData from '../data/barber.json';
 
 const API_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ? 'http://localhost:5000/api'
@@ -98,6 +99,10 @@ const initMockDb = () => {
       }
     ];
     localStorage.setItem('barber_bookings', JSON.stringify(initialBookings));
+  }
+
+  if (!localStorage.getItem('barber_services')) {
+    localStorage.setItem('barber_services', JSON.stringify(barberData.services));
   }
 };
 
@@ -1022,6 +1027,108 @@ export const getBlockedDaysApi = async () => {
   }
 
   const response = await axios.get(`${API_URL}/appointments/blocked-days`);
+  return response.data;
+};
+
+// ================= SERVICES API =================
+
+export const getServicesApi = async () => {
+  if (MOCK_MODE) {
+    if (!localStorage.getItem('barber_services')) {
+      localStorage.setItem('barber_services', JSON.stringify(barberData.services));
+    }
+    return JSON.parse(localStorage.getItem('barber_services') || '[]');
+  }
+
+  const response = await axios.get(`${API_URL}/services`);
+  return response.data;
+};
+
+export const addServiceApi = async (token, serviceData, file) => {
+  if (MOCK_MODE) {
+    const services = JSON.parse(localStorage.getItem('barber_services') || '[]');
+    const nextId = services.length > 0 ? Math.max(...services.map(s => s.id)) + 1 : 1;
+    const newService = {
+      id: nextId,
+      name: serviceData.name,
+      name_en: serviceData.name_en || '',
+      price: Number(serviceData.price),
+      duration: Number(serviceData.duration),
+      image_url: file ? URL.createObjectURL(file) : (serviceData.image_url || '/styles/1.png')
+    };
+    services.push(newService);
+    localStorage.setItem('barber_services', JSON.stringify(services));
+    return newService;
+  }
+
+  const formData = new FormData();
+  formData.append('name', serviceData.name);
+  formData.append('name_en', serviceData.name_en || '');
+  formData.append('price', serviceData.price);
+  formData.append('duration', serviceData.duration);
+  if (file) {
+    formData.append('image', file);
+  } else if (serviceData.image_url) {
+    formData.append('image_url', serviceData.image_url);
+  }
+
+  const response = await axios.post(`${API_URL}/admin/services`, formData, {
+    headers: { 
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+  return response.data;
+};
+
+export const updateServiceApi = async (token, serviceId, serviceData, file) => {
+  if (MOCK_MODE) {
+    const services = JSON.parse(localStorage.getItem('barber_services') || '[]');
+    const index = services.findIndex(s => s.id === serviceId || s._id === serviceId);
+    if (index === -1) throw new Error("Xizmat topilmadi");
+    services[index] = {
+      ...services[index],
+      name: serviceData.name,
+      name_en: serviceData.name_en || '',
+      price: Number(serviceData.price),
+      duration: Number(serviceData.duration),
+      image_url: file ? URL.createObjectURL(file) : (serviceData.image_url || services[index].image_url)
+    };
+    localStorage.setItem('barber_services', JSON.stringify(services));
+    return services[index];
+  }
+
+  const formData = new FormData();
+  formData.append('name', serviceData.name);
+  formData.append('name_en', serviceData.name_en || '');
+  formData.append('price', serviceData.price);
+  formData.append('duration', serviceData.duration);
+  if (file) {
+    formData.append('image', file);
+  } else if (serviceData.image_url) {
+    formData.append('image_url', serviceData.image_url);
+  }
+
+  const response = await axios.put(`${API_URL}/admin/services/${serviceId}`, formData, {
+    headers: { 
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+  return response.data;
+};
+
+export const deleteServiceApi = async (token, serviceId) => {
+  if (MOCK_MODE) {
+    let services = JSON.parse(localStorage.getItem('barber_services') || '[]');
+    services = services.filter(s => s.id !== serviceId && s._id !== serviceId);
+    localStorage.setItem('barber_services', JSON.stringify(services));
+    return { success: true, message: 'Xizmat muvaffaqiyatli o\'chirildi' };
+  }
+
+  const response = await axios.delete(`${API_URL}/admin/services/${serviceId}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
   return response.data;
 };
 

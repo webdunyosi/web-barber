@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { FaUserShield, FaSignOutAlt, FaHome, FaChartBar, FaCalendarCheck, FaUsers, FaUser, FaTachometerAlt, FaBell } from 'react-icons/fa';
+import { FaUserShield, FaSignOutAlt, FaHome, FaChartBar, FaCalendarCheck, FaUser, FaTachometerAlt, FaBell, FaCut, FaUsers } from 'react-icons/fa';
 import AdminBottomNavigation from '../components/layout/AdminBottomNavigation';
 
 const LayoutSkeleton = () => (
@@ -200,15 +200,15 @@ const AdminLayout = () => {
             </Link>
 
             <Link
-              to="/admin?tab=users"
+              to="/admin?tab=services"
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
-                location.pathname === '/admin' && new URLSearchParams(location.search).get('tab') === 'users'
+                location.pathname === '/admin' && new URLSearchParams(location.search).get('tab') === 'services'
                   ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/40'
                   : 'text-zinc-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              <FaUsers size={18} />
-              <span>Mijozlar Boshqaruvi</span>
+              <FaCut size={18} />
+              <span>Xizmatlar Boshqaruvi</span>
             </Link>
 
             <Link
