@@ -2,9 +2,21 @@
 import axios from 'axios';
 import barberData from '../data/barber.json';
 
-const API_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ? 'http://localhost:5000/api'
-  : 'https://web-barber-backend.onrender.com/api';
+const getApiUrl = () => {
+  if (typeof window === 'undefined') return 'https://web-barber-backend.onrender.com/api';
+  const hostname = window.location.hostname;
+  const isLocal = hostname === 'localhost' || 
+                  hostname === '127.0.0.1' || 
+                  /^192\.168\./.test(hostname) || 
+                  /^10\./.test(hostname) || 
+                  /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(hostname);
+  if (isLocal) {
+    return `http://${hostname}:5000/api`;
+  }
+  return 'https://web-barber-backend.onrender.com/api';
+};
+
+const API_URL = getApiUrl();
 const TELEGRAM_BOT_TOKEN = '8598199374:AAEQ98hlQkG3IPtntC5LkqeQ5Pv2h27Yr_U';
 const TELEGRAM_CHAT_ID = '-1004413936957';
 
