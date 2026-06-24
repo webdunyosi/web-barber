@@ -221,7 +221,7 @@ ${isFree ? '✅ _Loyalty Card orqali 10-bepul xizmat! Tasdiqlash uchun admin pan
   }
 
   const token = localStorage.getItem('barber_token');
-  const headers = { 'Content-Type': 'multipart/form-data' };
+  const headers = {};
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -1074,8 +1074,7 @@ export const addServiceApi = async (token, serviceData, file) => {
 
   const response = await axios.post(`${API_URL}/admin/services`, formData, {
     headers: { 
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data'
+      Authorization: `Bearer ${token}`
     }
   });
   return response.data;
@@ -1111,8 +1110,7 @@ export const updateServiceApi = async (token, serviceId, serviceData, file) => {
 
   const response = await axios.put(`${API_URL}/admin/services/${serviceId}`, formData, {
     headers: { 
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data'
+      Authorization: `Bearer ${token}`
     }
   });
   return response.data;
