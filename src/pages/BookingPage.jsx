@@ -150,7 +150,8 @@ const BookingPage = () => {
       setShowSuccessModal(true);
     } catch (error) {
       console.error('Error processing payment:', error);
-      toast.error(error.message || 'Xatolik yuz berdi. Iltimos, server ulanishini tekshiring.');
+      const errMsg = error.response?.data?.error || error.message || 'Xatolik yuz berdi. Iltimos, server ulanishini tekshiring.';
+      toast.error(errMsg);
     } finally {
       setIsProcessing(false);
     }
