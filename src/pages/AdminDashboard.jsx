@@ -3556,38 +3556,13 @@ const AdminDashboard = () => {
                       {playingVideoId === tutorial.id ? (
                         <>
                           <iframe
-                            id={`yt-iframe-${tutorial.id}`}
                             src={`https://www.youtube.com/embed/${tutorial.youtubeId}?autoplay=1&rel=0`}
                             title={tutorial.title}
                             className="w-full h-full border-0 absolute inset-0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen
                             onLoad={() => setIsVideoLoading(false)}
                           ></iframe>
-                          {/* Mobile Fullscreen Button */}
-                          {!isVideoLoading && (
-                            <button
-                              onClick={() => {
-                                const iframe = document.getElementById(`yt-iframe-${tutorial.id}`);
-                                const requestFS =
-                                  iframe?.requestFullscreen ||
-                                  iframe?.webkitRequestFullscreen ||
-                                  iframe?.mozRequestFullScreen ||
-                                  iframe?.msRequestFullscreen;
-                                if (requestFS) {
-                                  requestFS.call(iframe);
-                                } else {
-                                  window.open(`https://www.youtube.com/watch?v=${tutorial.youtubeId}`, '_blank');
-                                }
-                              }}
-                              className="absolute bottom-2 right-2 z-30 w-8 h-8 flex items-center justify-center bg-zinc-900/80 hover:bg-zinc-800 rounded-md border border-white/10 active:scale-90 transition-all"
-                              title="To'liq ekran"
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                              </svg>
-                            </button>
-                          )}
                           {isVideoLoading && (
                             <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950/90 backdrop-blur-sm z-20 animate-fadeIn">
                               <div className="relative w-12 h-12 flex items-center justify-center">
