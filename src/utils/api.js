@@ -23,7 +23,7 @@ const TELEGRAM_CHAT_ID = '-1004413936957';
 // Set this to false when connecting to the real deployed backend
 const MOCK_MODE = false;
 
-// Utility to send messages to the Telegram Bot
+// Utility to send text messages to Telegram channel
 const sendTelegramNotification = async (text) => {
   try {
     await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
@@ -39,6 +39,33 @@ const sendTelegramNotification = async (text) => {
     console.error('Telegram notification error:', error);
   }
 };
+
+// Utility to send photo (File object) with caption to Telegram channel
+const sendTelegramPhoto = async (file, caption) => {
+  try {
+    const formData = new FormData();
+    formData.append('chat_id', TELEGRAM_CHAT_ID);
+    formData.append('photo', file);
+    formData.append('caption', caption);
+    formData.append('parse_mode', 'Markdown');
+
+    const response = await fetch(
+      `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`,
+      { method: 'POST', body: formData }
+    );
+    const result = await response.json();
+    if (!result.ok) {
+      console.error('Telegram sendPhoto error:', result.description);
+      // Rasm xato bo'lsa matn yuboramiz
+      await sendTelegramNotification(caption + '\n\n\u26a0\ufe0f _(Chek rasmi yuborishda xatolik)_');
+    }
+  } catch (error) {
+    console.error('Telegram photo error:', error);
+    // Fallback: matn xabar
+    try { await sendTelegramNotification(caption + '\n\n\u26a0\ufe0f _(Chek rasmi yuborishda xatolik)_'); } catch {}
+  }
+};
+
 
 // MOCK DATABASE INITIALIZATION
 const initMockDb = () => {
@@ -189,24 +216,24 @@ export const submitBooking = async (bookingInfo, paymentData) => {
     saveMockBookings(bookings);
 
     // Send Telegram Notification for new booking/payment
-    let methodDisplay = isCash ? '💵 Sartaroshga (Joyida)' : '💳 Karta orqali (Online)';
+    let methodDisplay = isCash ? '\ud83d\udcb5 Sartaroshga (Joyida)' : '\ud83d\udcb3 Karta orqali (Online)';
     if (isFree) {
-      methodDisplay = '🎁 Bepul (Loyalty Card)';
+      methodDisplay = '\ud83c\udf81 Bepul (Loyalty Card)';
     }
     const message = `
-🧾 *Yangi Buyurtma & To'lov!*
+\ud83e\uddfe *Yangi Buyurtma & To'lov!*
 
-👤 *Mijoz:* ${bookingInfo.name}
-📱 *Telefon:* ${bookingInfo.phone}
-📱 *Telegram:* @${bookingInfo.telegram_user || 'mavjud emas'}
-💳 *To'lov usuli:* ${methodDisplay}
+\ud83d\udc64 *Mijoz:* ${bookingInfo.name}
+\ud83d\udcf1 *Telefon:* ${bookingInfo.phone}
+\ud83d\udcf1 *Telegram:* @${bookingInfo.telegram_user || 'mavjud emas'}
+\ud83d\udcb3 *To'lov usuli:* ${methodDisplay}
 
-💈 *Xizmat:* ${bookingInfo.service.name}
-💰 *Narx:* ${isFree ? 'BEPUL 🎁' : finalPrice.toLocaleString() + ' so\'m'}
-📅 *Sana:* ${bookingInfo.date}
-🕐 *Vaqt:* ${bookingInfo.time}
+\ud83d\udc88 *Xizmat:* ${bookingInfo.service.name}
+\ud83d\udcb0 *Narx:* ${isFree ? 'BEPUL \ud83c\udf81' : finalPrice.toLocaleString() + ' so\'m'}
+\ud83d\udcc5 *Sana:* ${bookingInfo.date}
+\ud83d\udd50 *Vaqt:* ${bookingInfo.time}
 
-${isFree ? '✅ _Loyalty Card orqali 10-bepul xizmat! Tasdiqlash uchun admin panelga kiring!_' : (isCash ? '✅ _Joyida to\'lash tanlandi. Tasdiqlash uchun admin panelga kiring!_' : '⚠️ _To\'lov chekini tasdiqlash uchun admin panelga kiring!_')}
+${isFree ? '\u2705 _Loyalty Card orqali 10-bepul xizmat! Tasdiqlash uchun admin panelga kiring!_' : (isCash ? '\u2705 _Joyida to\'lash tanlandi. Tasdiqlash uchun admin panelga kiring!_' : '\u26a0\ufe0f _To\'lov chekini tasdiqlash uchun admin panelga kiring!_')}
     `.trim();
     
     await sendTelegramNotification(message);
@@ -214,6 +241,36 @@ ${isFree ? '✅ _Loyalty Card orqali 10-bepul xizmat! Tasdiqlash uchun admin pan
     return { message: "Buyurtma qabul qilindi. To'lov tasdiqlangach, Telegram orqali xabar olasiz.", booking: newBooking };
   }
 
+  // ===== REAL MODE =====
+  // 1. Telegram caption tayyorlaymiz
+  const telegramCaption = [
+    "\ud83e\uddfe *Yangi Buyurtma & To'lov!*",
+    "",
+    `\ud83d\udc64 *Mijoz:* ${bookingInfo.name}`,
+    `\ud83d\udcf1 *Telefon:* ${bookingInfo.phone}`,
+    `\u2708\ufe0f *Telegram:* ${bookingInfo.telegram_user ? '@' + bookingInfo.telegram_user : 'mavjud emas'}`,
+    `\ud83d\udcb3 *To'lov:* ${isCash ? '\ud83d\udcb5 Joyida (Naqd)' : '\ud83d\udcb3 Karta (Online)'}`,
+    "",
+    `\ud83d\udc88 *Xizmat:* ${bookingInfo.service.name}`,
+    `\ud83d\udcb0 *Narx:* ${Number(bookingInfo.service.price).toLocaleString('uz-UZ')} so'm`,
+    `\ud83d\udcc5 *Sana:* ${bookingInfo.date}`,
+    `\ud83d\udd50 *Vaqt:* ${bookingInfo.time}`,
+    "",
+    isCash
+      ? "\u2705 _Joyida to'lash tanlandi. Admin panelga kiring!_"
+      : "\u26a0\ufe0f _Chekni tasdiqlash uchun admin panelga kiring!_",
+  ].join('\n');
+
+  // 2. To'g'ridan-to'g'ri Telegram ga yuboramiz (frontend dan)
+  if (!isCash && paymentData.receipt instanceof File) {
+    // Karta to'lovi: chek rasmini yuboramiz
+    await sendTelegramPhoto(paymentData.receipt, telegramCaption);
+  } else {
+    // Naqd to'lov: matn xabar
+    await sendTelegramNotification(telegramCaption);
+  }
+
+  // 3. Backend ga ham yuboramiz (DB ga saqlash uchun)
   const formData = new FormData();
   formData.append('name', bookingInfo.name);
   formData.append('phone', bookingInfo.phone);
