@@ -329,6 +329,7 @@ const AdminDashboard = () => {
   const [bookingsList, setBookingsList] = useState([]);
   const [stats, setStats] = useState(null);
   const [playingVideoId, setPlayingVideoId] = useState(null);
+  const [isVideoLoading, setIsVideoLoading] = useState(false);
 
   // Filters & UI States
   const [searchTerm, setSearchTerm] = useState('');
@@ -3492,6 +3493,7 @@ const AdminDashboard = () => {
                 onClick={() => {
                   setSearchParams({ tab: 'profile' });
                   setPlayingVideoId(null);
+                  setIsVideoLoading(false);
                 }}
                 className="flex items-center gap-2 text-zinc-400 hover:text-white transition-all duration-300 font-bold text-xs uppercase tracking-wider bg-zinc-900 border border-zinc-800 px-4 py-2.5 rounded-xl active:scale-95 cursor-pointer hover:border-emerald-500/30 hover:text-emerald-400"
               >
@@ -3536,13 +3538,27 @@ const AdminDashboard = () => {
                     {/* Thumbnail container */}
                     <div className="relative aspect-video bg-zinc-950 flex items-center justify-center overflow-hidden border-b border-zinc-850">
                       {playingVideoId === tutorial.id ? (
-                        <iframe
-                          src={`https://www.youtube.com/embed/${tutorial.youtubeId}?autoplay=1&rel=0`}
-                          title={tutorial.title}
-                          className="w-full h-full border-0 absolute inset-0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        ></iframe>
+                        <>
+                          <iframe
+                            src={`https://www.youtube.com/embed/${tutorial.youtubeId}?autoplay=1&rel=0`}
+                            title={tutorial.title}
+                            className="w-full h-full border-0 absolute inset-0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            onLoad={() => setIsVideoLoading(false)}
+                          ></iframe>
+                          {isVideoLoading && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950/90 backdrop-blur-sm z-20 animate-fadeIn">
+                              <div className="relative w-12 h-12 flex items-center justify-center">
+                                <div className="absolute inset-0 rounded-full border-[3px] border-emerald-500/10 border-t-emerald-500 animate-spin"></div>
+                                <div className="w-5 h-5 rounded-full bg-emerald-500/20 animate-pulse"></div>
+                              </div>
+                              <span className="text-[10px] tracking-widest text-emerald-400 font-extrabold mt-3 animate-pulse uppercase">
+                                Video yuklanmoqda...
+                              </span>
+                            </div>
+                          )}
+                        </>
                       ) : (
                         <>
                           <img 
@@ -3552,7 +3568,10 @@ const AdminDashboard = () => {
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent opacity-60"></div>
                           <button
-                            onClick={() => setPlayingVideoId(tutorial.id)}
+                            onClick={() => {
+                              setPlayingVideoId(tutorial.id);
+                              setIsVideoLoading(true);
+                            }}
                             className="absolute w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 scale-95 group-hover:scale-105 transition-all duration-300 cursor-pointer animate-pulse z-10"
                           >
                             <FaPlay className="ml-1 text-zinc-950" size={16} />

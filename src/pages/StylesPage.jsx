@@ -28,6 +28,7 @@ const StylesPage = () => {
   
   // Track which card is playing video
   const [playingVideoId, setPlayingVideoId] = useState(null)
+  const [isVideoLoading, setIsVideoLoading] = useState(false)
 
   const handleImageLoad = (id) => {
     setLoadedImages((prev) => ({ ...prev, [id]: true }))
@@ -47,6 +48,7 @@ const StylesPage = () => {
   // Reset playing video when switching tabs
   useEffect(() => {
     setPlayingVideoId(null)
+    setIsVideoLoading(false)
   }, [activeTab])
 
   const renderStyleCard = (style) => {
@@ -68,12 +70,25 @@ const StylesPage = () => {
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
                 className="w-full h-full rounded-t-2xl"
+                onLoad={() => setIsVideoLoading(false)}
               ></iframe>
+              {isVideoLoading && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950/90 backdrop-blur-sm z-20 animate-fadeIn">
+                  <div className="relative w-12 h-12 flex items-center justify-center">
+                    <div className="absolute inset-0 rounded-full border-[3px] border-emerald-500/10 border-t-emerald-500 animate-spin"></div>
+                    <div className="w-5 h-5 rounded-full bg-emerald-500/20 animate-pulse"></div>
+                  </div>
+                  <span className="text-[10px] tracking-widest text-emerald-400 font-extrabold mt-3 animate-pulse uppercase">
+                    Video yuklanmoqda...
+                  </span>
+                </div>
+              )}
               {/* Stop Button */}
               <button
                 onClick={(e) => {
                   e.stopPropagation()
                   setPlayingVideoId(null)
+                  setIsVideoLoading(false)
                 }}
                 className="absolute top-3 right-3 z-30 p-2 rounded-full bg-black/85 hover:bg-black text-white border border-white/10 transition-colors shadow-lg cursor-pointer"
                 title="Videoni yopish"
@@ -83,7 +98,12 @@ const StylesPage = () => {
             </>
           ) : (
             <div 
-              onClick={() => style.video && setPlayingVideoId(style.id)}
+              onClick={() => {
+                if (style.video) {
+                  setPlayingVideoId(style.id)
+                  setIsVideoLoading(true)
+                }
+              }}
               className={`w-full h-full cursor-pointer relative ${style.video ? 'group/media' : ''}`}
             >
               {!loadedImages[style.id] && (
