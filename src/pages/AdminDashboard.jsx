@@ -445,17 +445,33 @@ const AdminDashboard = () => {
 
   const handleEditUserSave = async (userId, updatedUserData) => {
     try {
+      let savedUser = null;
       if (userId) {
-        await editUser(userId, updatedUserData);
+        savedUser = await editUser(userId, updatedUserData);
+        // Immediately update usersList state so dashboard reflects changes instantly
+        setUsersList(prev => prev.map(u =>
+          (u.id === userId || u._id === userId)
+            ? { ...u, ...updatedUserData }
+            : u
+        ));
+        // Also update bookingsList so dashboard pending bookings show updated user info
+        setBookingsList(prev => prev.map(b => {
+          if (b.userId && (b.userId._id === userId || b.userId.id === userId)) {
+            return { ...b, userId: { ...b.userId, ...updatedUserData } };
+          }
+          return b;
+        }));
       } else {
         await createUserApi(token, updatedUserData);
       }
-      await loadData();
+      // Silently refresh all data in background (no skeleton)
+      await loadData(false);
     } catch (err) {
       toast.error(err.message || 'Xatolik yuz berdi');
       throw err;
     }
   };
+
 
   const parseBookingDate = (dateStr) => {
     if (!dateStr) return new Date(0);
