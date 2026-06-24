@@ -140,8 +140,16 @@ const initMockDb = () => {
     localStorage.setItem('barber_bookings', JSON.stringify(initialBookings));
   }
 
+  const defaultMockServices = [
+    { id: 1, name: 'Soch olish', name_en: 'Haircut', price: 100000, duration: 30, image_url: '/styles/1.png' },
+    { id: 2, name: 'Soqol olish', name_en: 'Beard Trim', price: 70000, duration: 20, image_url: '/styles/2.png' },
+    { id: 3, name: 'Soch + Soqol', name_en: 'Haircut + Beard', price: 150000, duration: 45, image_url: '/styles/3.png' },
+    { id: 4, name: 'Yuz tozalash', name_en: 'Face Massage', price: 150000, duration: 30, image_url: '/styles/4.png' },
+    { id: 5, name: 'Massaj', name_en: 'Massage', price: 100000, duration: 30, image_url: '/styles/4.png' }
+  ];
+
   if (!localStorage.getItem('barber_services')) {
-    localStorage.setItem('barber_services', JSON.stringify(barberData.services));
+    localStorage.setItem('barber_services', JSON.stringify(defaultMockServices));
   }
 };
 
@@ -1103,8 +1111,16 @@ export const getBlockedDaysApi = async () => {
 
 export const getServicesApi = async () => {
   if (MOCK_MODE) {
+    const defaultMockServices = [
+      { id: 1, name: 'Soch olish', name_en: 'Haircut', price: 100000, duration: 30, image_url: '/styles/1.png' },
+      { id: 2, name: 'Soqol olish', name_en: 'Beard Trim', price: 70000, duration: 20, image_url: '/styles/2.png' },
+      { id: 3, name: 'Soch + Soqol', name_en: 'Haircut + Beard', price: 150000, duration: 45, image_url: '/styles/3.png' },
+      { id: 4, name: 'Yuz tozalash', name_en: 'Face Massage', price: 150000, duration: 30, image_url: '/styles/4.png' },
+      { id: 5, name: 'Massaj', name_en: 'Massage', price: 100000, duration: 30, image_url: '/styles/4.png' }
+    ];
+
     if (!localStorage.getItem('barber_services')) {
-      localStorage.setItem('barber_services', JSON.stringify(barberData.services));
+      localStorage.setItem('barber_services', JSON.stringify(defaultMockServices));
     }
     return JSON.parse(localStorage.getItem('barber_services') || '[]');
   }

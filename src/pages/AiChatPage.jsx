@@ -47,7 +47,7 @@ const AiChatPage = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [services, setServices] = useState(barberData.services);
+  const [services, setServices] = useState([]);
   const messagesEndRef = useRef(null);
 
   // Fetch dynamic services list for AI context

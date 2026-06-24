@@ -1,12 +1,38 @@
 import React from 'react';
 import { formatPrice } from '../../../utils/format';
 
-const ServiceSelection = ({ services, selectedService, onSelectService }) => {
+const ServiceSelection = ({ services, loading, selectedService, onSelectService }) => {
   const [loadedImages, setLoadedImages] = React.useState({});
 
   const handleImageLoad = (id) => {
     setLoadedImages((prev) => ({ ...prev, [id]: true }));
   };
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full animate-fadeIn">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div
+            key={i}
+            className="bg-zinc-800/40 border border-emerald-500/10 rounded-xl p-4 animate-pulse flex items-center gap-4 relative overflow-hidden h-[98px]"
+          >
+            {/* Rasm skeleton */}
+            <div className="w-16 h-16 shrink-0 rounded-xl bg-zinc-700/30" />
+
+            {/* Matn skeleton */}
+            <div className="flex-1 min-w-0">
+              <div className="flex justify-between items-start gap-1">
+                <div className="h-5 bg-zinc-700/30 rounded-md w-3/4" />
+                <div className="h-3.5 bg-zinc-700/30 rounded-md w-10" />
+              </div>
+              <div className="h-3 bg-zinc-700/20 rounded-md w-1/2 mt-2" />
+              <div className="h-5 bg-zinc-700/30 rounded-md w-1/3 mt-3" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="w-full mx-auto">

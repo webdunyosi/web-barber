@@ -35,7 +35,8 @@ const BookingPage = () => {
   });
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [services, setServices] = useState(barberData.services);
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Fetch dynamic services
   useEffect(() => {
@@ -47,6 +48,8 @@ const BookingPage = () => {
         }
       } catch (err) {
         console.error("Xizmatlarni yuklashda xatolik:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchServices();
@@ -241,6 +244,7 @@ const BookingPage = () => {
         {currentStep === STEPS.SERVICE && (
           <ServiceSelection
             services={services}
+            loading={loading}
             selectedService={selectedService}
             onSelectService={(service) => {
               setSelectedService(service);
