@@ -334,7 +334,7 @@ const AdminDashboard = () => {
   // Filters & UI States
   const [searchTerm, setSearchTerm] = useState('');
   const [userStatusFilter, setUserStatusFilter] = useState('all'); // 'all' | 'active' | 'blocked'
-  const [bookingStatusFilter, setBookingStatusFilter] = useState('all'); // 'all' | 'pending' | 'confirmed' | 'rejected'
+  const [bookingStatusFilter, setBookingStatusFilter] = useState('pending'); // 'all' | 'pending' | 'confirmed' | 'rejected'
   const [zoomedReceipt, setZoomedReceipt] = useState(null);
   const [zoomedImage, setZoomedImage] = useState(null); // { url: '', title: '' }
   const [editingNotificationId, setEditingNotificationId] = useState(null);
