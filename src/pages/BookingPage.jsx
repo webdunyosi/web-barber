@@ -131,9 +131,9 @@ const BookingPage = () => {
     try {
       // 1. Backend kutayotgan formatda ma'lumotlarni yig'amiz
       const bookingInfo = {
-        name: personalInfo.name,
-        phone: personalInfo.phone,
-        telegram_user: personalInfo.telegram,
+        name: personalInfo.name || user?.name || '',
+        phone: personalInfo.phone || user?.phone || '',
+        telegram_user: personalInfo.telegram || user?.telegram || '',
         service: {
           name: selectedService.name,
           price: selectedService.price,
@@ -141,6 +141,8 @@ const BookingPage = () => {
         date: formatDate(selectedDate),
         time: selectedTime,
       };
+
+      console.log('Sending booking request:', { personalInfo, user, bookingInfo });
 
       // 2. api.js dagi funksiya orqali Render backendimizga jo'natamiz
       const result = await submitBooking(bookingInfo, paymentData);
