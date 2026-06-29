@@ -38,7 +38,7 @@ const BottomNavigation = () => {
           </NavLink>
 
           <NavLink
-            to="/stillar"
+            to="/buyurtmalarim"
             className={({ isActive }) =>
               `flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
                 isActive
@@ -47,8 +47,8 @@ const BottomNavigation = () => {
               }`
             }
           >
-            <FaCut size={19} />
-            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Stillar</span>
+            <FaCalendarCheck size={19} />
+            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Buyurtmalar</span>
           </NavLink>
         </div>
 

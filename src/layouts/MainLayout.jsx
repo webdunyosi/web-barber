@@ -12,6 +12,7 @@ const MainLayout = () => {
   const { currentStep } = useStep();
   const { isAuthenticated, isAdmin, loading } = useAuth();
   const location = useLocation();
+  const isScrollLockedPage = location.pathname.startsWith('/buyurtmalarim') || location.pathname.startsWith('/ai-chat');
 
   if (!loading && isAuthenticated && isAdmin) {
     return <Navigate to="/admin" replace />;
@@ -26,20 +27,24 @@ const MainLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 web-pattern">
+    <div className={`bg-zinc-950 web-pattern ${isScrollLockedPage ? 'h-dvh overflow-hidden flex flex-col' : 'min-h-screen'}`}>
       {/* Header */}
-      <Header currentStep={currentStep} toggleSidebar={toggleSidebar} />
+      {!location.pathname.startsWith('/buyurtmalarim') && (
+        <Header currentStep={currentStep} toggleSidebar={toggleSidebar} />
+      )}
       
       {/* Main Content with Sidebar */}
-      <div className="flex relative">
+      <div className={`flex relative ${isScrollLockedPage ? 'flex-1 overflow-hidden min-h-0' : ''}`}>
         {/* Sidebar */}
         <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
         
         {/* Page Content */}
-        <main className={`flex-1 container mx-auto lg:pb-8 ${
-          location.pathname === '/ai-chat' 
+        <main className={`flex-1 container mx-auto lg:pb-8 ${isScrollLockedPage ? 'overflow-hidden flex flex-col min-h-0' : ''} ${
+          location.pathname.startsWith('/ai-chat') 
             ? 'px-0 pt-0 pb-[68px]' 
-            : location.pathname === '/bildirishnomalar'
+            : location.pathname.startsWith('/buyurtmalarim')
+            ? 'px-0 pt-0 pb-[68px]'
+            : location.pathname.startsWith('/bildirishnomalar')
             ? 'px-2 pt-1.5 md:pt-6 pb-[80px]'
             : 'px-4 pt-3 md:pt-8 pb-[80px]'
         }`}>

@@ -461,15 +461,15 @@ const ProfilePage = () => {
             {/* Guruh 1: Asosiy Xizmatlar (List Group 1) */}
             <div className="bg-zinc-900/70 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-xl">
               <div className="p-1">
-                {/* Item 1: Mening buyurtmalarim */}
+                {/* Item 1: Soch stillari */}
                 <button
-                  onClick={() => navigate('/buyurtmalarim')}
+                  onClick={() => navigate('/stillar')}
                   className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer border-b border-white/5 text-left font-sans"
                 >
                   <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                    <FaCalendarCheck size={16} />
+                    <FaCut size={16} />
                   </div>
-                  <span className="flex-1 text-sm font-semibold text-zinc-200">Mening buyurtmalarim</span>
+                  <span className="flex-1 text-sm font-semibold text-zinc-200">Soch stillari</span>
                   <FaChevronRight size={12} className="text-zinc-500" />
                 </button>
 
