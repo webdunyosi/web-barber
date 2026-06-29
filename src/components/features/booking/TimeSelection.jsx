@@ -128,6 +128,17 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
     return `${selectedDate.getDate()}-${months[selectedDate.getMonth()]} ${selectedDate.getFullYear()}-yil`;
   };
 
+  const isTodaySelected = selectedDate && selectedDate.toDateString() === new Date().toDateString();
+  const now = new Date();
+  const currentHour = now.getHours();
+  const currentMinute = now.getMinutes();
+
+  const availableTimeSlots = timeSlots.filter((time) => {
+    if (!isTodaySelected) return true;
+    const [slotHour, slotMinute] = time.split(':').map(Number);
+    return slotHour > currentHour || (slotHour === currentHour && slotMinute > currentMinute);
+  });
+
   return (
     <div className="w-full max-w-4xl mx-auto p-0 mt-4 md:mt-0">
       
@@ -244,9 +255,13 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
                 </div>
               ))}
             </div>
+          ) : availableTimeSlots.length === 0 ? (
+            <div className="w-full py-8 text-center text-zinc-550 border border-dashed border-zinc-800/80 rounded-2xl bg-zinc-950/20">
+              Bugun uchun barcha ish soatlari o'tib ketgan. Iltimos, boshqa kunni tanlang.
+            </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {timeSlots.map((time) => {
+              {availableTimeSlots.map((time) => {
                 const isBooked = bookedTimes.includes(time);
                 const isSelected = selectedTime === time;
                 
