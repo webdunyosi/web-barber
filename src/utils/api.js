@@ -11,7 +11,7 @@ const getApiUrl = () => {
                   /^10\./.test(hostname) || 
                   /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(hostname);
   if (isLocal) {
-    return `http://${hostname}:5000/api`;
+    return `http://${hostname}:5001/api`;
   }
   return 'https://web-barber-backend.onrender.com/api';
 };
