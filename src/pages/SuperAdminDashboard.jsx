@@ -3,20 +3,66 @@ import { useAuth } from '../hooks/useAuth';
 import { 
   FaUserTie, FaUsers, FaCalendarCheck, FaCoins, FaPlus, 
   FaTrash, FaEdit, FaCopy, FaCheck, FaTimes, FaSpinner, 
-  FaSignOutAlt, FaEye, FaEyeSlash, FaChartBar, FaUserShield
+  FaSignOutAlt, FaEye, FaEyeSlash, FaChartBar, FaUserShield, FaUser,
+  FaChevronRight, FaSave, FaPhone, FaPaperPlane
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 const SuperAdminDashboard = () => {
-  const { token, logout, getBarbers, createBarber, updateBarber, deleteBarber, getSuperadminStats } = useAuth();
+  const { user, token, logout, getBarbers, createBarber, updateBarber, deleteBarber, getSuperadminStats, updateProfile } = useAuth();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState('barbers'); // 'barbers' or 'statistics'
+  const [activeTab, setActiveTab] = useState('barbers'); // 'barbers', 'statistics' or 'profile'
   const [barbers, setBarbers] = useState([]);
   const [stats, setStats] = useState({ barbersCount: 0, clientsCount: 0, appointmentsCount: 0, revenue: 0 });
   const [loading, setLoading] = useState(true);
   
+  // Profile editing states
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileError, setProfileError] = useState('');
+  const [profileSuccess, setProfileSuccess] = useState('');
+  const [editedName, setEditedName] = useState(user?.name || '');
+  const [editedPhone, setEditedPhone] = useState(user?.phone || '');
+  const [editedTelegram, setEditedTelegram] = useState(user?.telegram || '');
+  const [editedPassword, setEditedPassword] = useState('');
+  const [isProfileUpdating, setIsProfileUpdating] = useState(false);
+
+  // Sync state on user load
+  useEffect(() => {
+    if (user) {
+      setEditedName(user.name || '');
+      setEditedPhone(user.phone || '');
+      setEditedTelegram(user.telegram || '');
+    }
+  }, [user, isEditingProfile]);
+
+  const handleSaveProfile = async (e) => {
+    e.preventDefault();
+    setIsProfileUpdating(true);
+    setProfileError('');
+    setProfileSuccess('');
+    try {
+      const updateData = {
+        name: editedName,
+        telegram: editedTelegram
+      };
+      if (editedPassword.trim()) {
+        updateData.password = editedPassword;
+      }
+      await updateProfile(updateData);
+      setProfileSuccess('Profil muvaffaqiyatli yangilandi!');
+      setIsEditingProfile(false);
+      setEditedPassword('');
+      setTimeout(() => setProfileSuccess(''), 3000);
+    } catch (error) {
+      console.error('Update profile error:', error);
+      setProfileError(error.response?.data?.error || error.message || 'Profilni yangilashda xatolik yuz berdi');
+    } finally {
+      setIsProfileUpdating(false);
+    }
+  };
+
   // Modals / Forms state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBarber, setEditingBarber] = useState(null);
@@ -203,6 +249,18 @@ const SuperAdminDashboard = () => {
             >
               <FaChartBar size={18} />
               <span>Tizim Statistikasi</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('profile')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm cursor-pointer ${
+                activeTab === 'profile'
+                  ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/40'
+                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <FaUser size={18} />
+              <span>Profil Boshqaruvi</span>
             </button>
           </nav>
 
@@ -419,6 +477,250 @@ const SuperAdminDashboard = () => {
               </div>
             )}
 
+            {/* TAB 3: PROFILE MANAGEMENT */}
+            {activeTab === 'profile' && (
+              <div className="w-full text-white px-0 sm:px-4 py-2 pb-4 animate-fadeIn">
+                <div className="max-w-md mx-auto space-y-5">
+                  
+                  {/* Page Title */}
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-center bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+                    Shaxsiy Kabinet
+                  </h2>
+
+                  {/* Success / Error Alerts */}
+                  {profileError && (
+                    <div className="p-3.5 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold animate-fadeIn">
+                      {profileError}
+                    </div>
+                  )}
+                  {profileSuccess && (
+                    <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold animate-fadeIn">
+                      {profileSuccess}
+                    </div>
+                  )}
+
+                  {isEditingProfile ? (
+                    /* Editing Form Card */
+                    <div className="bg-zinc-900/40 backdrop-blur-md shadow-xl rounded-3xl p-5 space-y-4 relative overflow-hidden group">
+                      <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-emerald-500 to-green-600 shadow-[0_0_12px_rgba(16,185,129,0.4)]"></div>
+                      <h3 className="text-base font-bold text-white mb-2 border-b border-white/5 pb-3">Profilni tahrirlash</h3>
+                      
+                      <form onSubmit={handleSaveProfile} className="space-y-4" autoComplete="off">
+                        {/* Name Input */}
+                        <div>
+                          <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Ism</label>
+                          <input
+                            type="text"
+                            value={editedName}
+                            onChange={(e) => setEditedName(e.target.value)}
+                            disabled={isProfileUpdating}
+                            className="w-full bg-zinc-800/80 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                            placeholder={user?.name || "Ismingizni kiriting"}
+                            autoComplete="off"
+                          />
+                        </div>
+
+                        {/* Phone Input */}
+                        <div>
+                          <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Telefon raqam</label>
+                          <div className="relative flex items-center">
+                            <FaPhone size={12} className="absolute left-3 text-zinc-500 z-10" />
+                            <input
+                              type="text"
+                              value={editedPhone}
+                              disabled
+                              className="w-full bg-zinc-950/40 border border-zinc-900 text-zinc-550 rounded-xl pl-9 pr-3 py-2 text-sm cursor-not-allowed select-none"
+                              placeholder={user?.phone || "+998 99 999 99 99"}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Telegram Username Input */}
+                        <div>
+                          <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Telegram username</label>
+                          <div className="relative flex items-center">
+                            <span className="absolute left-3 text-zinc-500 text-sm font-semibold">@</span>
+                            <input
+                              type="text"
+                              value={editedTelegram}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setEditedTelegram(val.startsWith('@') ? val.substring(1) : val);
+                              }}
+                              disabled={isProfileUpdating}
+                              className="w-full bg-zinc-800/80 border border-white/10 rounded-xl pl-7 pr-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                              placeholder={user?.telegram || "username"}
+                              autoComplete="off"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Password Input */}
+                        <div>
+                          <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Yangi parol (ixtiyoriy)</label>
+                          <div className="relative flex items-center">
+                            <input
+                              type={showPassword ? "text" : "password"}
+                              value={editedPassword}
+                              onChange={(e) => setEditedPassword(e.target.value)}
+                              disabled={isProfileUpdating}
+                              className="w-full bg-zinc-850/80 border border-white/10 rounded-xl pl-3 pr-10 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                              placeholder="Bo'sh qoldirilsa o'zgarmaydi"
+                              autoComplete="new-password"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="absolute inset-y-0 right-0 flex items-center pr-3 text-zinc-500 hover:text-white transition-colors cursor-pointer border-none bg-transparent"
+                            >
+                              {showPassword ? <FaEyeSlash size={14} /> : <FaEye size={14} />}
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-2 pt-2">
+                          <button
+                            type="submit"
+                            disabled={isProfileUpdating}
+                            className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-2.5 px-3 rounded-xl transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer text-xs disabled:opacity-50"
+                          >
+                            {isProfileUpdating ? (
+                              <FaSpinner size={12} className="animate-spin" />
+                            ) : (
+                              <FaSave size={12} />
+                            )}
+                            <span>Saqlash</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setIsEditingProfile(false)}
+                            disabled={isProfileUpdating}
+                            className="flex-1 bg-zinc-800 border border-white/5 hover:bg-zinc-750 text-gray-300 font-semibold py-2.5 px-3 rounded-xl transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer text-xs disabled:opacity-50"
+                          >
+                            <FaTimes size={12} />
+                            <span>Bekor qilish</span>
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  ) : (
+                    /* Profile Details & Navigation lists */
+                    <>
+                      {/* User Info Header Card */}
+                      <div className="bg-zinc-900/40 backdrop-blur-md shadow-xl rounded-3xl p-4 sm:p-5 relative overflow-hidden group">
+                        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-emerald-500 to-green-600 shadow-[0_0_12px_rgba(16,185,129,0.4)]"></div>
+                        
+                        <div className="flex items-center gap-4">
+                          <div className="relative group shrink-0">
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-300 animate-pulse"></div>
+                            <img 
+                              src="/avatar/men.png" 
+                              alt="Profile" 
+                              className="relative w-16 h-16 rounded-full object-cover border-2 border-emerald-500/30" 
+                            />
+                            <span className="absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full bg-emerald-500 border-2 border-zinc-900 flex items-center justify-center text-[8px]" title="Online">
+                              ✓
+                            </span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-base sm:text-lg font-bold tracking-wide text-white truncate">{user?.name}</h3>
+                            <p className="text-xs text-zinc-400 font-medium mt-0.5">{user?.phone}</p>
+                            <div className="mt-2 flex items-center gap-2">
+                              <span className="inline-block px-2.5 py-0.5 text-[9px] font-extrabold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
+                                Super Admin
+                              </span>
+                            </div>
+                          </div>
+                          {/* Edit profile header shortcut */}
+                          <button
+                            onClick={() => {
+                              setIsEditingProfile(true);
+                              setProfileError('');
+                            }}
+                            className="w-10 h-10 rounded-xl bg-zinc-800/80 hover:bg-zinc-750 border border-white/5 hover:border-emerald-500/30 text-zinc-400 hover:text-emerald-400 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 shrink-0"
+                            title="Profilni tahrirlash"
+                          >
+                            <FaEdit size={16} />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Group 1: Manage Sections */}
+                      <div className="bg-zinc-900/40 backdrop-blur-md shadow-xl rounded-3xl overflow-hidden">
+                        <div className="p-1">
+                          {/* Item 1: Sartaroshlar Boshqaruvi */}
+                          <button
+                            onClick={() => setActiveTab('barbers')}
+                            className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer border-b border-white/5 text-left font-sans"
+                          >
+                            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                              <FaUserTie size={16} />
+                            </div>
+                            <span className="flex-1 text-sm font-semibold text-zinc-200">Sartaroshlar boshqaruvi</span>
+                            <FaChevronRight size={12} className="text-zinc-500" />
+                          </button>
+
+                          {/* Item 2: Tizim Statistikasi */}
+                          <button
+                            onClick={() => setActiveTab('statistics')}
+                            className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                          >
+                            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                              <FaChartBar size={16} />
+                            </div>
+                            <span className="flex-1 text-sm font-semibold text-zinc-200">Tizim statistikasi</span>
+                            <FaChevronRight size={12} className="text-zinc-500" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Group 2: Developer Contact Info */}
+                      <div className="bg-zinc-900/40 backdrop-blur-md shadow-xl rounded-3xl overflow-hidden">
+                        <div className="p-1">
+                          {/* Item 1: Telegram Link */}
+                          <a
+                            href="https://t.me/AlimardonToshpulatov"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-all duration-200 border-b border-white/5 text-left font-sans cursor-pointer group"
+                          >
+                            <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 group-hover:bg-sky-500/20 group-hover:border-sky-500/30 flex items-center justify-center text-sky-400 transition-colors duration-200 shrink-0">
+                              <FaPaperPlane size={14} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <span className="block text-[10px] text-gray-400 uppercase tracking-wider">Dasturchi Telegram</span>
+                              <span className="text-sm font-semibold text-zinc-200 truncate block group-hover:text-white transition-colors duration-200">
+                                @AlimardonToshpulatov
+                              </span>
+                            </div>
+                            <FaChevronRight size={12} className="text-zinc-500 group-hover:text-zinc-300 transition-colors duration-200" />
+                          </a>
+
+                          {/* Item 2: Phone Link */}
+                          <a
+                            href="tel:+998509509545"
+                            className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-all duration-200 text-left font-sans cursor-pointer group"
+                          >
+                            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 group-hover:bg-emerald-500/20 group-hover:border-emerald-500/30 flex items-center justify-center text-emerald-400 transition-colors duration-200 shrink-0">
+                              <FaPhone size={14} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <span className="block text-[10px] text-gray-400 uppercase tracking-wider">Dasturchi Telefon</span>
+                              <span className="text-sm font-semibold text-zinc-200 truncate block group-hover:text-white transition-colors duration-200">
+                                +998 50 950 95 45
+                              </span>
+                            </div>
+                            <FaChevronRight size={12} className="text-zinc-500 group-hover:text-zinc-300 transition-colors duration-200" />
+                          </a>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+
           </div>
         )}
       </main>
@@ -442,6 +744,15 @@ const SuperAdminDashboard = () => {
         >
           <FaChartBar size={18} />
           <span>Statistika</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('profile')}
+          className={`flex flex-col items-center gap-1 text-[10px] font-bold uppercase transition-colors cursor-pointer ${
+            activeTab === 'profile' ? 'text-emerald-400' : 'text-zinc-500'
+          }`}
+        >
+          <FaUser size={18} />
+          <span>Profil</span>
         </button>
       </div>
 
