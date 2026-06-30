@@ -13,6 +13,7 @@ const BarberRedirectHandler = () => {
     const handleRedirect = async () => {
       try {
         await loadBarberBySlug(slug);
+        sessionStorage.setItem('viewing_storefront', 'true');
         navigate('/');
       } catch (err) {
         console.error('Barber redirect handler error:', err);

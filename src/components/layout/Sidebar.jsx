@@ -77,8 +77,9 @@ const Sidebar = ({ isOpen, onClose }) => {
               <NavLink
                 to="/superadmin"
                 onClick={() => {
+                  sessionStorage.removeItem('viewing_storefront');
                   if (window.innerWidth < 1024) {
-                    onClose()
+                    onClose();
                   }
                 }}
                 className={({ isActive }) =>
@@ -101,8 +102,9 @@ const Sidebar = ({ isOpen, onClose }) => {
               <NavLink
                 to="/admin"
                 onClick={() => {
+                  sessionStorage.removeItem('viewing_storefront');
                   if (window.innerWidth < 1024) {
-                    onClose()
+                    onClose();
                   }
                 }}
                 className={({ isActive }) =>

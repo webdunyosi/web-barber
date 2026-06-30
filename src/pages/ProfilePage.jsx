@@ -64,9 +64,20 @@ const userTutorialsList = [
 ];
 
 const ProfilePage = () => {
-  const { user, isAuthenticated, isAdmin, logout, updateProfile } = useAuth();
+  const { user, isAuthenticated, isAdmin, isSuperAdmin, logout, updateProfile } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const navigate = useNavigate();
+
+  // Redirect admins to their dashboards immediately
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (isSuperAdmin) {
+        navigate('/superadmin');
+      } else if (isAdmin) {
+        navigate('/admin');
+      }
+    }
+  }, [isAuthenticated, isAdmin, isSuperAdmin, navigate]);
 
   // Profile view state
   const [view, setView] = useState('profile'); // 'profile' | 'edit' | 'tutorials'

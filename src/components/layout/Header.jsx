@@ -98,13 +98,21 @@ const Header = ({ currentStep, toggleSidebar }) => {
             <div className="flex items-center gap-2">
               {isAuthenticated ? (
                 <div className="flex items-center gap-2 bg-zinc-800/60 border border-zinc-700 rounded-xl px-2.5 py-1.5 backdrop-blur-sm animate-fadeIn">
-                  {isSuperAdmin ? (
-                    <Link to="/superadmin" className="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 text-xs sm:text-sm font-semibold">
+                   {isSuperAdmin ? (
+                    <Link 
+                      to="/superadmin" 
+                      onClick={() => sessionStorage.removeItem('viewing_storefront')}
+                      className="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 text-xs sm:text-sm font-semibold"
+                    >
                       <FaUserShield size={15} />
                       <span>Super Admin</span>
                     </Link>
                   ) : isAdmin ? (
-                    <Link to="/admin" className="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 text-xs sm:text-sm font-semibold">
+                    <Link 
+                      to="/admin" 
+                      onClick={() => sessionStorage.removeItem('viewing_storefront')}
+                      className="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 text-xs sm:text-sm font-semibold"
+                    >
                       <FaUserShield size={15} />
                       <span>Admin Panel</span>
                     </Link>
@@ -116,7 +124,10 @@ const Header = ({ currentStep, toggleSidebar }) => {
                   )}
                   <span className="w-[1px] h-4 bg-zinc-700"></span>
                   <button
-                    onClick={logout}
+                    onClick={() => {
+                      sessionStorage.removeItem('viewing_storefront');
+                      logout();
+                    }}
                     className="text-zinc-400 hover:text-red-400 transition-colors flex items-center justify-center p-0.5 cursor-pointer"
                     title="Chiqish"
                   >
