@@ -17,7 +17,7 @@ const MainLayout = () => {
   const location = useLocation();
   const isScrollLockedPage = location.pathname.startsWith('/buyurtmalarim') || location.pathname.startsWith('/ai-chat');
 
-  if (!loading && isAuthenticated) {
+  if (!loading && isAuthenticated && !activeBarber) {
     if (isSuperAdmin) {
       return <Navigate to="/superadmin" replace />;
     }
