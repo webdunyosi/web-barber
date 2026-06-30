@@ -25,11 +25,11 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
         phone: '+998 ',
         telegram: '',
         password: '',
-        barberSlug: activeBarber?.slug || '',
+        barberSlug: '',
       });
       setErrors({});
     }
-  }, [isOpen, activeBarber]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -196,7 +196,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
           {/* Barber Slug (Sartarosh Kodi) Input */}
           <div className="group flex flex-col">
             <label className="block text-left text-xs font-semibold uppercase tracking-wider text-zinc-400 group-focus-within:text-emerald-400 transition-colors duration-300 mb-1.5 pl-1">
-              {activeTab === 'register' ? 'Sartarosh kodi *' : 'Sartarosh kodi (Mijozlar uchun)'}
+              Sartarosh kodi {activeTab === 'register' && '*'}
             </label>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-white/40 group-focus-within:text-emerald-400 transition-colors duration-300">
