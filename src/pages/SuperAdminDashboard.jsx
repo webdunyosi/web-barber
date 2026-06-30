@@ -267,13 +267,21 @@ const SuperAdminDashboard = () => {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {barbers.map((barber) => (
-                      <div key={barber._id} className="bg-zinc-900/40 border border-zinc-850 rounded-3xl p-5 flex flex-col justify-between space-y-4 hover:border-zinc-700/60 transition-all shadow-md relative overflow-hidden group">
+                      <div key={barber._id} className="bg-zinc-900/40 backdrop-blur-md shadow-xl hover:shadow-2xl hover:shadow-emerald-500/5 transition-all duration-300 relative overflow-hidden rounded-3xl pl-7 pr-5 py-5 flex flex-col justify-between space-y-4 group">
+                        
+                        {/* Status Accent Left Bar */}
+                        <div className={`absolute left-0 top-0 bottom-0 w-1.5 transition-all duration-300 ${
+                          barber.status === 'active' 
+                            ? 'bg-gradient-to-b from-emerald-500 to-green-600 shadow-[0_0_12px_rgba(16,185,129,0.4)]' 
+                            : 'bg-gradient-to-b from-red-500 to-rose-600 shadow-[0_0_12px_rgba(239,68,68,0.4)]'
+                        }`}></div>
+
                         <div className="space-y-4">
                           <div className="flex items-center gap-3">
                             <img 
                               src={barber.avatar || "/avatar/men.png"} 
                               alt={barber.name} 
-                              className="w-12 h-12 rounded-full object-cover border border-zinc-800 group-hover:border-emerald-500/30 transition-colors"
+                              className="w-12 h-12 rounded-full object-cover border border-zinc-800/80 group-hover:border-emerald-500/30 transition-colors"
                             />
                             <div className="min-w-0 flex-1">
                               <h3 className="text-base font-bold truncate group-hover:text-emerald-400 transition-colors">
@@ -287,22 +295,22 @@ const SuperAdminDashboard = () => {
 
                           <div className="space-y-2 text-xs text-zinc-400">
                             <div className="flex justify-between">
-                              <span className="text-zinc-600">Telefon:</span>
+                              <span className="text-zinc-650 font-medium">Telefon:</span>
                               <span className="font-semibold text-zinc-300">{barber.phone}</span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-zinc-600">Telegram:</span>
+                              <span className="text-zinc-650 font-medium">Telegram:</span>
                               <span className="font-semibold text-zinc-300">
                                 {barber.telegram ? `@${barber.telegram}` : '-'}
                               </span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-zinc-600">Slug:</span>
+                              <span className="text-zinc-650 font-medium">Slug:</span>
                               <span className="font-semibold text-emerald-500">/{barber.slug}</span>
                             </div>
                           </div>
 
-                          <div className="bg-zinc-950/80 border border-zinc-850 rounded-xl p-2.5 flex items-center justify-between gap-2">
+                          <div className="bg-zinc-950/40 border border-zinc-900/80 rounded-xl p-2.5 flex items-center justify-between gap-2 backdrop-blur-sm">
                             <div className="min-w-0 flex-1">
                               <span className="text-[9px] text-zinc-650 font-bold uppercase tracking-wider block leading-none">Mijoz havolasi</span>
                               <span className="text-xxs font-mono text-zinc-450 truncate block mt-1">
@@ -319,13 +327,13 @@ const SuperAdminDashboard = () => {
                           </div>
                         </div>
 
-                        <div className="border-t border-zinc-850/60 pt-3.5 flex items-center justify-between">
+                        <div className="border-t border-zinc-850/40 pt-3.5 flex items-center justify-between">
                           <button
                             onClick={() => handleToggleStatus(barber)}
                             className={`text-xxs font-bold uppercase px-2.5 py-1 rounded-full cursor-pointer transition-colors active:scale-95 ${
                               barber.status === 'active'
-                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20'
-                                : 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
+                                ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
+                                : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
                             }`}
                           >
                             {barber.status === 'active' ? 'Faol' : 'Bloklangan'}
@@ -334,7 +342,7 @@ const SuperAdminDashboard = () => {
                           <div className="flex gap-1.5">
                             <button 
                               onClick={() => handleOpenEditModal(barber)}
-                              className="w-8 h-8 rounded-lg bg-zinc-800/80 hover:bg-zinc-750 text-zinc-400 hover:text-white border border-zinc-850 flex items-center justify-center transition-colors cursor-pointer"
+                              className="w-8 h-8 rounded-lg bg-zinc-800/80 hover:bg-zinc-750 text-zinc-400 hover:text-white border border-zinc-850/60 flex items-center justify-center transition-colors cursor-pointer"
                               title="Tahrirlash"
                             >
                               <FaEdit size={12} />
@@ -365,45 +373,45 @@ const SuperAdminDashboard = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {/* Metric 1 */}
-                  <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 backdrop-blur-sm flex items-center justify-between">
+                  <div className="bg-zinc-900/40 backdrop-blur-md shadow-xl hover:shadow-2xl hover:shadow-emerald-500/5 transition-all duration-300 rounded-3xl p-6 flex items-center justify-between">
                     <div className="space-y-1">
-                      <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider block">Sartaroshlar</span>
+                      <span className="text-xs text-zinc-550 font-bold uppercase tracking-wider block">Sartaroshlar</span>
                       <p className="text-3xl font-black">{stats.barbersCount}</p>
                     </div>
-                    <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                    <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 shrink-0">
                       <FaUserTie size={24} />
                     </div>
                   </div>
 
                   {/* Metric 2 */}
-                  <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 backdrop-blur-sm flex items-center justify-between">
+                  <div className="bg-zinc-900/40 backdrop-blur-md shadow-xl hover:shadow-2xl hover:shadow-emerald-500/5 transition-all duration-300 rounded-3xl p-6 flex items-center justify-between">
                     <div className="space-y-1">
-                      <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider block">Mijozlar</span>
+                      <span className="text-xs text-zinc-550 font-bold uppercase tracking-wider block">Mijozlar</span>
                       <p className="text-3xl font-black">{stats.clientsCount}</p>
                     </div>
-                    <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                    <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 shrink-0">
                       <FaUsers size={24} />
                     </div>
                   </div>
 
                   {/* Metric 3 */}
-                  <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 backdrop-blur-sm flex items-center justify-between">
+                  <div className="bg-zinc-900/40 backdrop-blur-md shadow-xl hover:shadow-2xl hover:shadow-emerald-500/5 transition-all duration-300 rounded-3xl p-6 flex items-center justify-between">
                     <div className="space-y-1">
-                      <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider block">Buyurtmalar</span>
+                      <span className="text-xs text-zinc-550 font-bold uppercase tracking-wider block">Buyurtmalar</span>
                       <p className="text-3xl font-black">{stats.appointmentsCount}</p>
                     </div>
-                    <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                    <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 shrink-0">
                       <FaCalendarCheck size={24} />
                     </div>
                   </div>
 
                   {/* Metric 4 */}
-                  <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 backdrop-blur-sm flex items-center justify-between">
+                  <div className="bg-zinc-900/40 backdrop-blur-md shadow-xl hover:shadow-2xl hover:shadow-emerald-500/5 transition-all duration-300 rounded-3xl p-6 flex items-center justify-between">
                     <div className="space-y-1">
-                      <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider block">Karta Tushumi</span>
+                      <span className="text-xs text-zinc-550 font-bold uppercase tracking-wider block">Karta Tushumi</span>
                       <p className="text-3xl font-black text-emerald-400">{(stats.revenue || 0).toLocaleString()} UZS</p>
                     </div>
-                    <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                    <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 shrink-0">
                       <FaCoins size={24} />
                     </div>
                   </div>
