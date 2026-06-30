@@ -29,5 +29,10 @@
     "name": "Sadoqat kartasi",
     "path": "/loyalty",
     "icon": "FaGift"
+  },
+  {
+    "name": "Profil",
+    "path": "/profil",
+    "icon": "FaUser"
   }
 ]
