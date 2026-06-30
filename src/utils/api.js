@@ -339,7 +339,7 @@ ${isFree ? '\u2705 _Loyalty Card orqali 10-bepul xizmat! Tasdiqlash uchun admin 
 // ================= AUTH API =================
 
 // Login
-export const loginApi = async (phone, password) => {
+export const loginApi = async (phone, password, barberSlug) => {
   if (MOCK_MODE) {
     const users = getMockUsers();
     const cleanPhone = phone.replace(/\s+/g, '');
@@ -369,7 +369,7 @@ export const loginApi = async (phone, password) => {
     };
   }
 
-  const response = await axios.post(`${API_URL}/auth/login`, { phone, password });
+  const response = await axios.post(`${API_URL}/auth/login`, { phone, password, barberSlug });
   return response.data;
 };
 

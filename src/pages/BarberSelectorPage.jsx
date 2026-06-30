@@ -1,86 +1,117 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useBarber } from '../contexts/BarberContext';
-import { FaCut, FaMapMarkerAlt, FaChevronRight } from 'react-icons/fa';
+import { FaCut, FaChevronRight, FaSignInAlt } from 'react-icons/fa';
+import AuthModal from '../components/features/auth/AuthModal';
 
 const BarberSelectorPage = () => {
-  const { barbersList, selectBarber, loadingBarbers } = useBarber();
+  const { loadBarberBySlug } = useBarber();
+  const [slugInput, setSlugInput] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!slugInput.trim()) {
+      setError('Sartarosh kodini kiriting');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+    try {
+      await loadBarberBySlug(slugInput.trim().toLowerCase());
+    } catch (err) {
+      console.error(err);
+      setError('Sartarosh topilmadi. Kodni qaytadan tekshirib ko\'ring.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white flex flex-col justify-between py-12 px-4 relative web-pattern">
+    <div className="min-h-screen bg-zinc-950 text-white flex flex-col justify-between py-12 px-4 relative web-pattern font-sans">
       {/* Background radial glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none"></div>
 
-      <div className="max-w-4xl mx-auto w-full space-y-12 z-10 my-auto">
+      <div className="max-w-md mx-auto w-full space-y-8 z-10 my-auto">
         {/* Header Branding */}
-        <div className="text-center space-y-4">
+        <div className="text-center space-y-4 animate-fadeIn">
           <div className="inline-flex p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mb-2 animate-bounce">
             <FaCut size={32} />
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
-            WEB BARBER PLATFORMASI
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+            WEB BARBER
           </h1>
-          <p className="text-zinc-400 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-            O'zingizga ma'qul bo'lgan sartaroshni tanlang va qulay onlayn navbat olish hamda sadoqat kartalaridan foydalanish imkoniyatini qo'lga kiriting.
+          <p className="text-zinc-400 text-xs sm:text-sm max-w-xs mx-auto leading-relaxed">
+            Sartaroshxonangiz sahifasiga kirish uchun sartarosh tomonidan berilgan maxsus kodni kiriting.
           </p>
         </div>
 
-        {/* Barbers list */}
-        {loadingBarbers ? (
-          <div className="flex flex-col items-center justify-center py-12 space-y-4">
-            <div className="w-12 h-12 rounded-full border-4 border-emerald-500/10 border-t-emerald-500 animate-spin"></div>
-            <span className="text-xs text-emerald-400 font-extrabold tracking-widest uppercase animate-pulse">Sartaroshlar yuklanmoqda...</span>
-          </div>
-        ) : barbersList.length === 0 ? (
-          <div className="text-center py-12 bg-zinc-900/40 border border-zinc-800 rounded-3xl p-8 backdrop-blur-sm max-w-md mx-auto">
-            <span className="text-4xl block mb-3">📭</span>
-            <h3 className="text-lg font-bold text-white mb-1">Hozircha sartaroshlar yo'q</h3>
-            <p className="text-sm text-zinc-500">Tizimda hech qanday sartarosh ro'yxatdan o'tmagan. Iltimos, keyinroq qayta urunib ko'ring.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            {barbersList.map((barber) => (
-              <div
-                key={barber._id}
-                onClick={() => selectBarber(barber)}
-                className="group relative bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800 hover:border-emerald-500/40 rounded-3xl p-5 backdrop-blur-md shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between hover:scale-[1.02] active:scale-[0.99]"
-              >
-                {/* Decorative border glow */}
-                <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-emerald-500/0 via-emerald-500/0 to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        {/* Access Form Card */}
+        <div className="bg-zinc-900/60 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-md shadow-2xl space-y-6 relative overflow-hidden animate-slideUp">
+          <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-emerald-500 to-teal-500"></div>
 
-                <div className="flex gap-4">
-                  <img
-                    src={barber.avatar || "/avatar/men.png"}
-                    alt={barber.name}
-                    className="w-16 h-16 rounded-full object-cover border-2 border-zinc-800 group-hover:border-emerald-500/30 transition-colors"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors truncate">
-                      {barber.shopName || barber.name}
-                    </h3>
-                    <p className="text-xs text-zinc-400 mt-1 line-clamp-2 h-8 leading-relaxed">
-                      {barber.description || "Ushbu sartarosh shaxsiy salon ma'lumotlarini kiritmagan."}
-                    </p>
-                    <div className="flex items-center gap-1 text-[10px] text-zinc-500 font-semibold uppercase tracking-wider mt-2.5">
-                      <FaMapMarkerAlt className="text-emerald-500" />
-                      <span>Toshkent, O'zbekiston</span>
-                    </div>
-                  </div>
-                </div>
+          {error && (
+            <div className="p-3.5 bg-red-500/10 border border-red-500/30 rounded-xl text-red-300 text-sm text-center font-medium animate-fadeIn">
+              {error}
+            </div>
+          )}
 
-                <div className="border-t border-zinc-850 mt-5 pt-3.5 flex items-center justify-between">
-                  <span className="text-[10px] bg-emerald-500/15 text-emerald-400 font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                    Faol
-                  </span>
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400 group-hover:text-emerald-300 transition-colors">
-                    <span>Kirish</span>
-                    <FaChevronRight size={10} className="transform group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="group flex flex-col">
+              <label className="block text-left text-xs font-semibold uppercase tracking-wider text-zinc-400 group-focus-within:text-emerald-400 transition-colors duration-300 mb-2 pl-1">
+                Sartarosh Kodi (Login / Username)
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-white/40 group-focus-within:text-emerald-400 transition-colors duration-300">
+                  <FaCut size={14} />
+                </span>
+                <input
+                  type="text"
+                  value={slugInput}
+                  onChange={(e) => {
+                    setSlugInput(e.target.value);
+                    if (error) setError('');
+                  }}
+                  placeholder="masalan: behruz"
+                  className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 placeholder:text-white/20 text-sm hover:bg-white/10"
+                />
               </div>
-            ))}
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full group relative overflow-hidden bg-gradient-to-r from-emerald-500 to-green-600 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] text-white font-bold py-3.5 px-4 rounded-xl transition-all active:scale-[0.98] cursor-pointer disabled:bg-zinc-800 disabled:text-white/20 disabled:cursor-not-allowed flex items-center justify-center gap-2 border border-emerald-400/30 text-sm tracking-wide uppercase"
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-5 h-5 rounded-full border-2 border-white/20 border-t-white animate-spin"></div>
+                  <span>Yuklanmoqda...</span>
+                </>
+              ) : (
+                <>
+                  <span>Davom etish</span>
+                  <FaChevronRight size={10} className="transform group-hover:translate-x-0.5 transition-transform" />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="border-t border-white/5 pt-4 text-center">
+            <button
+              onClick={() => setIsAuthModalOpen(true)}
+              className="text-xs text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1.5 mx-auto transition-colors cursor-pointer"
+            >
+              <FaSignInAlt size={12} />
+              <span>Sartarosh & Admin kirishi</span>
+            </button>
           </div>
-        )}
+        </div>
       </div>
+
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
 
       {/* Footer copyright */}
       <div className="text-center text-[10px] text-zinc-600 font-medium z-10 pt-8">

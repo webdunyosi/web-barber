@@ -53,14 +53,14 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, [token]);
 
-  const login = async (phone, password) => {
+  const login = async (phone, password, barberSlug) => {
     setLoading(true);
     try {
-      const res = await loginApi(phone, password);
+      const res = await loginApi(phone, password, barberSlug);
       localStorage.setItem('barber_token', res.token);
       setToken(res.token);
       setUser(res.user);
-      return res.user;
+      return res; // Return full response containing activeBarber
     } catch (err) {
       throw err;
     } finally {
@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('barber_token', res.token);
       setToken(res.token);
       setUser(res.user);
-      return res.user;
+      return res; // Return full response containing activeBarber
     } catch (err) {
       throw err;
     } finally {

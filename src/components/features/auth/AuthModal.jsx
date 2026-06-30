@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
-import { FaTimes, FaUser, FaPhone, FaPaperPlane, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useBarber } from '../../../contexts/BarberContext';
+import { FaTimes, FaUser, FaPhone, FaPaperPlane, FaLock, FaEye, FaEyeSlash, FaCut } from 'react-icons/fa';
 
 const AuthModal = ({ isOpen, onClose, onSuccess }) => {
   const { login, register } = useAuth();
+  const { activeBarber, selectBarber } = useBarber();
   const [activeTab, setActiveTab] = useState('login'); // 'login' | 'register'
   const [formData, setFormData] = useState({
     name: '',
     phone: '+998 ',
     telegram: '',
     password: '',
+    barberSlug: '',
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -22,10 +25,11 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
         phone: '+998 ',
         telegram: '',
         password: '',
+        barberSlug: activeBarber?.slug || '',
       });
       setErrors({});
     }
-  }, [isOpen]);
+  }, [isOpen, activeBarber]);
 
   if (!isOpen) return null;
 
@@ -68,6 +72,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
     
     if (activeTab === 'register') {
       if (!formData.name.trim()) newErrors.name = 'Ismingizni kiriting';
+      if (!formData.barberSlug.trim()) newErrors.barberSlug = 'Sartarosh kodini (login) kiriting';
     }
     
     if (!formData.phone.trim() || formData.phone.trim() === '+998') {
@@ -94,18 +99,25 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
     try {
       const trimmedPhone = formData.phone.trim();
       if (activeTab === 'login') {
-        const user = await login(trimmedPhone, formData.password);
-        if (onSuccess) onSuccess(user);
+        const res = await login(trimmedPhone, formData.password, formData.barberSlug.trim());
+        if (res.activeBarber) {
+          selectBarber(res.activeBarber);
+        }
+        if (onSuccess) onSuccess(res.user);
         onClose();
       } else {
         const trimmedData = {
           ...formData,
           name: formData.name.trim(),
           phone: trimmedPhone,
-          telegram: formData.telegram.trim()
+          telegram: formData.telegram.trim(),
+          barberSlug: formData.barberSlug.trim()
         };
-        const user = await register(trimmedData);
-        if (onSuccess) onSuccess(user);
+        const res = await register(trimmedData);
+        if (res.activeBarber) {
+          selectBarber(res.activeBarber);
+        }
+        if (onSuccess) onSuccess(res.user);
         onClose();
       }
     } catch (err) {
@@ -181,6 +193,28 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
 
         {/* Auth Form */}
         <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
+          {/* Barber Slug (Sartarosh Kodi) Input */}
+          <div className="group flex flex-col">
+            <label className="block text-left text-xs font-semibold uppercase tracking-wider text-zinc-400 group-focus-within:text-emerald-400 transition-colors duration-300 mb-1.5 pl-1">
+              {activeTab === 'register' ? 'Sartarosh kodi *' : 'Sartarosh kodi (Mijozlar uchun)'}
+            </label>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-white/40 group-focus-within:text-emerald-400 transition-colors duration-300">
+                <FaCut size={14} />
+              </span>
+              <input
+                type="text"
+                value={formData.barberSlug}
+                onChange={(e) => handleChange('barberSlug', e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, ''))}
+                placeholder="masalan: behruz"
+                className={`w-full pl-11 pr-4 py-3.5 bg-white/5 border rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 placeholder:text-white/20 text-sm hover:bg-white/10 ${
+                  errors.barberSlug ? 'border-red-500/50 focus:ring-red-500/10 focus:border-red-500' : 'border-white/10'
+                }`}
+              />
+            </div>
+            {errors.barberSlug && <p className="mt-1.5 text-xs text-red-400 pl-1 text-left">{errors.barberSlug}</p>}
+          </div>
+
           {activeTab === 'register' && (
             <div className="group flex flex-col animate-fadeIn">
               <label className="block text-left text-xs font-semibold uppercase tracking-wider text-zinc-400 group-focus-within:text-emerald-400 transition-colors duration-300 mb-1.5 pl-1">

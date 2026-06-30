@@ -584,6 +584,7 @@ const ProfilePage = () => {
             <div className="pt-2">
               <button
                 onClick={() => {
+                  sessionStorage.removeItem('viewing_storefront');
                   logout();
                   navigate('/');
                 }}
