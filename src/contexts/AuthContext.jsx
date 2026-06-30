@@ -19,7 +19,12 @@ import {
   getServicesApi,
   addServiceApi,
   updateServiceApi,
-  deleteServiceApi
+  deleteServiceApi,
+  getBarbersApi,
+  createBarberApi,
+  updateBarberApi,
+  deleteBarberApi,
+  getSuperadminStatsApi
 } from '../utils/api';
 
 export const AuthProvider = ({ children }) => {
@@ -179,12 +184,38 @@ export const AuthProvider = ({ children }) => {
     return await deleteServiceApi(token, serviceId);
   };
 
+  const getBarbers = async () => {
+    if (!token) throw new Error('Unauthenticated');
+    return await getBarbersApi(token);
+  };
+
+  const createBarber = async (barberData) => {
+    if (!token) throw new Error('Unauthenticated');
+    return await createBarberApi(token, barberData);
+  };
+
+  const updateBarber = async (barberId, barberData) => {
+    if (!token) throw new Error('Unauthenticated');
+    return await updateBarberApi(token, barberId, barberData);
+  };
+
+  const deleteBarber = async (barberId) => {
+    if (!token) throw new Error('Unauthenticated');
+    return await deleteBarberApi(token, barberId);
+  };
+
+  const getSuperadminStats = async () => {
+    if (!token) throw new Error('Unauthenticated');
+    return await getSuperadminStatsApi(token);
+  };
+
   const value = {
     user,
     token,
     loading,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin',
+    isSuperAdmin: user?.role === 'superadmin',
     login,
     register,
     logout,
@@ -203,7 +234,12 @@ export const AuthProvider = ({ children }) => {
     getServices,
     addService,
     updateService,
-    deleteService
+    deleteService,
+    getBarbers,
+    createBarber,
+    updateBarber,
+    deleteBarber,
+    getSuperadminStats
   };
 
   return (

@@ -7,7 +7,7 @@ import AuthModal from '../features/auth/AuthModal';
 import { useStep } from '../../hooks/useStep';
 
 const Header = ({ currentStep, toggleSidebar }) => {
-  const { user, isAuthenticated, isAdmin, logout } = useAuth();
+  const { user, isAuthenticated, isAdmin, isSuperAdmin, logout } = useAuth();
   const { setCurrentStep } = useStep();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const location = useLocation();
@@ -98,7 +98,12 @@ const Header = ({ currentStep, toggleSidebar }) => {
             <div className="flex items-center gap-2">
               {isAuthenticated ? (
                 <div className="flex items-center gap-2 bg-zinc-800/60 border border-zinc-700 rounded-xl px-2.5 py-1.5 backdrop-blur-sm animate-fadeIn">
-                  {isAdmin ? (
+                  {isSuperAdmin ? (
+                    <Link to="/superadmin" className="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 text-xs sm:text-sm font-semibold">
+                      <FaUserShield size={15} />
+                      <span>Super Admin</span>
+                    </Link>
+                  ) : isAdmin ? (
                     <Link to="/admin" className="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 text-xs sm:text-sm font-semibold">
                       <FaUserShield size={15} />
                       <span>Admin Panel</span>

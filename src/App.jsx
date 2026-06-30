@@ -15,61 +15,72 @@ import NotificationsPage from './pages/NotificationsPage';
 import ScrollToTop from './components/layout/ScrollToTop';
 import { StepProvider } from './contexts/StepContext.jsx';
 import { AuthProvider } from './contexts/AuthContext.jsx';
+import { BarberProvider } from './contexts/BarberContext.jsx';
+import BarberRedirectHandler from './pages/BarberRedirectHandler.jsx';
+import SuperAdminDashboard from './pages/SuperAdminDashboard.jsx';
 
 const App = () => {
   return (
     <AuthProvider>
-      <Toaster
-        position="top-center"
-        toastOptions={{
-          style: {
-            background: '#18181b',
-            color: '#fff',
-            border: '1px solid rgba(16, 185, 129, 0.3)',
-            borderRadius: '12px',
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '14px',
-          },
-          success: {
-            iconTheme: {
-              primary: '#10b981',
-              secondary: '#18181b',
-            },
-          },
-          error: {
-            iconTheme: {
-              primary: '#ef4444',
-              secondary: '#18181b',
-            },
+      <BarberProvider>
+        <Toaster
+          position="top-center"
+          toastOptions={{
             style: {
-              border: '1px solid rgba(239, 68, 68, 0.3)',
+              background: '#18181b',
+              color: '#fff',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              borderRadius: '12px',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '14px',
+            },
+            success: {
+              iconTheme: {
+                primary: '#10b981',
+                secondary: '#18181b',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#18181b',
+              },
+              style: {
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+              }
             }
-          }
-        }}
-      />
-      <StepProvider>
-        <Router>
-          <ScrollToTop />
-          <Routes>
-            {/* Customer Routes */}
-            <Route path="/" element={<MainLayout />}>
-              <Route index element={<BookingPage />} />
-              <Route path="/stillar" element={<StylesPage />} />
-              <Route path="/sartarosh" element={<BarberProfilePage />} />
-              <Route path="/profil" element={<ProfilePage />} />
-              <Route path="/ai-chat" element={<AiChatPage />} />
-              <Route path="/loyalty" element={<LoyaltyPage />} />
-              <Route path="/buyurtmalarim" element={<BookingsListPage />} />
-              <Route path="/bildirishnomalar" element={<NotificationsPage />} />
-            </Route>
+          }}
+        />
+        <StepProvider>
+          <Router>
+            <ScrollToTop />
+            <Routes>
+              {/* Customer Routes */}
+              <Route path="/" element={<MainLayout />}>
+                <Route index element={<BookingPage />} />
+                <Route path="/stillar" element={<StylesPage />} />
+                <Route path="/sartarosh" element={<BarberProfilePage />} />
+                <Route path="/profil" element={<ProfilePage />} />
+                <Route path="/ai-chat" element={<AiChatPage />} />
+                <Route path="/loyalty" element={<LoyaltyPage />} />
+                <Route path="/buyurtmalarim" element={<BookingsListPage />} />
+                <Route path="/bildirishnomalar" element={<NotificationsPage />} />
+              </Route>
 
-            {/* Admin Routes */}
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-            </Route>
-          </Routes>
-        </Router>
-      </StepProvider>
+              {/* Redirect handler for Slug-based URLs */}
+              <Route path="/b/:slug" element={<BarberRedirectHandler />} />
+
+              {/* Super Admin Routes */}
+              <Route path="/superadmin" element={<SuperAdminDashboard />} />
+
+              {/* Admin Routes */}
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+              </Route>
+            </Routes>
+          </Router>
+        </StepProvider>
+      </BarberProvider>
     </AuthProvider>
   );
 };

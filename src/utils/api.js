@@ -17,6 +17,34 @@ const getApiUrl = () => {
 };
 
 const API_URL = getApiUrl();
+
+// Axios request interceptor to inject x-barber-id and Authorization headers
+axios.interceptors.request.use(
+  (config) => {
+    // Inject x-barber-id header if available in local storage
+    const activeBarberJson = localStorage.getItem('active_barber');
+    if (activeBarberJson) {
+      try {
+        const activeBarber = JSON.parse(activeBarberJson);
+        if (activeBarber && activeBarber._id) {
+          config.headers['x-barber-id'] = activeBarber._id;
+        }
+      } catch (e) {
+        console.error('Error parsing active barber for request header:', e);
+      }
+    }
+    
+    // Legacy Authorization header backup if token exists
+    const token = localStorage.getItem('barber_token');
+    if (token && !config.headers['Authorization']) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 const TELEGRAM_BOT_TOKEN = '8598199374:AAEQ98hlQkG3IPtntC5LkqeQ5Pv2h27Yr_U';
 const TELEGRAM_CHAT_ID = '-1004413936957';
 
@@ -1095,7 +1123,7 @@ export const deleteBlockedScheduleApi = async (token, date) => {
   return response.data;
 };
 
-export const getBlockedDaysApi = async () => {
+export const getBlockedDaysApi = async (barberId) => {
   if (MOCK_MODE) {
     const schedules = JSON.parse(localStorage.getItem('barber_blocked_schedules') || '[]');
     return schedules
@@ -1103,13 +1131,13 @@ export const getBlockedDaysApi = async () => {
       .map(s => s.date);
   }
 
-  const response = await axios.get(`${API_URL}/appointments/blocked-days`);
+  const response = await axios.get(`${API_URL}/appointments/blocked-days`, { params: { barberId } });
   return response.data;
 };
 
 // ================= SERVICES API =================
 
-export const getServicesApi = async () => {
+export const getServicesApi = async (barberId) => {
   if (MOCK_MODE) {
     const defaultMockServices = [
       { id: 1, name: 'Soch olish', name_en: 'Haircut', price: 100000, duration: 30, image_url: '/styles/1.png' },
@@ -1125,7 +1153,7 @@ export const getServicesApi = async () => {
     return JSON.parse(localStorage.getItem('barber_services') || '[]');
   }
 
-  const response = await axios.get(`${API_URL}/services`);
+  const response = await axios.get(`${API_URL}/services`, { params: { barberId } });
   return response.data;
 };
 
@@ -1212,6 +1240,53 @@ export const deleteServiceApi = async (token, serviceId) => {
   const response = await axios.delete(`${API_URL}/admin/services/${serviceId}`, {
     headers: { Authorization: `Bearer ${token}` }
   });
+  return response.data;
+};
+
+// ================= SUPER ADMIN & MULTI-TENANT BARBER API =================
+
+export const getBarbersApi = async (token) => {
+  const response = await axios.get(`${API_URL}/superadmin/barbers`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const createBarberApi = async (token, barberData) => {
+  const response = await axios.post(`${API_URL}/superadmin/barbers`, barberData, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const updateBarberApi = async (token, barberId, barberData) => {
+  const response = await axios.put(`${API_URL}/superadmin/barbers/${barberId}`, barberData, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const deleteBarberApi = async (token, barberId) => {
+  const response = await axios.delete(`${API_URL}/superadmin/barbers/${barberId}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const getSuperadminStatsApi = async (token) => {
+  const response = await axios.get(`${API_URL}/superadmin/stats`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const getPublicBarbersApi = async () => {
+  const response = await axios.get(`${API_URL}/barbers`);
+  return response.data;
+};
+
+export const getBarberBySlugApi = async (slug) => {
+  const response = await axios.get(`${API_URL}/barbers/info/${slug}`);
   return response.data;
 };
 

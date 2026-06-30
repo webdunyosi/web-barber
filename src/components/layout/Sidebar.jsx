@@ -16,7 +16,7 @@ const menuIcons = {
 }
 
 const Sidebar = ({ isOpen, onClose }) => {
-  const { user, isAuthenticated, isAdmin, logout } = useAuth();
+  const { user, isAuthenticated, isAdmin, isSuperAdmin, logout } = useAuth();
 
   return (
     <>
@@ -72,6 +72,30 @@ const Sidebar = ({ isOpen, onClose }) => {
               </NavLink>
             ))}
 
+            {/* Conditionally add Super Admin Panel link */}
+            {isSuperAdmin && (
+              <NavLink
+                to="/superadmin"
+                onClick={() => {
+                  if (window.innerWidth < 1024) {
+                    onClose()
+                  }
+                }}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-4 py-3 rounded-lg border border-emerald-500/20 transition-all duration-300 ${
+                    isActive
+                      ? "bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/50 border-emerald-500"
+                      : "text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
+                  }`
+                }
+              >
+                <span aria-hidden="true">
+                  {menuIcons.FaUserShield}
+                </span>
+                <span className="font-bold">Super Admin</span>
+              </NavLink>
+            )}
+
             {/* Conditionally add Admin Panel link */}
             {isAdmin && (
               <NavLink
@@ -109,7 +133,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold text-white truncate">{user?.name}</p>
                   <p className="text-xs text-white/50 truncate">
-                    {isAdmin ? 'Sartarosh (Admin)' : user?.phone}
+                  {isSuperAdmin ? 'Super Admin' : isAdmin ? 'Sartarosh (Admin)' : user?.phone}
                   </p>
                 </div>
               </div>

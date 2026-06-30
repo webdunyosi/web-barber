@@ -6,16 +6,29 @@ import Sidebar from '../components/layout/Sidebar';
 import BottomNavigation from '../components/layout/BottomNavigation';
 import { useStep } from '../hooks/useStep';
 import { useAuth } from '../hooks/useAuth';
+import { useBarber } from '../contexts/BarberContext';
+import BarberSelectorPage from '../pages/BarberSelectorPage';
 
 const MainLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { currentStep } = useStep();
-  const { isAuthenticated, isAdmin, loading } = useAuth();
+  const { isAuthenticated, isAdmin, isSuperAdmin, loading } = useAuth();
+  const { activeBarber } = useBarber();
   const location = useLocation();
   const isScrollLockedPage = location.pathname.startsWith('/buyurtmalarim') || location.pathname.startsWith('/ai-chat');
 
-  if (!loading && isAuthenticated && isAdmin) {
-    return <Navigate to="/admin" replace />;
+  if (!loading && isAuthenticated) {
+    if (isSuperAdmin) {
+      return <Navigate to="/superadmin" replace />;
+    }
+    if (isAdmin) {
+      return <Navigate to="/admin" replace />;
+    }
+  }
+
+  // Render full-screen Barber Selection page if no barber context is loaded
+  if (!activeBarber) {
+    return <BarberSelectorPage />;
   }
 
   const toggleSidebar = () => {

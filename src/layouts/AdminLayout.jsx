@@ -110,7 +110,7 @@ const LayoutSkeleton = () => (
 );
 
 const AdminLayout = () => {
-  const { user, isAuthenticated, isAdmin, loading, logout } = useAuth();
+  const { user, isAuthenticated, isAdmin, isSuperAdmin, loading, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -128,6 +128,9 @@ const AdminLayout = () => {
   }
 
   if (!isAdmin) {
+    if (isSuperAdmin) {
+      return <Navigate to="/superadmin" replace />;
+    }
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-950 p-4">
         <div className="max-w-md w-full text-center bg-zinc-900 border border-red-500/30 rounded-2xl p-8 backdrop-blur-md shadow-2xl">
