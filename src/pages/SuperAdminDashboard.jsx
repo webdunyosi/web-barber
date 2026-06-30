@@ -198,7 +198,7 @@ const SuperAdminDashboard = () => {
 
   const copyUrl = (slug, id) => {
     const origin = window.location.origin;
-    const url = `${origin}/#/b/${slug}`;
+    const url = `${origin}/b/${slug}`;
     navigator.clipboard.writeText(url);
     setCopiedId(id);
     toast.success('Mijoz havolasi nusxalandi');
@@ -372,7 +372,7 @@ const SuperAdminDashboard = () => {
                             <div className="min-w-0 flex-1">
                               <span className="text-[9px] text-zinc-650 font-bold uppercase tracking-wider block leading-none">Mijoz havolasi</span>
                               <span className="text-xxs font-mono text-zinc-450 truncate block mt-1">
-                                {window.location.origin}/#/b/{barber.slug}
+                                {window.location.origin}/b/{barber.slug}
                               </span>
                             </div>
                             <button
