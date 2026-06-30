@@ -153,7 +153,7 @@ const AdminLayout = () => {
   return (
     <div className="min-h-screen bg-zinc-950 text-white flex flex-col lg:flex-row web-pattern">
       {/* Admin Sidebar */}
-      <aside className="hidden lg:flex w-full lg:w-64 bg-zinc-900/90 backdrop-blur-xl border-b lg:border-b-0 lg:border-r border-emerald-500/30 flex-col justify-between shrink-0">
+      <aside className="hidden lg:flex w-full lg:w-64 bg-zinc-900/90 backdrop-blur-xl border-b lg:border-b-0 lg:border-r border-emerald-500/30 flex-col justify-between shrink-0 sticky top-0 h-screen">
         <div className="p-4">
           {/* Logo */}
           <div className="flex items-center gap-3 border-b border-white/10 pb-4 mb-6">
