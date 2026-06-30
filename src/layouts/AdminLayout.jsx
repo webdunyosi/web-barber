@@ -240,25 +240,6 @@ const AdminLayout = () => {
           </nav>
         </div>
 
-        {/* Admin Footer details */}
-        <div className="p-4 border-t border-white/10 bg-zinc-950/40">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold uppercase">
-              {user?.name?.charAt(0)}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-white truncate">{user?.name}</p>
-              <p className="text-xs text-zinc-500 truncate">Administrator</p>
-            </div>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 bg-red-500/10 border border-red-500/20 hover:bg-red-500/25 text-red-400 text-sm font-semibold py-2 px-3 rounded-xl transition-all active:scale-[0.98] cursor-pointer"
-          >
-            <FaSignOutAlt size={14} />
-            <span>Chiqish</span>
-          </button>
-        </div>
       </aside>
 
       {/* Main Admin Dashboard Workspace */}
