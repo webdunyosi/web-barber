@@ -105,7 +105,7 @@ const Header = ({ currentStep, toggleSidebar }) => {
                       className="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 text-xs sm:text-sm font-semibold"
                     >
                       <FaUserShield size={15} />
-                      <span>Super Admin</span>
+                      <span>Admin Panel</span>
                     </Link>
                   ) : isAdmin ? (
                     <Link 
@@ -114,7 +114,7 @@ const Header = ({ currentStep, toggleSidebar }) => {
                       className="text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1 text-xs sm:text-sm font-semibold"
                     >
                       <FaUserShield size={15} />
-                      <span>Admin Panel</span>
+                      <span>Sartarosh Panel</span>
                     </Link>
                   ) : (
                     <Link to="/profil" className="flex items-center gap-1.5 text-zinc-300 hover:text-emerald-400 transition-colors text-xs sm:text-sm font-semibold">

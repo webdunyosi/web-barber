@@ -93,7 +93,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 <span aria-hidden="true">
                   {menuIcons.FaUserShield}
                 </span>
-                <span className="font-bold">Super Admin</span>
+                <span className="font-bold">Admin Panel</span>
               </NavLink>
             )}
 
@@ -118,7 +118,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 <span aria-hidden="true">
                   {menuIcons.FaUserShield}
                 </span>
-                <span className="font-bold">Admin Panel</span>
+                <span className="font-bold">Sartarosh Panel</span>
               </NavLink>
             )}
           </nav>
@@ -135,7 +135,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold text-white truncate">{user?.name}</p>
                   <p className="text-xs text-white/50 truncate">
-                  {isSuperAdmin ? 'Super Admin' : isAdmin ? 'Sartarosh (Admin)' : user?.phone}
+                  {isSuperAdmin ? 'Admin' : isAdmin ? 'Sartarosh' : user?.phone}
                   </p>
                 </div>
               </div>

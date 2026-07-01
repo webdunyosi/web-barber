@@ -221,7 +221,7 @@ const SuperAdminDashboard = () => {
             <FaUserShield className="text-emerald-500" size={24} />
             <div>
               <h1 className="text-lg font-extrabold uppercase tracking-wider text-emerald-400">Web Barber</h1>
-              <span className="text-xxs font-bold text-emerald-500/80 uppercase">Super Admin</span>
+              <span className="text-xxs font-bold text-emerald-500/80 uppercase">Admin</span>
             </div>
           </div>
 
@@ -628,7 +628,7 @@ const SuperAdminDashboard = () => {
                             <p className="text-xs text-zinc-400 font-medium mt-0.5">{user?.phone}</p>
                             <div className="mt-2 flex items-center gap-2">
                               <span className="inline-block px-2.5 py-0.5 text-[9px] font-extrabold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
-                                Super Admin
+                                Admin
                               </span>
                             </div>
                           </div>
