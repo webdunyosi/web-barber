@@ -275,19 +275,7 @@ const SuperAdminDashboard = () => {
         </div>
       </aside>
 
-      {/* Mobile Header Bar */}
-      <header className="lg:hidden bg-zinc-900/90 border-b border-emerald-500/20 py-4 px-6 sticky top-0 z-40 backdrop-blur-md flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <FaUserShield className="text-emerald-500" size={20} />
-          <h1 className="text-md font-bold uppercase tracking-wider text-emerald-400">Web Barber SaaS</h1>
-        </div>
-        <button 
-          onClick={handleLogout}
-          className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-xs font-bold py-1.5 px-3 rounded-lg cursor-pointer transition-colors"
-        >
-          Chiqish
-        </button>
-      </header>
+
 
       {/* Main Admin Workspace Container */}
       <main className="flex-1 min-w-0 p-4 md:p-8 pb-24 lg:pb-8 overflow-y-auto">
