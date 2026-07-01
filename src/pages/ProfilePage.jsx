@@ -555,7 +555,49 @@ const ProfilePage = () => {
               </div>
             </div>
 
+            {/* Guruh 2.5: Manzil va Xarita (Barber Shop Location) */}
+            <div className="bg-zinc-900/70 border border-white/10 rounded-3xl p-4 backdrop-blur-xl shadow-xl space-y-3.5">
+              <div className="flex items-center gap-2.5 pb-1 border-b border-white/5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <span className="text-xs font-extrabold text-zinc-300 uppercase tracking-wider">Bizning manzil</span>
+              </div>
 
+              <div className="text-sm font-medium text-zinc-200 leading-relaxed pl-1">
+                Memorlar 14. Al-Jasur bekati orqasida.
+              </div>
+
+              {/* Map Iframe */}
+              <div className="w-full h-44 rounded-2xl overflow-hidden border border-white/10 bg-zinc-950/40 relative group">
+                <iframe 
+                  src="https://www.google.com/maps/embed?pb=!1m13!1m8!1m3!1d6102.357123163107!2d65.371166!3d40.116024!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNDDCsDA2JzU3LjciTiA2NcKwMjInMTYuMiJF!5e0!3m2!1sen!2s!4v1782890026523!5m2!1sen!2s" 
+                  width="100%" 
+                  height="100%" 
+                  style={{ border: 0 }} 
+                  allowFullScreen="" 
+                  loading="lazy" 
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  title="Barber Shop Location"
+                ></iframe>
+              </div>
+
+              {/* Open in Maps Button */}
+              <a
+                href="https://maps.app.goo.gl/rtXp2cLfABuSGoqD9"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-emerald-500/30 text-zinc-300 hover:text-white font-semibold py-2.5 px-4 rounded-xl transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer text-xs"
+              >
+                <span>Google Maps'da ochish</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            </div>
 
             {/* Guruh 3: Admin Paneli (agar foydalanuvchi Admin bo'lsa) */}
             {isAdmin && (
