@@ -2851,12 +2851,7 @@ const AdminDashboard = () => {
             <div className="w-full text-white px-0 sm:px-4 py-2 pb-4 animate-fadeIn">
               <div className="max-w-md mx-auto space-y-5">
                 
-                {/* Page Title */}
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-center bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
-                  Shaxsiy Kabinet
-                </h2>
-
-                {/* Success / Error Alerts */}
+                 {/* Success / Error Alerts */}
                 {profileError && (
                   <div className="p-3.5 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold animate-fade-in">
                     {profileError}
@@ -2995,7 +2990,7 @@ const AdminDashboard = () => {
                           <p className="text-xs text-zinc-400 font-medium mt-0.5">{user?.phone}</p>
                           <div className="mt-2 flex items-center gap-2">
                             <span className="inline-block px-2.5 py-0.5 text-[9px] font-extrabold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
-                              Sartarosh Admin
+                              Sartarosh
                             </span>
                           </div>
                         </div>
@@ -3119,9 +3114,7 @@ const AdminDashboard = () => {
                     </div>
 
                     {/* Version info */}
-                    <p className="text-center text-[10px] text-zinc-650 font-medium tracking-wide pt-2">
-                      Ilova versiyasi 1.10.42 (Build 349)
-                    </p>
+                    
                   </>
                 )}
               </div>

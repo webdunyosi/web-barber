@@ -596,9 +596,7 @@ const ProfilePage = () => {
             </div>
 
             {/* Versiya ma'lumoti */}
-            <p className="text-center text-[10px] text-zinc-600 font-medium tracking-wide pt-2">
-              Ilova versiyasi 1.10.42 (Build 349)
-            </p>
+
           </>
         )}
 

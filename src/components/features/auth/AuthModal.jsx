@@ -206,7 +206,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }) => {
                 type="text"
                 value={formData.barberSlug}
                 onChange={(e) => handleChange('barberSlug', e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, ''))}
-                placeholder="masalan: behruz"
+                placeholder="sartarosh kodi"
                 className={`w-full pl-11 pr-4 py-3.5 bg-white/5 border rounded-xl outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-zinc-950/50 transition-all duration-300 placeholder:text-white/20 text-sm hover:bg-white/10 ${
                   errors.barberSlug ? 'border-red-500/50 focus:ring-red-500/10 focus:border-red-500' : 'border-white/10'
                 }`}
