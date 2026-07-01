@@ -196,12 +196,10 @@ const SuperAdminDashboard = () => {
     }
   };
 
-  const copyUrl = (slug, id) => {
-    const origin = window.location.origin;
-    const url = `${origin}/b/${slug}`;
-    navigator.clipboard.writeText(url);
+  const copySlug = (slug, id) => {
+    navigator.clipboard.writeText(slug);
     setCopiedId(id);
-    toast.success('Mijoz havolasi nusxalandi');
+    toast.success('Sartarosh kodi nusxalandi');
     setTimeout(() => setCopiedId(null), 3000);
   };
 
@@ -351,20 +349,20 @@ const SuperAdminDashboard = () => {
                               </span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-zinc-650 font-medium">Slug:</span>
-                              <span className="font-semibold text-emerald-500">/{barber.slug}</span>
+                              <span className="text-zinc-650 font-medium">Sartarosh kodi:</span>
+                              <span className="font-semibold text-emerald-500">{barber.slug}</span>
                             </div>
                           </div>
 
                           <div className="bg-zinc-950/40 border border-zinc-900/80 rounded-xl p-2.5 flex items-center justify-between gap-2 backdrop-blur-sm">
                             <div className="min-w-0 flex-1">
-                              <span className="text-[9px] text-zinc-650 font-bold uppercase tracking-wider block leading-none">Mijoz havolasi</span>
-                              <span className="text-xxs font-mono text-zinc-450 truncate block mt-1">
-                                {window.location.origin}/b/{barber.slug}
+                              <span className="text-[9px] text-zinc-650 font-bold uppercase tracking-wider block leading-none">Mijozlar kirishi uchun kod</span>
+                              <span className="text-xs font-mono font-bold text-emerald-400 block mt-1">
+                                {barber.slug}
                               </span>
                             </div>
                             <button
-                              onClick={() => copyUrl(barber.slug, barber._id)}
+                              onClick={() => copySlug(barber.slug, barber._id)}
                               className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-emerald-500/30 text-zinc-400 hover:text-emerald-400 flex items-center justify-center cursor-pointer transition-colors"
                               title="Nusxalash"
                             >
@@ -789,19 +787,16 @@ const SuperAdminDashboard = () => {
                 </div>
 
                 <div>
-                  <label className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider block mb-1">Havola Slug (URL nomi)</label>
-                  <div className="relative flex items-center">
-                    <span className="absolute left-3 text-xxs font-mono text-zinc-500">/b/</span>
-                    <input 
-                      type="text" 
-                      name="slug"
-                      value={formData.slug}
-                      onChange={handleInputChange}
-                      required
-                      placeholder="masalan, jasur"
-                      className="w-full bg-zinc-800/80 border border-zinc-700/50 rounded-xl pl-8 pr-3 py-2 text-white text-sm font-mono focus:outline-none focus:border-emerald-500 transition-colors"
-                    />
-                  </div>
+                  <label className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider block mb-1">Sartarosh kodi</label>
+                  <input 
+                    type="text" 
+                    name="slug"
+                    value={formData.slug}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="masalan, jasur"
+                    className="w-full bg-zinc-800/80 border border-zinc-700/50 rounded-xl px-3 py-2 text-white text-sm font-mono focus:outline-none focus:border-emerald-500 transition-colors"
+                  />
                 </div>
 
                 <div>
@@ -857,17 +852,7 @@ const SuperAdminDashboard = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider block mb-1">Salon haqida tavsif (Ixtiyoriy)</label>
-                <textarea 
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  rows={2}
-                  placeholder="Salon yoki sartarosh haqida batafsil ma'lumotlar..."
-                  className="w-full bg-zinc-800/80 border border-zinc-700/50 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors resize-none"
-                />
-              </div>
+
 
               <div className="flex gap-2.5 pt-2">
                 <button
