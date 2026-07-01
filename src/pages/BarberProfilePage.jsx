@@ -90,16 +90,16 @@ const BarberProfilePage = () => {
             <div className="flex justify-center items-center">
               <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-500"></div>
-                <div className="relative w-full max-w-sm overflow-hidden rounded-2xl bg-zinc-900">
+                <div className="relative w-full max-w-sm h-64 sm:h-80 overflow-hidden rounded-2xl bg-zinc-900">
                   {!imageLoaded && (
-                    <div className="absolute inset-0 bg-zinc-800 animate-pulse rounded-2xl flex items-center justify-center min-h-[250px] sm:min-h-[300px]">
+                    <div className="absolute inset-0 bg-zinc-800 animate-pulse rounded-2xl flex items-center justify-center">
                       <div className="w-10 h-10 rounded-full border-2 border-emerald-500/10 border-t-emerald-500 animate-spin"></div>
                     </div>
                   )}
                   <img
                     src={activeBarber.avatar || "/avatar/men.png"}
                     alt={activeBarber.name}
-                    className={`w-full h-auto rounded-2xl object-cover shadow-2xl transition-all duration-500 ${
+                    className={`w-full h-full rounded-2xl object-cover shadow-2xl transition-all duration-500 ${
                       imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
                     }`}
                     onLoad={() => setImageLoaded(true)}
@@ -115,7 +115,7 @@ const BarberProfilePage = () => {
                   {activeBarber.name}
                 </h1>
                 <p className="text-lg md:text-xl text-emerald-400 font-semibold">
-                  {activeBarber.title || "Professional Barber"}
+                  Professional Barber
                 </p>
               </div>
 

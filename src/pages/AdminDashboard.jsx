@@ -423,6 +423,18 @@ const AdminDashboard = () => {
   const [profileError, setProfileError] = useState('');
   const [profileSuccess, setProfileSuccess] = useState('');
 
+  // Barber Info Form States
+  const [editedShopName, setEditedShopName] = useState('');
+  const [editedTitle, setEditedTitle] = useState('');
+  const [editedDescription, setEditedDescription] = useState('');
+  const [editedAvatar, setEditedAvatar] = useState('');
+  const [editedInstagram, setEditedInstagram] = useState('');
+  const [editedFacebook, setEditedFacebook] = useState('');
+  const [editedYoutube, setEditedYoutube] = useState('');
+  const [editedExperienceStartYear, setEditedExperienceStartYear] = useState('');
+  const [editedExperienceYears, setEditedExperienceYears] = useState('');
+  const [isBarberInfoSaving, setIsBarberInfoSaving] = useState(false);
+
   // User Editing modal states
   const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
   const [userToEdit, setUserToEdit] = useState(null);
@@ -566,6 +578,47 @@ const AdminDashboard = () => {
       setProfileError(error.response?.data?.error || error.message || 'Serverda xatolik yuz berdi');
     } finally {
       setIsProfileUpdating(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      setEditedShopName(user.shopName || '');
+      setEditedTitle(user.title || 'Professional Barber');
+      setEditedDescription(user.description || '');
+      setEditedAvatar(user.avatar || '/avatar/men.png');
+      setEditedInstagram(user.instagram || '');
+      setEditedFacebook(user.facebook || '');
+      setEditedYoutube(user.youtube || '');
+      setEditedExperienceStartYear(user.experienceStartYear || 2011);
+      setEditedExperienceYears(user.experienceYears || 15);
+    }
+  }, [user]);
+
+  const handleSaveBarberInfo = async (e) => {
+    e.preventDefault();
+    setIsBarberInfoSaving(true);
+    try {
+      const updateData = {
+        name: user.name, // Keep existing name
+        shopName: editedShopName,
+        description: editedDescription,
+        avatar: editedAvatar,
+        telegram: editedTelegram,
+        instagram: editedInstagram,
+        facebook: editedFacebook,
+        youtube: editedYoutube,
+        experienceStartYear: Number(editedExperienceStartYear),
+        experienceYears: Number(editedExperienceYears)
+      };
+      await updateProfile(updateData);
+      toast.success("Sartarosh ma'lumotlari muvaffaqiyatli saqlandi!");
+      setSearchParams({ tab: 'profile' });
+    } catch (error) {
+      console.error("Sartarosh ma'lumotlarini saqlashda xato:", error);
+      toast.error(error.response?.data?.error || error.message || 'Xatolik yuz berdi');
+    } finally {
+      setIsBarberInfoSaving(false);
     }
   };
 
@@ -3073,12 +3126,24 @@ const AdminDashboard = () => {
                         {/* Item 4: Ish jadvali boshqaruvi */}
                         <button
                           onClick={() => setSearchParams({ tab: 'schedule' })}
-                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer border-b border-white/5 text-left font-sans"
                         >
                           <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                             <FaCalendarAlt size={16} />
                           </div>
                           <span className="flex-1 text-sm font-semibold text-zinc-200">Ish jadvali boshqaruvi</span>
+                          <FaChevronRight size={12} className="text-zinc-500" />
+                        </button>
+
+                        {/* Item 5: Sartarosh ma'lumotlari */}
+                        <button
+                          onClick={() => setSearchParams({ tab: 'barber-info' })}
+                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                        >
+                          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <FaCut size={16} />
+                          </div>
+                          <span className="flex-1 text-sm font-semibold text-zinc-200">Sartarosh ma'lumotlari</span>
                           <FaChevronRight size={12} className="text-zinc-500" />
                         </button>
                       </div>
@@ -3140,6 +3205,206 @@ const AdminDashboard = () => {
                     
                   </>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* ================= TAB: BARBER INFO ================= */}
+          {activeTab === 'barber-info' && (
+            <div className="w-full text-white px-0 sm:px-4 py-2 pb-4 animate-fadeIn">
+              <div className="max-w-xl mx-auto space-y-5">
+                <div className="flex items-center gap-3 mb-2">
+                  <button
+                    onClick={() => setSearchParams({ tab: 'profile' })}
+                    className="w-10 h-10 rounded-xl bg-zinc-900 border border-white/5 flex items-center justify-center text-zinc-400 hover:text-white cursor-pointer transition-colors active:scale-95"
+                  >
+                    <FaArrowLeft size={16} />
+                  </button>
+                  <h2 className="text-xl font-bold text-white">Mijozlar ko'radigan ma'lumotlar</h2>
+                </div>
+
+                <div className="bg-zinc-900/70 border border-white/10 rounded-3xl p-5 backdrop-blur-xl shadow-xl">
+                  <form onSubmit={handleSaveBarberInfo} className="space-y-4" autoComplete="off">
+                    {/* Salon nomi */}
+                    <div>
+                      <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Salon nomi</label>
+                      <input
+                        type="text"
+                        value={editedShopName}
+                        onChange={(e) => setEditedShopName(e.target.value)}
+                        disabled={isBarberInfoSaving}
+                        className="w-full bg-zinc-800/80 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                        placeholder="Salon nomini kiriting"
+                        required
+                      />
+                    </div>
+
+
+
+                    {/* Avatar URL */}
+                    <div>
+                      <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Rasm havolasi (Avatar URL)</label>
+                      <input
+                        type="text"
+                        value={editedAvatar}
+                        onChange={(e) => setEditedAvatar(e.target.value)}
+                        disabled={isBarberInfoSaving}
+                        className="w-full bg-zinc-800/80 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                        placeholder="/barber/1.png"
+                        required
+                      />
+                    </div>
+
+                    {/* Tajriba boshlangan yil va Yillar */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Tajriba boshlangan yil</label>
+                        <input
+                          type="number"
+                          value={editedExperienceStartYear}
+                          onChange={(e) => setEditedExperienceStartYear(e.target.value)}
+                          disabled={isBarberInfoSaving}
+                          className="w-full bg-zinc-800/80 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                          placeholder="2011"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Tajriba yillari</label>
+                        <input
+                          type="number"
+                          value={editedExperienceYears}
+                          onChange={(e) => setEditedExperienceYears(e.target.value)}
+                          disabled={isBarberInfoSaving}
+                          className="w-full bg-zinc-800/80 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                          placeholder="15"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    {/* Men haqimda (Bio) */}
+                    <div>
+                      <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Men haqimda (Tarjimai hol)</label>
+                      <textarea
+                        value={editedDescription}
+                        onChange={(e) => setEditedDescription(e.target.value)}
+                        disabled={isBarberInfoSaving}
+                        rows={4}
+                        className="w-full bg-zinc-800/80 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50 resize-none font-sans"
+                        placeholder="Mijozlarga ko'rinadigan tarjimai holingizni kiriting..."
+                      />
+                    </div>
+
+                    {/* Ijtimoiy tarmoqlar */}
+                    <div className="border-t border-white/5 pt-4 space-y-4">
+                      <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Ijtimoiy tarmoqlar (Username)</h4>
+                      
+                      <div className="grid grid-cols-2 gap-3.5 md:gap-4">
+                        {/* Telegram */}
+                        <div>
+                          <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Telegram (username)</label>
+                          <div className="relative flex items-center">
+                            <span className="absolute left-3 text-zinc-550 text-sm font-semibold">@</span>
+                            <input
+                              type="text"
+                              value={editedTelegram}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setEditedTelegram(val.startsWith('@') ? val.substring(1) : val);
+                              }}
+                              disabled={isBarberInfoSaving}
+                              className="w-full bg-zinc-800/80 border border-white/10 rounded-xl pl-7 pr-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                              placeholder="username"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Instagram */}
+                        <div>
+                          <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Instagram (username)</label>
+                          <div className="relative flex items-center">
+                            <span className="absolute left-3 text-zinc-550 text-sm font-semibold">@</span>
+                            <input
+                              type="text"
+                              value={editedInstagram}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setEditedInstagram(val.startsWith('@') ? val.substring(1) : val);
+                              }}
+                              disabled={isBarberInfoSaving}
+                              className="w-full bg-zinc-800/80 border border-white/10 rounded-xl pl-7 pr-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                              placeholder="username"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Facebook */}
+                        <div>
+                          <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Facebook (username)</label>
+                          <div className="relative flex items-center">
+                            <span className="absolute left-3 text-zinc-550 text-sm font-semibold">@</span>
+                            <input
+                              type="text"
+                              value={editedFacebook}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setEditedFacebook(val.startsWith('@') ? val.substring(1) : val);
+                              }}
+                              disabled={isBarberInfoSaving}
+                              className="w-full bg-zinc-800/80 border border-white/10 rounded-xl pl-7 pr-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                              placeholder="username"
+                            />
+                          </div>
+                        </div>
+
+                        {/* YouTube */}
+                        <div>
+                          <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">YouTube (username)</label>
+                          <div className="relative flex items-center">
+                            <span className="absolute left-3 text-zinc-550 text-sm font-semibold">@</span>
+                            <input
+                              type="text"
+                              value={editedYoutube}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setEditedYoutube(val.startsWith('@') ? val.substring(1) : val);
+                              }}
+                              disabled={isBarberInfoSaving}
+                              className="w-full bg-zinc-800/80 border border-white/10 rounded-xl pl-7 pr-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                              placeholder="username"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Tugmalar */}
+                    <div className="flex gap-3 pt-4 border-t border-white/5">
+                      <button
+                        type="submit"
+                        disabled={isBarberInfoSaving}
+                        className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-2.5 px-4 rounded-xl transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer text-sm disabled:opacity-50"
+                      >
+                        {isBarberInfoSaving ? (
+                          <FaSpinner size={16} className="animate-spin" />
+                        ) : (
+                          <FaSave size={16} />
+                        )}
+                        <span>Saqlash</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSearchParams({ tab: 'profile' })}
+                        disabled={isBarberInfoSaving}
+                        className="flex-1 bg-zinc-800 border border-white/5 hover:bg-zinc-750 text-gray-300 font-semibold py-2.5 px-4 rounded-xl transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer text-sm disabled:opacity-50"
+                      >
+                        <FaTimes size={16} />
+                        <span>Bekor qilish</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
           )}
