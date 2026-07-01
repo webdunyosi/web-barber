@@ -24,7 +24,11 @@ import {
   createBarberApi,
   updateBarberApi,
   deleteBarberApi,
-  getSuperadminStatsApi
+  getSuperadminStatsApi,
+  getPaymentsApi,
+  createPaymentApi,
+  updatePaymentApi,
+  deletePaymentApi
 } from '../utils/api';
 
 export const AuthProvider = ({ children }) => {
@@ -209,6 +213,26 @@ export const AuthProvider = ({ children }) => {
     return await getSuperadminStatsApi(token);
   };
 
+  const getPayments = async () => {
+    if (!token) throw new Error('Unauthenticated');
+    return await getPaymentsApi(token);
+  };
+
+  const createPayment = async (paymentData) => {
+    if (!token) throw new Error('Unauthenticated');
+    return await createPaymentApi(token, paymentData);
+  };
+
+  const updatePayment = async (paymentId, paymentData) => {
+    if (!token) throw new Error('Unauthenticated');
+    return await updatePaymentApi(token, paymentId, paymentData);
+  };
+
+  const deletePayment = async (paymentId) => {
+    if (!token) throw new Error('Unauthenticated');
+    return await deletePaymentApi(token, paymentId);
+  };
+
   const value = {
     user,
     token,
@@ -239,7 +263,11 @@ export const AuthProvider = ({ children }) => {
     createBarber,
     updateBarber,
     deleteBarber,
-    getSuperadminStats
+    getSuperadminStats,
+    getPayments,
+    createPayment,
+    updatePayment,
+    deletePayment
   };
 
   return (

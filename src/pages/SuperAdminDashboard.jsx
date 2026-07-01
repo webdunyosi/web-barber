@@ -10,13 +10,32 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 const SuperAdminDashboard = () => {
-  const { user, token, logout, getBarbers, createBarber, updateBarber, deleteBarber, getSuperadminStats, updateProfile } = useAuth();
+  const { 
+    user, token, logout, 
+    getBarbers, createBarber, updateBarber, deleteBarber, 
+    getSuperadminStats, updateProfile,
+    getPayments, createPayment, updatePayment, deletePayment
+  } = useAuth();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState('barbers'); // 'barbers', 'statistics' or 'profile'
+  const [activeTab, setActiveTab] = useState('barbers'); // 'barbers', 'statistics', 'profile' or 'payments'
   const [barbers, setBarbers] = useState([]);
   const [stats, setStats] = useState({ barbersCount: 0, clientsCount: 0, appointmentsCount: 0, revenue: 0 });
   const [loading, setLoading] = useState(true);
+
+  // Payments States
+  const [payments, setPayments] = useState([]);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [editingPayment, setEditingPayment] = useState(null);
+  const [paymentFormData, setPaymentFormData] = useState({
+    barberId: '',
+    amount: 200000,
+    monthsCount: 1,
+    fromDate: '',
+    toDate: '',
+    receiptUrl: '',
+    notes: ''
+  });
   
   // Profile editing states
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -87,8 +106,10 @@ const SuperAdminDashboard = () => {
       setLoading(true);
       const barbersData = await getBarbers();
       const statsData = await getSuperadminStats();
+      const paymentsData = await getPayments();
       setBarbers(barbersData);
       setStats(statsData);
+      setPayments(paymentsData);
     } catch (error) {
       console.error('Superadmin load error:', error);
       toast.error('Ma\'lumotlarni yuklashda xatolik yuz berdi');
@@ -100,6 +121,86 @@ const SuperAdminDashboard = () => {
   useEffect(() => {
     loadData();
   }, []);
+
+  const handleOpenAddPaymentModal = () => {
+    setEditingPayment(null);
+    setPaymentFormData({
+      barberId: barbers[0]?._id || '',
+      amount: 200000,
+      monthsCount: 1,
+      fromDate: new Date().toISOString().split('T')[0],
+      toDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString().split('T')[0],
+      receiptUrl: '',
+      notes: ''
+    });
+    setIsPaymentModalOpen(true);
+  };
+
+  const handleOpenEditPaymentModal = (payment) => {
+    setEditingPayment(payment);
+    setPaymentFormData({
+      barberId: payment.barberId?._id || payment.barberId || '',
+      amount: payment.amount || 200000,
+      monthsCount: payment.monthsCount || 1,
+      fromDate: new Date(payment.fromDate).toISOString().split('T')[0],
+      toDate: new Date(payment.toDate).toISOString().split('T')[0],
+      receiptUrl: payment.receiptUrl || '',
+      notes: payment.notes || ''
+    });
+    setIsPaymentModalOpen(true);
+  };
+
+  const handlePaymentInputChange = (e) => {
+    const { name, value } = e.target;
+    setPaymentFormData(prev => {
+      const updated = { ...prev, [name]: value };
+      if (name === 'fromDate' || name === 'monthsCount') {
+        const from = updated.fromDate ? new Date(updated.fromDate) : new Date();
+        const months = parseInt(updated.monthsCount) || 1;
+        if (!isNaN(from.getTime())) {
+          from.setMonth(from.getMonth() + months);
+          updated.toDate = from.toISOString().split('T')[0];
+        }
+      }
+      return updated;
+    });
+  };
+
+  const handlePaymentSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      if (editingPayment) {
+        await updatePayment(editingPayment._id, paymentFormData);
+        toast.success('To\'lov ma\'lumoti muvaffaqiyatli yangilandi');
+      } else {
+        await createPayment(paymentFormData);
+        toast.success('Yangi to\'lov muvaffaqiyatli saqlandi');
+      }
+      setIsPaymentModalOpen(false);
+      loadData();
+    } catch (error) {
+      console.error('Submit payment error:', error);
+      toast.error(error.response?.data?.error || error.message || 'Xatolik yuz berdi');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDeletePayment = async (paymentId) => {
+    if (window.confirm('Haqiqatan ham ushbu to\'lov ma\'lumotini o\'chirmoqchimisiz?')) {
+      try {
+        setLoading(true);
+        await deletePayment(paymentId);
+        toast.success('To\'lov ma\'lumoti o\'chirildi');
+        loadData();
+      } catch (error) {
+        console.error('Delete payment error:', error);
+        toast.error('To\'lovni o\'chirishda xatolik yuz berdi');
+        setLoading(false);
+      }
+    }
+  };
 
   const handleOpenAddModal = () => {
     setEditingBarber(null);
@@ -250,6 +351,18 @@ const SuperAdminDashboard = () => {
             </button>
 
             <button
+              onClick={() => setActiveTab('payments')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm cursor-pointer ${
+                activeTab === 'payments'
+                  ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/40'
+                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <FaCoins size={18} />
+              <span>To'lovlar Nazorati</span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('profile')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm cursor-pointer ${
                 activeTab === 'profile'
@@ -348,9 +461,21 @@ const SuperAdminDashboard = () => {
                                 {barber.telegram ? `@${barber.telegram}` : '-'}
                               </span>
                             </div>
-                            <div className="flex justify-between">
+                             <div className="flex justify-between">
                               <span className="text-zinc-650 font-medium">Sartarosh kodi:</span>
                               <span className="font-semibold text-emerald-500">{barber.slug}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-zinc-650 font-medium">Obuna muddati:</span>
+                              <span className={`font-semibold ${
+                                barber.subscriptionExpiresAt && new Date(barber.subscriptionExpiresAt) > new Date()
+                                  ? 'text-emerald-400'
+                                  : 'text-red-400'
+                              }`}>
+                                {barber.subscriptionExpiresAt 
+                                  ? `${new Date(barber.subscriptionExpiresAt).toLocaleDateString('uz-UZ')} gacha`
+                                  : 'Faol emas / To\'lanmagan'}
+                              </span>
                             </div>
                           </div>
 
@@ -701,9 +826,172 @@ const SuperAdminDashboard = () => {
                           </a>
                         </div>
                       </div>
+
+                      {/* Group 3: Logout */}
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center justify-center gap-2 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 text-sm font-bold py-3.5 px-4 rounded-3xl transition-all active:scale-[0.98] cursor-pointer mt-2"
+                      >
+                        <FaSignOutAlt size={15} />
+                        <span>Tizimdan Chiqish</span>
+                      </button>
                     </>
                   )}
                 </div>
+              </div>
+            )}
+
+            {/* TAB 4: PAYMENTS MANAGEMENT */}
+            {activeTab === 'payments' && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl font-black tracking-wide">To'lovlar Nazorati</h2>
+                    <p className="text-xs text-zinc-500">Sartaroshlarning oylik foydalanish to'lovlarini va cheklarini kuzatib boring (oylik to'lov: 200,000 UZS)</p>
+                  </div>
+                  <button 
+                    onClick={handleOpenAddPaymentModal}
+                    className="flex items-center justify-center gap-1.5 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-2.5 px-4 rounded-xl shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer text-xs"
+                  >
+                    <FaPlus size={12} />
+                    <span>Yangi To'lov Qo'shish</span>
+                  </button>
+                </div>
+
+                {payments.length === 0 ? (
+                  <div className="bg-zinc-900/50 border border-zinc-900 rounded-3xl p-12 text-center backdrop-blur-sm">
+                    <FaCoins className="mx-auto text-zinc-700 mb-4 animate-bounce" size={40} />
+                    <h3 className="text-base font-bold text-zinc-300">To'lovlar mavjud emas</h3>
+                    <p className="text-xs text-zinc-500 mt-1">Hozircha hech qanday sartarosh to'lovlari kiritilmagan.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                    {payments.map((payment) => {
+                      const from = new Date(payment.fromDate).toLocaleDateString('uz-UZ');
+                      const to = new Date(payment.toDate).toLocaleDateString('uz-UZ');
+                      const isExpired = new Date(payment.toDate) < new Date();
+                      
+                      return (
+                        <div key={payment._id} className="bg-zinc-900/40 backdrop-blur-md shadow-xl hover:shadow-2xl hover:shadow-emerald-500/5 transition-all duration-300 relative overflow-hidden rounded-3xl pl-7 pr-5 py-5 flex flex-col justify-between space-y-4 group">
+                          
+                          {/* Status Accent Left Bar */}
+                          <div className={`absolute left-0 top-0 bottom-0 w-1.5 transition-all duration-300 ${
+                            !isExpired 
+                              ? 'bg-gradient-to-b from-emerald-500 to-green-600 shadow-[0_0_12px_rgba(16,185,129,0.4)]' 
+                              : 'bg-gradient-to-b from-red-500 to-rose-600 shadow-[0_0_12px_rgba(239,68,68,0.4)]'
+                          }`}></div>
+
+                          <div className="space-y-4">
+                            <div className="flex items-center gap-3">
+                              <img 
+                                src={payment.barberId?.avatar || "/avatar/men.png"} 
+                                alt={payment.barberId?.name || "Sartarosh"} 
+                                className="w-12 h-12 rounded-full object-cover border border-zinc-800/80 group-hover:border-emerald-500/30 transition-colors"
+                              />
+                              <div className="min-w-0 flex-1">
+                                <h3 className="text-base font-bold truncate group-hover:text-emerald-400 transition-colors">
+                                  {payment.barberId?.name || 'O\'chirilgan Sartarosh'}
+                                </h3>
+                                <span className="text-emerald-400 text-xxs font-bold uppercase tracking-wider block bg-emerald-500/5 border border-emerald-500/10 w-fit px-1.5 py-0.5 rounded-md mt-0.5">
+                                  {payment.barberId?.shopName || 'Salon nomi yo\'q'}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="space-y-2 text-xs text-zinc-400">
+                              <div className="flex justify-between">
+                                <span className="text-zinc-650 font-medium">To'lov summasi:</span>
+                                <span className="font-bold text-white">
+                                  {((payment.amount || 0) * (payment.monthsCount || 1)).toLocaleString('uz-UZ')} UZS
+                                </span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-zinc-650 font-medium">Necha oylik to'lov:</span>
+                                <span className="font-semibold text-zinc-200">
+                                  {payment.monthsCount} oy
+                                </span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-zinc-650 font-medium">Qaysi sanadan:</span>
+                                <span className="font-semibold text-zinc-200">{from}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-zinc-650 font-medium">Qaysi sanagacha:</span>
+                                <span className="font-semibold text-zinc-200">{to}</span>
+                              </div>
+                              {payment.notes && (
+                                <div className="flex justify-between">
+                                  <span className="text-zinc-650 font-medium shrink-0">Izoh:</span>
+                                  <span className="font-semibold text-zinc-300 text-right truncate pl-4 max-w-[180px]" title={payment.notes}>
+                                    {payment.notes}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+
+                            {payment.receiptUrl ? (
+                              <div className="bg-zinc-950/40 border border-zinc-900/80 rounded-xl p-2.5 flex items-center justify-between gap-2 backdrop-blur-sm">
+                                <div className="min-w-0 flex-1">
+                                  <span className="text-[9px] text-zinc-650 font-bold uppercase tracking-wider block leading-none">To'lov hujjati</span>
+                                  <span className="text-xxs font-bold text-emerald-400 block mt-1 truncate">
+                                    Check rasmi (Google Photos)
+                                  </span>
+                                </div>
+                                <a
+                                  href={payment.receiptUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-emerald-500/30 text-zinc-400 hover:text-emerald-400 flex items-center justify-center cursor-pointer transition-colors"
+                                  title="Checkni ko'rish"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                  </svg>
+                                </a>
+                              </div>
+                            ) : (
+                              <div className="bg-zinc-950/20 border border-zinc-900/50 rounded-xl p-2.5 flex items-center justify-between gap-2 backdrop-blur-sm">
+                                <div className="min-w-0 flex-1">
+                                  <span className="text-[9px] text-zinc-650 font-bold uppercase tracking-wider block leading-none">To'lov hujjati</span>
+                                  <span className="text-xxs font-bold text-zinc-500 block mt-1 italic">
+                                    Check yuklanmagan
+                                  </span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="border-t border-zinc-850/40 pt-3.5 flex items-center justify-between">
+                            <span className={`text-[10px] font-bold uppercase px-2.5 py-1 rounded-full ${
+                              isExpired 
+                                ? 'bg-red-500/10 text-red-400' 
+                                : 'bg-emerald-500/10 text-emerald-400'
+                            }`}>
+                              {isExpired ? 'Muddati o\'tgan' : 'Faol obuna'}
+                            </span>
+
+                            <div className="flex gap-1.5">
+                              <button
+                                onClick={() => handleOpenEditPaymentModal(payment)}
+                                className="w-8 h-8 rounded-lg bg-zinc-800/80 hover:bg-zinc-750 text-zinc-400 hover:text-white border border-zinc-850/60 flex items-center justify-center transition-colors cursor-pointer"
+                                title="Tahrirlash"
+                              >
+                                <FaEdit size={12} />
+                              </button>
+                              <button
+                                onClick={() => handleDeletePayment(payment._id)}
+                                className="w-8 h-8 rounded-lg bg-red-500/15 hover:bg-red-500/25 text-red-400 border border-red-500/20 flex items-center justify-center transition-colors cursor-pointer"
+                                title="O'chirish"
+                              >
+                                <FaTrash size={11} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
 
@@ -730,6 +1018,15 @@ const SuperAdminDashboard = () => {
         >
           <FaChartBar size={18} />
           <span>Statistika</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('payments')}
+          className={`flex flex-col items-center gap-1 text-[10px] font-bold uppercase transition-colors cursor-pointer ${
+            activeTab === 'payments' ? 'text-emerald-400' : 'text-zinc-500'
+          }`}
+        >
+          <FaCoins size={18} />
+          <span>To'lovlar</span>
         </button>
         <button
           onClick={() => setActiveTab('profile')}
@@ -866,6 +1163,143 @@ const SuperAdminDashboard = () => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
+                  disabled={submitting}
+                  className="flex-1 bg-zinc-800 hover:bg-zinc-750 text-zinc-300 font-bold py-2.5 px-4 rounded-xl border border-zinc-700/30 transition-all cursor-pointer text-xs disabled:opacity-50"
+                >
+                  Bekor qilish
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Dialog for Payment Add / Edit */}
+      {isPaymentModalOpen && (
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-md flex items-center justify-center z-[100] p-4 transition-all duration-300">
+          <div className="absolute inset-0" onClick={() => setIsPaymentModalOpen(false)}></div>
+          <div className="relative w-full max-w-md bg-zinc-950/80 border border-white/10 backdrop-blur-2xl rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] z-10 text-white overflow-hidden animate-bounce-in">
+            <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                {editingPayment ? 'To\'lov ma\'lumotini tahrirlash' : 'Yangi to\'lov kiritish'}
+              </h3>
+              <button 
+                onClick={() => setIsPaymentModalOpen(false)}
+                className="text-zinc-500 hover:text-white transition-colors cursor-pointer border-none bg-transparent"
+              >
+                <FaTimes size={16} />
+              </button>
+            </div>
+
+            <form onSubmit={handlePaymentSubmit} className="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
+              <div>
+                <label className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider block mb-1">Sartaroshni tanlang</label>
+                <select
+                  name="barberId"
+                  value={paymentFormData.barberId}
+                  onChange={handlePaymentInputChange}
+                  required
+                  className="w-full bg-zinc-800/80 border border-zinc-700/50 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                >
+                  <option value="" disabled>Sartaroshni tanlang...</option>
+                  {barbers.map(b => (
+                    <option key={b._id} value={b._id}>
+                      {b.name} ({b.shopName || 'Salon nomi yo\'q'})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider block mb-1">1 oylik to'lov summasi (UZS)</label>
+                  <input 
+                    type="number" 
+                    name="amount"
+                    value={paymentFormData.amount}
+                    onChange={handlePaymentInputChange}
+                    required
+                    placeholder="Masalan, 200000"
+                    className="w-full bg-zinc-800/80 border border-zinc-700/50 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider block mb-1">Necha oylik to'lov</label>
+                  <input 
+                    type="number" 
+                    name="monthsCount"
+                    value={paymentFormData.monthsCount}
+                    onChange={handlePaymentInputChange}
+                    required
+                    min="1"
+                    className="w-full bg-zinc-800/80 border border-zinc-700/50 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider block mb-1">Qaysi sanadan</label>
+                  <input 
+                    type="date" 
+                    name="fromDate"
+                    value={paymentFormData.fromDate}
+                    onChange={handlePaymentInputChange}
+                    required
+                    className="w-full bg-zinc-800/80 border border-zinc-700/50 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider block mb-1">Qaysi sanagacha</label>
+                  <input 
+                    type="date" 
+                    name="toDate"
+                    value={paymentFormData.toDate}
+                    onChange={handlePaymentInputChange}
+                    required
+                    className="w-full bg-zinc-800/80 border border-zinc-700/50 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider block mb-1">Check rasmi linki (Google Photos)</label>
+                <input 
+                  type="url" 
+                  name="receiptUrl"
+                  value={paymentFormData.receiptUrl}
+                  onChange={handlePaymentInputChange}
+                  placeholder="https://photos.google.com/..."
+                  className="w-full bg-zinc-800/80 border border-zinc-700/50 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider block mb-1">Izoh (Ixtiyoriy)</label>
+                <textarea 
+                  name="notes"
+                  value={paymentFormData.notes}
+                  onChange={handlePaymentInputChange}
+                  rows={2}
+                  placeholder="Qo'shimcha izohlar yoki to'lov tafsilotlari..."
+                  className="w-full bg-zinc-800/80 border border-zinc-700/50 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors resize-none"
+                />
+              </div>
+
+              <div className="flex gap-2.5 pt-2">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-2.5 px-4 rounded-xl hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-1.5 cursor-pointer text-xs disabled:opacity-50"
+                >
+                  {submitting ? <FaSpinner size={12} className="animate-spin" /> : null}
+                  <span>{editingPayment ? 'Saqlash' : 'To\'lovni kiritish'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsPaymentModalOpen(false)}
                   disabled={submitting}
                   className="flex-1 bg-zinc-800 hover:bg-zinc-750 text-zinc-300 font-bold py-2.5 px-4 rounded-xl border border-zinc-700/30 transition-all cursor-pointer text-xs disabled:opacity-50"
                 >

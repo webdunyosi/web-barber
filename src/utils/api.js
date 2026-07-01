@@ -1290,4 +1290,32 @@ export const getBarberBySlugApi = async (slug) => {
   return response.data;
 };
 
+export const getPaymentsApi = async (token) => {
+  const response = await axios.get(`${API_URL}/superadmin/payments`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const createPaymentApi = async (token, paymentData) => {
+  const response = await axios.post(`${API_URL}/superadmin/payments`, paymentData, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const updatePaymentApi = async (token, paymentId, paymentData) => {
+  const response = await axios.put(`${API_URL}/superadmin/payments/${paymentId}`, paymentData, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const deletePaymentApi = async (token, paymentId) => {
+  const response = await axios.delete(`${API_URL}/superadmin/payments/${paymentId}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
 
