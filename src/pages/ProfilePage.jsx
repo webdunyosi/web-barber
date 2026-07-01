@@ -182,11 +182,6 @@ const ProfilePage = () => {
     <div className="w-full lg:w-5/6 ml-auto text-white px-0 sm:px-4 py-6 pb-4 lg:pb-8">
       <div className="max-w-md mx-auto space-y-5">
         
-        {/* Page Title */}
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-center bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
-          Shaxsiy Kabinet
-        </h2>
-
         {/* Success / Error Alerts */}
         {errorMessage && (
           <div className="p-3.5 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold animate-fade-in">
