@@ -1,9 +1,11 @@
 import React from "react"
 import {
   FaInstagram, FaTelegramPlane, FaFacebook, FaYoutube,
-  FaCalendarAlt, FaUser, FaGlobe,
+  FaCalendarAlt, FaUser, FaGlobe, FaSignInAlt, FaLock,
 } from "react-icons/fa"
 import { useBarber } from "../contexts/BarberContext"
+import { useAuth } from "../hooks/useAuth"
+import AuthModal from "../components/features/auth/AuthModal"
 
 const getSocialIcon = (iconName, className) => {
   const icons = {
@@ -18,7 +20,33 @@ const getSocialIcon = (iconName, className) => {
 
 const BarberProfilePage = () => {
   const { activeBarber } = useBarber();
+  const { isAuthenticated } = useAuth();
   const [imageLoaded, setImageLoaded] = React.useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = React.useState(false);
+
+  if (!isAuthenticated) {
+    return (
+      <div className="w-full lg:w-5/6 ml-auto min-h-[70vh] flex flex-col items-center justify-center px-0 sm:px-4 py-12 text-white text-center animate-fadeIn">
+        <div className="max-w-md w-full bg-zinc-900/80 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl mx-auto text-center space-y-6">
+          <div className="w-16 h-16 rounded-full bg-zinc-800/80 border border-zinc-700/50 flex items-center justify-center mx-auto text-zinc-400">
+            <FaLock size={24} />
+          </div>
+          <h2 className="text-2xl font-bold mb-2">Sartarosh profili qulflangan</h2>
+          <p className="text-gray-400 text-sm mb-6 font-medium">
+            Sartarosh ma'lumotlarini ko'rish uchun iltimos tizimga kiring.
+          </p>
+          <button
+            onClick={() => setIsAuthModalOpen(true)}
+            className="w-full bg-linear-to-br from-emerald-500 to-green-600 hover:shadow-lg hover:shadow-emerald-500/30 text-white font-bold py-3.5 px-4 rounded-xl transition-all active:scale-[0.98] border border-emerald-400 flex items-center justify-center gap-2 cursor-pointer text-sm"
+          >
+            <FaSignInAlt size={16} />
+            <span>Tizimga kirish</span>
+          </button>
+        </div>
+        <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+      </div>
+    );
+  }
 
   if (!activeBarber) {
     return (
@@ -187,6 +215,7 @@ const BarberProfilePage = () => {
           </div>
         )}
       </div>
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </div>
   )
 }

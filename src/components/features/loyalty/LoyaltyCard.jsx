@@ -110,15 +110,7 @@ const LoyaltyCard = ({ stampsCount = 0 }) => {
               {renderStamps()}
             </div>
 
-            {/* Bottom Row: Contact Info */}
-            <div className="flex flex-col items-center">
-              <div className="bg-white/5 border border-white/10 rounded-full px-4 py-1 flex items-center gap-1.5 shadow-md hover:bg-white/10 transition-colors">
-                <FaPhone size={9} className="text-emerald-400 shrink-0" />
-                <span className="text-[10px] font-bold text-white tracking-wider">
-                  +998 99 999 99 99
-                </span>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>
