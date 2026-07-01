@@ -1,21 +1,9 @@
 import React from "react"
 import {
-  FaTrophy, FaStar, FaGraduationCap, FaUsers,
   FaInstagram, FaTelegramPlane, FaFacebook, FaYoutube,
-  FaBriefcase, FaCalendarAlt, FaUser, FaGlobe,
+  FaCalendarAlt, FaUser, FaGlobe,
 } from "react-icons/fa"
 import barberProfile from "../data/barberProfile.json"
-
-const getAchievementIcon = (iconName, className) => {
-  const icons = {
-    FaTrophy: FaTrophy,
-    FaStar: FaStar,
-    FaGraduationCap: FaGraduationCap,
-    FaUsers: FaUsers
-  };
-  const IconComponent = icons[iconName] || FaTrophy;
-  return <IconComponent className={className} />;
-}
 
 const getSocialIcon = (iconName, className) => {
   const icons = {
@@ -73,10 +61,7 @@ const BarberProfilePage = () => {
               </div>
 
               <div className="space-y-2 md:space-y-3">
-                <div className="flex items-center gap-2.5 md:gap-3 text-white/80">
-                  <span className="text-emerald-400"><FaBriefcase size={20} /></span>
-                  <span className="text-sm sm:text-base md:text-lg">{barberProfile.experience.specialization}</span>
-                </div>
+
                 <div className="flex items-center gap-2.5 md:gap-3 text-white/80">
                   <span className="text-emerald-400"><FaCalendarAlt size={20} /></span>
                   <span className="text-sm sm:text-base md:text-lg">
@@ -114,33 +99,7 @@ const BarberProfilePage = () => {
           </p>
         </div>
 
-        {/* Achievements Section */}
-        <div className="bg-zinc-900/50 backdrop-blur-lg rounded-2xl p-4 sm:p-6 md:p-8 border border-emerald-500/20 shadow-xl">
-          <h2 className="text-xl md:text-3xl font-bold text-white mb-4 md:mb-8 flex items-center gap-2 md:gap-3">
-            <span className="text-emerald-400"><FaTrophy className="w-5 h-5 md:w-9 md:h-9" /></span>
-            Yutuqlarim
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
-            {barberProfile.achievements.map((achievement) => (
-              <div
-                key={achievement.id}
-                className="group relative bg-zinc-800/50 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-emerald-500/20 hover:border-emerald-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-emerald-500/10"
-              >
-                <div className="flex items-start gap-3 md:gap-4">
-                  <span className="text-emerald-400 shrink-0">{getAchievementIcon(achievement.icon, "w-8 h-8 md:w-12 md:h-12 shrink-0")}</span>
-                  <div className="flex-1">
-                    <h3 className="text-base md:text-xl font-bold text-white mb-1 md:mb-2 group-hover:text-emerald-400 transition-colors">
-                      {achievement.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm md:text-base text-white/60 leading-relaxed">
-                      {achievement.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+
 
         {/* Social Media Section */}
         <div className="bg-zinc-900/50 backdrop-blur-lg rounded-2xl p-4 sm:p-6 md:p-8 border border-emerald-500/20 shadow-xl">
@@ -170,21 +129,6 @@ const BarberProfilePage = () => {
           </div>
         </div>
 
-        {/* Call to Action */}
-        <div className="bg-gradient-to-br from-emerald-500/10 to-green-500/10 rounded-2xl border border-emerald-500/30 p-5 md:p-8 text-center">
-          <h3 className="text-lg md:text-3xl font-bold text-white mb-2">
-            Professional xizmat olishni xohlaysizmi?
-          </h3>
-          <p className="text-white/70 mb-4 text-xs sm:text-sm md:text-lg">
-            Bugun buyurtma qiling va sifatli sartaroshlik xizmatlaridan bahramand bo'ling
-          </p>
-          <a
-            href="/"
-            className="inline-block bg-gradient-to-r from-emerald-500 to-green-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-2xl hover:shadow-emerald-500/50 transition-all duration-300 hover:scale-105 text-sm md:text-lg"
-          >
-            Buyurtma Qilish
-          </a>
-        </div>
       </div>
     </div>
   )

@@ -1,6 +1,6 @@
 {
   "name": "Behruz",
-  "title": "Professional Sartarosh",
+  "title": "Professional Barber",
   "image": "/barber/1.png",
   "bio": "Men 15 yildan beri sartaroshlik sohasida faoliyat yuritaman. Har bir mijozga professional yondashuv va sifatli xizmat ko'rsatish mening asosiy maqsadim. Zamonaviy va klassik stillarni birlashtirish orqali har bir mijozga o'ziga mos bo'lgan uslubni topib beraman.",
   "experience": {
@@ -73,16 +73,6 @@
       "id": 1,
       "value": "15+",
       "label": "Yillik tajriba"
-    },
-    {
-      "id": 2,
-      "value": "5000+",
-      "label": "Mamnun mijozlar"
-    },
-    {
-      "id": 3,
-      "value": "10+",
-      "label": "Mukofotlar"
     },
     {
       "id": 4,
