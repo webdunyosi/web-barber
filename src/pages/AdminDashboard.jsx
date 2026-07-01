@@ -416,6 +416,7 @@ const AdminDashboard = () => {
   const [editedName, setEditedName] = useState('');
   const [editedPhone, setEditedPhone] = useState('');
   const [editedTelegram, setEditedTelegram] = useState('');
+  const [editedSlug, setEditedSlug] = useState('');
   const [editedPassword, setEditedPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isProfileUpdating, setIsProfileUpdating] = useState(false);
@@ -526,9 +527,10 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (user) {
-      setEditedName('');
-      setEditedPhone('');
-      setEditedTelegram('');
+      setEditedName(user.name || '');
+      setEditedPhone(user.phone || '');
+      setEditedTelegram(user.telegram || '');
+      setEditedSlug(user.slug || '');
       setEditedPassword('');
       setShowPassword(false);
     }
@@ -539,6 +541,7 @@ const AdminDashboard = () => {
     const finalName = editedName.trim() || user?.name || '';
     const finalTelegram = editedTelegram.trim() || user?.telegram || '';
     const finalPhone = editedPhone.trim() || user?.phone || '';
+    const finalSlug = editedSlug.trim() || user?.slug || '';
     
     setIsProfileUpdating(true);
     setProfileError('');
@@ -548,7 +551,8 @@ const AdminDashboard = () => {
       const updateData = {
         name: finalName,
         phone: finalPhone,
-        telegram: finalTelegram
+        telegram: finalTelegram,
+        slug: finalSlug
       };
       if (editedPassword.trim()) {
         updateData.password = editedPassword;
@@ -2914,6 +2918,25 @@ const AdminDashboard = () => {
                             disabled={isProfileUpdating}
                             className="w-full bg-zinc-800/80 border border-white/10 rounded-xl pl-7 pr-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
                             placeholder={user?.telegram || "username"}
+                            autoComplete="off"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Barber Code Input */}
+                      <div>
+                        <label className="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Sartarosh kodi</label>
+                        <div className="relative flex items-center">
+                          <FaCut size={12} className="absolute left-3 text-zinc-500 z-10" />
+                          <input
+                            type="text"
+                            value={editedSlug}
+                            onChange={(e) => {
+                              setEditedSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, ''));
+                            }}
+                            disabled={isProfileUpdating}
+                            className="w-full bg-zinc-800/80 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors disabled:opacity-50"
+                            placeholder={user?.slug || "sartarosh kodi"}
                             autoComplete="off"
                           />
                         </div>

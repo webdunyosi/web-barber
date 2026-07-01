@@ -95,9 +95,9 @@ const ProfilePage = () => {
   // Initialize edit fields when user info changes or edit mode is toggled
   useEffect(() => {
     if (user) {
-      setEditedName('');
-      setEditedPhone('');
-      setEditedTelegram('');
+      setEditedName(user.name || '');
+      setEditedPhone(user.phone || '');
+      setEditedTelegram(user.telegram || '');
       setEditedPassword('');
       setShowPassword(false);
     }
