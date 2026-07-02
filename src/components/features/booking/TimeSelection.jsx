@@ -256,7 +256,7 @@ const TimeSelection = ({ timeSlots, selectedDate, selectedTime, onSelectDate, on
               ))}
             </div>
           ) : availableTimeSlots.length === 0 ? (
-            <div className="w-full py-8 text-center text-zinc-550 border border-dashed border-zinc-800/80 rounded-2xl bg-zinc-950/20">
+            <div className="w-full py-8 text-center text-zinc-300 font-medium border border-dashed border-zinc-800/80 rounded-2xl bg-zinc-900/30 px-4">
               Bugun uchun barcha ish soatlari o'tib ketgan. Iltimos, boshqa kunni tanlang.
             </div>
           ) : (
