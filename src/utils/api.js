@@ -1318,4 +1318,19 @@ export const deletePaymentApi = async (token, paymentId) => {
   return response.data;
 };
 
+// Get My Subscription (Barber side)
+export const getMySubscriptionApi = async (token) => {
+  if (MOCK_MODE) {
+    return {
+      subscriptionExpiresAt: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
+      payments: []
+    };
+  }
+  const response = await axios.get(`${API_URL}/admin/my-subscription`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+
 

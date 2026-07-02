@@ -1,7 +1,8 @@
 import React from 'react';
 import { Outlet, Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { FaUserShield, FaSignOutAlt, FaHome, FaChartBar, FaCalendarCheck, FaUser, FaTachometerAlt, FaBell, FaCut, FaUsers } from 'react-icons/fa';
+import { FaUserShield, FaSignOutAlt, FaHome, FaChartBar, FaCalendarCheck, FaUser, FaTachometerAlt, FaBell, FaCut, FaUsers, FaLock } from 'react-icons/fa';
+import { toast } from 'react-hot-toast';
 import AdminBottomNavigation from '../components/layout/AdminBottomNavigation';
 
 const LayoutSkeleton = () => (
@@ -119,6 +120,46 @@ const AdminLayout = () => {
     navigate('/');
   };
 
+  const isSubscriptionExpired = user?.role === 'admin' && (!user.subscriptionExpiresAt || new Date(user.subscriptionExpiresAt) < new Date());
+
+  const renderNavLink = (tabName, label, icon) => {
+    const searchParams = new URLSearchParams(location.search);
+    const activeTab = searchParams.get('tab') || 'dashboard';
+    const isActive = location.pathname === '/admin' && activeTab === tabName;
+    const isLocked = isSubscriptionExpired && tabName !== 'profile';
+
+    if (isLocked) {
+      return (
+        <button
+          key={tabName}
+          onClick={() => toast.error("Profilingizda obuna muddati tugaganligi (qarzdorlik) sababli ushbu bo'lim bloklangan. Obunani faollashtirish uchun to'lov bo'limiga o'ting.")}
+          className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm text-zinc-500 hover:bg-white/5 cursor-not-allowed border-none text-left"
+        >
+          <div className="flex items-center gap-3">
+            {icon}
+            <span className="text-zinc-400">{label}</span>
+          </div>
+          <FaLock size={12} className="text-red-500/80 mr-1" />
+        </button>
+      );
+    }
+
+    return (
+      <Link
+        key={tabName}
+        to={`/admin?tab=${tabName}`}
+        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
+          isActive
+            ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/40'
+            : 'text-zinc-400 hover:text-white hover:bg-white/5'
+        }`}
+      >
+        {icon}
+        <span>{label}</span>
+      </Link>
+    );
+  };
+
   if (loading) {
     return <LayoutSkeleton />;
   }
@@ -166,77 +207,12 @@ const AdminLayout = () => {
 
           {/* Nav Items */}
           <nav className="space-y-1.5">
-            <Link
-              to="/admin?tab=dashboard"
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
-                location.pathname === '/admin' && (new URLSearchParams(location.search).get('tab') || 'dashboard') === 'dashboard'
-                  ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/40'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <FaTachometerAlt size={18} />
-              <span>Boshqaruv Paneli</span>
-            </Link>
-
-            <Link
-              to="/admin?tab=statistics"
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
-                location.pathname === '/admin' && new URLSearchParams(location.search).get('tab') === 'statistics'
-                  ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/40'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <FaChartBar size={18} />
-              <span>Moliya & Statistika</span>
-            </Link>
-
-            <Link
-              to="/admin?tab=bookings"
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
-                location.pathname === '/admin' && new URLSearchParams(location.search).get('tab') === 'bookings'
-                  ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/40'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <FaCalendarCheck size={18} />
-              <span>Buyurtmalar & To'lovlar</span>
-            </Link>
-
-            <Link
-              to="/admin?tab=services"
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
-                location.pathname === '/admin' && new URLSearchParams(location.search).get('tab') === 'services'
-                  ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/40'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <FaCut size={18} />
-              <span>Xizmatlar Boshqaruvi</span>
-            </Link>
-
-            <Link
-              to="/admin?tab=notifications"
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
-                location.pathname === '/admin' && new URLSearchParams(location.search).get('tab') === 'notifications'
-                  ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/40'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <FaBell size={18} />
-              <span>Bildirishnomalar</span>
-            </Link>
-
-            <Link
-              to="/admin?tab=profile"
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm ${
-                location.pathname === '/admin' && new URLSearchParams(location.search).get('tab') === 'profile'
-                  ? 'bg-emerald-500/90 text-white shadow-lg shadow-emerald-500/40'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <FaUser size={18} />
-              <span>Profil Boshqaruvi</span>
-            </Link>
+            {renderNavLink('dashboard', 'Boshqaruv Paneli', <FaTachometerAlt size={18} />)}
+            {renderNavLink('statistics', 'Moliya & Statistika', <FaChartBar size={18} />)}
+            {renderNavLink('bookings', 'Buyurtmalar & To\'lovlar', <FaCalendarCheck size={18} />)}
+            {renderNavLink('services', 'Xizmatlar Boshqaruvi', <FaCut size={18} />)}
+            {renderNavLink('notifications', 'Bildirishnomalar', <FaBell size={18} />)}
+            {renderNavLink('profile', 'Profil Boshqaruvi', <FaUser size={18} />)}
           </nav>
         </div>
 

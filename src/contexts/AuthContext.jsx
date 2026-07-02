@@ -28,7 +28,8 @@ import {
   getPaymentsApi,
   createPaymentApi,
   updatePaymentApi,
-  deletePaymentApi
+  deletePaymentApi,
+  getMySubscriptionApi
 } from '../utils/api';
 
 export const AuthProvider = ({ children }) => {
@@ -233,6 +234,11 @@ export const AuthProvider = ({ children }) => {
     return await deletePaymentApi(token, paymentId);
   };
 
+  const getMySubscription = async () => {
+    if (!token) throw new Error('Unauthenticated');
+    return await getMySubscriptionApi(token);
+  };
+
   const value = {
     user,
     token,
@@ -267,7 +273,8 @@ export const AuthProvider = ({ children }) => {
     getPayments,
     createPayment,
     updatePayment,
-    deletePayment
+    deletePayment,
+    getMySubscription
   };
 
   return (

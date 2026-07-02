@@ -52,7 +52,10 @@ import {
   FaLink,
   FaGift,
   FaCheckCircle,
-  FaPlus
+  FaPlus,
+  FaCoins,
+  FaLock,
+  FaExternalLinkAlt
 } from 'react-icons/fa';
 import { formatPrice } from '../utils/format';
 import { getNotificationsApi, createNotificationApi, deleteNotificationApi, updateNotificationApi, createUserApi, getBlockedSchedulesApi, saveBlockedScheduleApi, deleteBlockedScheduleApi } from '../utils/api';
@@ -319,11 +322,33 @@ const AdminDashboard = () => {
     getServices,
     addService,
     updateService,
-    deleteService
+    deleteService,
+    getMySubscription
   } = useAuth();
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get('tab') || 'dashboard';
+  const isSubscriptionExpired = user?.role === 'admin' && (!user.subscriptionExpiresAt || new Date(user.subscriptionExpiresAt) < new Date());
+  const activeTab = isSubscriptionExpired ? 'subscription' : (searchParams.get('tab') || 'dashboard');
+
+  const [mySubscription, setMySubscription] = useState({ subscriptionExpiresAt: null, payments: [] });
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      if (user?.role === 'admin' && token) {
+        setSubscriptionLoading(true);
+        try {
+          const data = await getMySubscription();
+          setMySubscription(data);
+        } catch (error) {
+          console.error("Subscription yuklashda xatolik:", error);
+        } finally {
+          setSubscriptionLoading(false);
+        }
+      }
+    };
+    fetchSubscription();
+  }, [user, token]);
 
   const [usersList, setUsersList] = useState([]);
   const [bookingsList, setBookingsList] = useState([]);
@@ -2903,6 +2928,206 @@ const AdminDashboard = () => {
             </div>
           )}
 
+          {/* ================= TAB: SUBSCRIPTION ================= */}
+          {activeTab === 'subscription' && (
+            <div className="w-full text-white px-0 sm:px-4 py-2 pb-4 animate-fadeIn">
+              <div className="max-w-xl mx-auto space-y-6">
+                
+                {/* Header with Back button */}
+                <div className="flex items-center gap-3">
+                  {!isSubscriptionExpired && (
+                    <button
+                      onClick={() => setSearchParams({ tab: 'profile' })}
+                      className="w-10 h-10 rounded-xl bg-zinc-900 border border-white/5 flex items-center justify-center text-zinc-400 hover:text-white cursor-pointer transition-colors active:scale-95 animate-fadeIn"
+                    >
+                      <FaArrowLeft size={16} />
+                    </button>
+                  )}
+                  <div>
+                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                      <FaCoins className="text-emerald-400" size={20} />
+                      <span>To'lov va Obuna holati</span>
+                    </h2>
+                    <p className="text-xs text-zinc-400 mt-0.5">Ilovadan foydalanish obunasi va to'lovlar tarixi</p>
+                  </div>
+                </div>
+
+                {/* Subscription Status Card */}
+                <div className={`border rounded-3xl p-6 backdrop-blur-xl shadow-xl transition-all duration-300 ${
+                  isSubscriptionExpired
+                    ? 'bg-red-500/10 border-red-500/20 shadow-red-500/5'
+                    : 'bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/5'
+                }`}>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-[10px] text-zinc-400 uppercase tracking-widest font-bold">Ilova holati</span>
+                    <span className={`px-3 py-1 text-xs font-black uppercase tracking-wider rounded-full ${
+                      isSubscriptionExpired
+                        ? 'bg-red-500/20 text-red-400 animate-pulse'
+                        : 'bg-emerald-500/20 text-emerald-400'
+                    }`}>
+                      {isSubscriptionExpired ? "Qarzdorlik" : "Faol Obuna"}
+                    </span>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <span className="text-zinc-400 text-xs font-medium">Obuna muddati tugash sanasi:</span>
+                      <div className="text-lg sm:text-xl font-extrabold text-white mt-0.5">
+                        {mySubscription.subscriptionExpiresAt 
+                          ? new Date(mySubscription.subscriptionExpiresAt).toLocaleDateString('uz-UZ', { year: 'numeric', month: 'long', day: 'numeric' })
+                          : "Kiritilmagan"}
+                      </div>
+                    </div>
+
+                    {isSubscriptionExpired ? (
+                      <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-xs font-semibold text-red-400 flex items-start gap-2.5">
+                        <FaExclamationTriangle className="shrink-0 text-red-400 mt-0.5 animate-bounce" size={16} />
+                        <div>
+                          <p className="font-bold">Ilovadan foydalanish vaqtincha cheklandi!</p>
+                          <p className="mt-1 text-zinc-300 leading-relaxed font-normal">Obuna to'lovi amalga oshirilmagan yoki muddati tugagan. Davom ettirish uchun tizim administratoriga murojaat qiling va to'lov chekini taqdim eting.</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 text-xs font-semibold text-emerald-400 flex items-start gap-2.5">
+                        <FaCheckCircle className="shrink-0 text-emerald-400 mt-0.5" size={16} />
+                        <div>
+                          <p className="font-bold">Sizning obunangiz faol holatda!</p>
+                          <p className="mt-1 text-zinc-300 leading-relaxed font-normal">Tizimning barcha imkoniyatlaridan to'liq foydalanishingiz mumkin.</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Payment Support (Admin Contacts) */}
+                <div className="bg-zinc-900/70 border border-white/10 rounded-3xl p-5 backdrop-blur-xl shadow-xl space-y-4">
+                  <div>
+                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">To'lov qilish uchun bog'lanish</h3>
+                    <p className="text-xs text-zinc-400 mt-0.5">Obunani uzaytirish yoki to'lov qilish uchun quyidagi kontaktlarga murojaat qiling:</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    {/* Telegram support link */}
+                    <a
+                      href="https://t.me/AlimardonToshpulatov"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-4 py-3 bg-zinc-950/60 border border-white/5 hover:border-sky-500/30 rounded-2xl transition-all duration-300 group cursor-pointer"
+                    >
+                      <div className="w-9 h-9 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center group-hover:bg-sky-500/20 transition-colors shrink-0">
+                        <FaPaperPlane size={14} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <span className="block text-[9px] text-zinc-500 uppercase tracking-wider font-bold">Admin Telegram</span>
+                        <span className="text-xs font-semibold text-zinc-200 truncate block group-hover:text-white transition-colors">
+                          @AlimardonToshpulatov
+                        </span>
+                      </div>
+                    </a>
+
+                    {/* Phone support link */}
+                    <a
+                      href="tel:+998509509545"
+                      className="flex items-center gap-3 px-4 py-3 bg-zinc-950/60 border border-white/5 hover:border-emerald-500/30 rounded-2xl transition-all duration-300 group cursor-pointer"
+                    >
+                      <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center group-hover:bg-emerald-500/20 transition-colors shrink-0">
+                        <FaPhone size={14} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <span className="block text-[9px] text-zinc-500 uppercase tracking-wider font-bold">Admin Telefon</span>
+                        <span className="text-xs font-semibold text-zinc-200 truncate block group-hover:text-white transition-colors">
+                          +998 (50) 950-95-45
+                        </span>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+
+                {/* Payment History Log */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-2 px-1 flex-row">
+                    <FaHistory size={14} />
+                    <span>To'lovlar tarixi ({mySubscription.payments?.length || 0})</span>
+                  </h3>
+
+                  {subscriptionLoading ? (
+                    <div className="flex flex-col items-center justify-center py-10 bg-zinc-900/40 border border-white/5 rounded-3xl">
+                      <FaSpinner size={20} className="animate-spin text-emerald-400 mb-2" />
+                      <p className="text-zinc-500 text-xs font-medium">Yuklanmoqda...</p>
+                    </div>
+                  ) : !mySubscription.payments || mySubscription.payments.length === 0 ? (
+                    <div className="bg-zinc-900/40 border border-white/5 rounded-3xl p-8 text-center text-zinc-500">
+                      <p className="text-xs font-semibold">To'lovlar tarixi mavjud emas</p>
+                      <p className="text-[10px] text-zinc-650 mt-0.5">Siz to'lagan obuna cheklari bu yerda ro'yxat bo'lib ko'rinadi.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3.5">
+                      {mySubscription.payments.map((payment) => {
+                        const from = new Date(payment.fromDate).toLocaleDateString('uz-UZ');
+                        const to = new Date(payment.toDate).toLocaleDateString('uz-UZ');
+                        const isPaymentExpired = new Date(payment.toDate) < new Date();
+
+                        return (
+                          <div
+                            key={payment._id}
+                            className="bg-zinc-900/50 border border-white/5 rounded-3xl p-4.5 space-y-3.5 relative overflow-hidden group shadow-lg"
+                          >
+                            {/* Left indicator accent color */}
+                            <div className={`absolute left-0 top-0 bottom-0 w-1 transition-colors ${
+                              isPaymentExpired ? 'bg-red-500/50' : 'bg-emerald-500/50'
+                            }`}></div>
+
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="space-y-1">
+                                <div className="text-sm font-bold text-white">
+                                  {((payment.amount || 0) * (payment.monthsCount || 1)).toLocaleString('uz-UZ')} UZS
+                                </div>
+                                <div className="text-[10px] text-zinc-400 font-semibold">
+                                  Muddat: {payment.monthsCount} oy ({from} dan - {to} gacha)
+                                </div>
+                              </div>
+                              <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                                isPaymentExpired ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'
+                              }`}>
+                                {isPaymentExpired ? "Eski" : "Faol"}
+                              </span>
+                            </div>
+
+                            {payment.notes && (
+                              <p className="text-xs text-zinc-400 leading-relaxed italic bg-zinc-950/20 border border-white/5 rounded-xl p-2.5 font-medium font-sans">
+                                Izoh: {payment.notes}
+                              </p>
+                            )}
+
+                            {payment.receiptUrl ? (
+                              <div className="flex items-center justify-between gap-3 bg-zinc-950/40 border border-white/5 rounded-2xl p-2.5 backdrop-blur-sm">
+                                <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">To'lov hujjati (Check)</span>
+                                <a
+                                  href={payment.receiptUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 border border-white/5 hover:border-emerald-500/30 text-zinc-300 hover:text-emerald-400 text-[10px] font-bold transition-all cursor-pointer select-none active:scale-95 shrink-0"
+                                >
+                                  <span>Checkni ko'rish</span>
+                                  <FaExternalLinkAlt size={9} />
+                                </a>
+                              </div>
+                            ) : (
+                              <div className="bg-zinc-950/10 border border-white/5 rounded-2xl p-2.5 text-center">
+                                <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider italic">Check hujjati yuklanmagan</span>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+              </div>
+            </div>
+          )}
+
           {/* ================= TAB: PROFILE ================= */}
           {activeTab === 'profile' && (
             <div className="w-full text-white px-0 sm:px-4 py-2 pb-4 animate-fadeIn">
@@ -3138,12 +3363,35 @@ const AdminDashboard = () => {
                         {/* Item 5: Sartarosh ma'lumotlari */}
                         <button
                           onClick={() => setSearchParams({ tab: 'barber-info' })}
-                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer border-b border-white/5 text-left font-sans"
                         >
                           <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                             <FaCut size={16} />
                           </div>
                           <span className="flex-1 text-sm font-semibold text-zinc-200">Sartarosh ma'lumotlari</span>
+                          <FaChevronRight size={12} className="text-zinc-500" />
+                        </button>
+
+                        {/* Item 6: To'lov va obuna */}
+                        <button
+                          onClick={() => setSearchParams({ tab: 'subscription' })}
+                          className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors duration-200 cursor-pointer text-left font-sans"
+                        >
+                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                            isSubscriptionExpired 
+                              ? 'bg-red-500/10 border border-red-500/20 text-red-400' 
+                              : 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
+                          }`}>
+                            <FaCoins size={16} />
+                          </div>
+                          <span className="flex-1 text-sm font-semibold text-zinc-200 flex items-center gap-2">
+                            <span>To'lov va obuna</span>
+                            {isSubscriptionExpired && (
+                              <span className="px-1.5 py-0.5 text-[8px] font-black bg-red-500/20 text-red-400 border border-red-500/35 uppercase tracking-wider animate-pulse rounded-md">
+                                Qarzdorlik
+                              </span>
+                            )}
+                          </span>
                           <FaChevronRight size={12} className="text-zinc-500" />
                         </button>
                       </div>

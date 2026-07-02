@@ -1,15 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaChartBar, FaCalendarCheck, FaUser, FaTachometerAlt, FaCut } from 'react-icons/fa';
+import { FaChartBar, FaCalendarCheck, FaUser, FaTachometerAlt, FaCut, FaLock } from 'react-icons/fa';
 import { useAuth } from '../../hooks/useAuth';
+import { toast } from 'react-hot-toast';
 
 const AdminBottomNavigation = () => {
   const location = useLocation();
-  const { getBookings } = useAuth();
+  const { getBookings, user } = useAuth();
   const [pendingCount, setPendingCount] = useState(0);
 
   const searchParams = new URLSearchParams(location.search);
   const currentTab = searchParams.get('tab') || 'dashboard';
+
+  const isSubscriptionExpired = user?.role === 'admin' && (!user.subscriptionExpiresAt || new Date(user.subscriptionExpiresAt) < new Date());
+
+  const renderTabLink = (tabName, label, icon) => {
+    const isLocked = isSubscriptionExpired && tabName !== 'profile';
+    const isActive = currentTab === tabName;
+
+    if (isLocked) {
+      return (
+        <button
+          key={tabName}
+          onClick={() => toast.error("Obuna muddati tugaganligi sababli ushbu bo'lim bloklangan. Iltimos, obunani faollashtiring.")}
+          className="flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 text-zinc-650 cursor-not-allowed border-none bg-transparent"
+        >
+          <div className="relative">
+            {icon}
+            <FaLock size={8} className="absolute -top-1 -right-1 text-red-500 bg-zinc-950 rounded-full" />
+          </div>
+          <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium text-zinc-600">{label}</span>
+        </button>
+      );
+    }
+
+    return (
+      <Link
+        key={tabName}
+        to={`/admin?tab=${tabName}`}
+        className={`flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
+          isActive
+            ? 'text-emerald-400 scale-105 font-semibold'
+            : 'text-gray-400 hover:text-white'
+        }`}
+      >
+        {icon}
+        <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">{label}</span>
+      </Link>
+    );
+  };
 
   const fetchPendingCount = async () => {
     try {
@@ -48,75 +87,45 @@ const AdminBottomNavigation = () => {
       <div className="relative w-full h-full flex items-center justify-between px-1">
         {/* Left Tabs */}
         <div className="flex-1 flex justify-around pr-0">
-          <Link
-            to="/admin?tab=dashboard"
-            className={`flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
-              currentTab === 'dashboard'
-                ? 'text-emerald-400 scale-105 font-semibold'
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            <FaTachometerAlt size={19} />
-            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Boshqaruv</span>
-          </Link>
-
-          <Link
-            to="/admin?tab=statistics"
-            className={`flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
-              currentTab === 'statistics'
-                ? 'text-emerald-400 scale-105 font-semibold'
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            <FaChartBar size={19} />
-            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Statistika</span>
-          </Link>
+          {renderTabLink('dashboard', 'Boshqaruv', <FaTachometerAlt size={19} />)}
+          {renderTabLink('statistics', 'Statistika', <FaChartBar size={19} />)}
         </div>
 
         {/* Center notch space with Floating action button (Bookings) */}
         <div className="w-[64px] shrink-0 relative h-full">
-          <Link
-            to="/admin?tab=bookings"
-            className={`absolute -top-2.5 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 shadow-[0_4px_20px_rgba(16,185,129,0.3)] border-2 ${
-              currentTab === 'bookings'
-                ? 'bg-emerald-500 text-white border-emerald-400 scale-110 shadow-[0_0_25px_rgba(16,185,129,0.5)]'
-                : 'bg-zinc-900 text-emerald-400 border-emerald-500/40 hover:border-emerald-400 hover:bg-zinc-850'
-            }`}
-          >
-            <FaCalendarCheck size={22} />
-            {pendingCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-zinc-950 font-extrabold text-[10px] w-5 h-5 rounded-full flex items-center justify-center border border-zinc-950 animate-pulse">
-                {pendingCount}
-              </span>
-            )}
-          </Link>
+          {isSubscriptionExpired ? (
+            <button
+              onClick={() => toast.error("Obuna muddati tugaganligi sababli ushbu bo'lim bloklangan. Iltimos, obunani faollashtiring.")}
+              className="absolute -top-2.5 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 bg-zinc-900 text-zinc-600 border-zinc-800 cursor-not-allowed border-2"
+            >
+              <div className="relative">
+                <FaCalendarCheck size={22} />
+                <FaLock size={10} className="absolute -top-1 -right-1 text-red-500 bg-zinc-950 rounded-full" />
+              </div>
+            </button>
+          ) : (
+            <Link
+              to="/admin?tab=bookings"
+              className={`absolute -top-2.5 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 shadow-[0_4px_20px_rgba(16,185,129,0.3)] border-2 ${
+                currentTab === 'bookings'
+                  ? 'bg-emerald-500 text-white border-emerald-400 scale-110 shadow-[0_0_25px_rgba(16,185,129,0.5)]'
+                  : 'bg-zinc-900 text-emerald-400 border-emerald-500/40 hover:border-emerald-400 hover:bg-zinc-850'
+              }`}
+            >
+              <FaCalendarCheck size={22} />
+              {pendingCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-zinc-950 font-extrabold text-[10px] w-5 h-5 rounded-full flex items-center justify-center border border-zinc-950 animate-pulse">
+                  {pendingCount}
+                </span>
+              )}
+            </Link>
+          )}
         </div>
 
         {/* Right Tabs */}
         <div className="flex-1 flex justify-around pl-0">
-          <Link
-            to="/admin?tab=services"
-            className={`flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
-              currentTab === 'services'
-                ? 'text-emerald-400 scale-105 font-semibold'
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            <FaCut size={19} />
-            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Xizmatlar</span>
-          </Link>
-
-          <Link
-            to="/admin?tab=profile"
-            className={`flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 rounded-xl transition-all duration-300 ${
-              currentTab === 'profile'
-                ? 'text-emerald-400 scale-105 font-semibold'
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            <FaUser size={19} />
-            <span className="text-[9.5px] min-[360px]:text-[10px] tracking-tight font-medium">Profil</span>
-          </Link>
+          {renderTabLink('services', 'Xizmatlar', <FaCut size={19} />)}
+          {renderTabLink('profile', 'Profil', <FaUser size={19} />)}
         </div>
       </div>
     </div>
