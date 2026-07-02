@@ -43,6 +43,7 @@ import {
   FaBolt,
   FaBullhorn,
   FaHistory,
+  FaDownload,
   FaImage,
   FaComment,
   FaClock,
@@ -300,6 +301,64 @@ const tutorialsList = [
     duration: "01:00"
   }
 ];
+
+const formatSubscriptionExpiry = (expiryDateStr) => {
+  if (!expiryDateStr) return { dateFormatted: "Kiritilmagan", badgeText: "", expired: true, daysLeft: 0 };
+  
+  const expiryDate = new Date(expiryDateStr);
+  const now = new Date();
+  
+  // Set times to midnight to calculate pure day difference
+  const date1 = Date.UTC(expiryDate.getFullYear(), expiryDate.getMonth(), expiryDate.getDate());
+  const date2 = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const daysDiff = Math.ceil((date1 - date2) / (1000 * 3600 * 24));
+  
+  const day = expiryDate.getDate();
+  const monthIndex = expiryDate.getMonth();
+  const year = expiryDate.getFullYear();
+  
+  const monthsUz = [
+    'yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun',
+    'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr'
+  ];
+  
+  const monthName = monthsUz[monthIndex];
+  const dateFormatted = `${day}-${monthName} ${year}-yil`;
+  
+  let badgeText = "";
+  let expired = false;
+  
+  if (daysDiff > 0) {
+    badgeText = `${daysDiff} kun qoldi`;
+    expired = false;
+  } else if (daysDiff === 0) {
+    badgeText = `Bugun tugaydi`;
+    expired = false;
+  } else {
+    badgeText = `Muddati o'tgan (${Math.abs(daysDiff)} kun avval)`;
+    expired = true;
+  }
+  
+  return { dateFormatted, badgeText, expired, daysLeft: daysDiff };
+};
+
+const handleDownloadImage = async (imageUrl) => {
+  try {
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'check.jpg');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Rasm yuklab olishda xatolik:", error);
+    window.open(imageUrl, '_blank');
+  }
+};
 
 const AdminDashboard = () => {
   const {
@@ -2971,12 +3030,28 @@ const AdminDashboard = () => {
 
                   <div className="space-y-4">
                     <div>
-                      <span className="text-zinc-400 text-xs font-medium">Obuna muddati tugash sanasi:</span>
-                      <div className="text-lg sm:text-xl font-extrabold text-white mt-0.5">
-                        {mySubscription.subscriptionExpiresAt 
-                          ? new Date(mySubscription.subscriptionExpiresAt).toLocaleDateString('uz-UZ', { year: 'numeric', month: 'long', day: 'numeric' })
-                          : "Kiritilmagan"}
-                      </div>
+                      <span className="text-zinc-400 text-xs font-medium block mb-1.5">Obuna muddati tugash sanasi:</span>
+                      {mySubscription.subscriptionExpiresAt ? (() => {
+                        const expiry = formatSubscriptionExpiry(mySubscription.subscriptionExpiresAt);
+                        return (
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                            <span className="text-xl font-black text-white tracking-wide">
+                              {expiry.dateFormatted}
+                            </span>
+                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold w-fit ${
+                              expiry.expired 
+                                ? 'bg-red-500/10 text-red-400 border border-red-500/25 animate-pulse' 
+                                : expiry.daysLeft <= 7
+                                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/25 animate-pulse'
+                                : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25'
+                            }`}>
+                              {expiry.badgeText}
+                            </span>
+                          </div>
+                        );
+                      })() : (
+                        <div className="text-lg font-extrabold text-zinc-500">Kiritilmagan</div>
+                      )}
                     </div>
 
                     {isSubscriptionExpired ? (
@@ -3102,15 +3177,14 @@ const AdminDashboard = () => {
                             {payment.receiptUrl ? (
                               <div className="flex items-center justify-between gap-3 bg-zinc-950/40 border border-white/5 rounded-2xl p-2.5 backdrop-blur-sm">
                                 <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">To'lov hujjati (Check)</span>
-                                <a
-                                  href={payment.receiptUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                                <button
+                                  type="button"
+                                  onClick={() => setZoomedReceipt(payment.receiptUrl)}
                                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 border border-white/5 hover:border-emerald-500/30 text-zinc-300 hover:text-emerald-400 text-[10px] font-bold transition-all cursor-pointer select-none active:scale-95 shrink-0"
                                 >
                                   <span>Checkni ko'rish</span>
                                   <FaExternalLinkAlt size={9} />
-                                </a>
+                                </button>
                               </div>
                             ) : (
                               <div className="bg-zinc-950/10 border border-white/5 rounded-2xl p-2.5 text-center">
@@ -4700,12 +4774,23 @@ const AdminDashboard = () => {
             {/* Header info */}
             <div className="w-full flex justify-between items-center mb-3 bg-zinc-950/70 p-3 rounded-xl border border-white/5 backdrop-blur-md">
               <span className="text-sm font-semibold">To'lov chekini ko'rish</span>
-              <button
-                onClick={() => setZoomedReceipt(null)}
-                className="text-white hover:text-emerald-400 transition-colors p-1 bg-transparent border-none cursor-pointer"
-              >
-                <FaTimesCircle size={20} />
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => handleDownloadImage(zoomedReceipt)}
+                  className="text-emerald-400 hover:text-emerald-300 transition-colors p-1 bg-transparent border-none cursor-pointer flex items-center gap-1.5 text-xs font-bold"
+                  title="Yuklab olish"
+                >
+                  <FaDownload size={16} />
+                  <span className="hidden sm:inline">Yuklab olish</span>
+                </button>
+                <button
+                  onClick={() => setZoomedReceipt(null)}
+                  className="text-white hover:text-red-400 transition-colors p-1 bg-transparent border-none cursor-pointer"
+                  title="Yopish"
+                >
+                  <FaTimesCircle size={20} />
+                </button>
+              </div>
             </div>
             {/* Large receipt picture */}
             <img
